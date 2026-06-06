@@ -271,6 +271,54 @@
     </div>
   </section>
 
+  <!-- MODULE 3 -->
+  <section class="card">
+    <div class="card-h">
+      <span class="idx">3</span>
+      <h2>Dose reçue selon le temps</h2>
+      <span class="hint">D = débit × temps</span>
+    </div>
+
+    <div class="row r2">
+      <div>
+        <label>Débit de dose subi</label>
+        <div class="ig">
+          <input type="number" id="drate" value="100" min="0" step="any" inputmode="decimal">
+          <select id="drateu">
+            <option value="1">µSv/h</option>
+            <option value="1000">mSv/h</option>
+            <option value="1000000">Sv/h</option>
+          </select>
+        </div>
+        <button class="link-btn" id="pull3" style="margin-top:8px">↑ Reprendre le débit du module 1</button>
+      </div>
+      <div>
+        <label>Durée d'exposition</label>
+        <div class="ig">
+          <input type="number" id="dur" value="30" min="0" step="any" inputmode="decimal">
+          <select id="duru">
+            <option value="0.0002777778">s</option>
+            <option value="0.01666667" selected>min</option>
+            <option value="1">h</option>
+            <option value="24">jours</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout">
+      <span class="ro-label">Dose efficace reçue</span>
+      <span class="ro-val" id="out3">—</span>
+    </div>
+    <div class="sub-readout">
+      <div class="chip">En µSv<b id="dose_u">—</b></div>
+      <div class="chip">En mSv<b id="dose_m">—</b></div>
+      <div class="chip">% limite publique<b id="dose_pct">—</b></div>
+      <div class="chip">≈ radios thorax<b id="dose_radio">—</b></div>
+    </div>
+    <div class="verdict" id="verdict3" style="margin-top:14px"><span class="dot"></span><span></span></div>
+  </section>
+
   <div class="disc">
     <b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b> dans le vide, sans blindage ni atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues, ni au rayonnement alpha/bêta (faible portée), ni en présence d'écran ou de diffusion. Les budgets de dose sont des <b>doses efficaces de référence</b> (réglementation FR / Euratom 2013/59) fournies à titre indicatif. Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR.
   </div>
@@ -372,13 +420,51 @@
     $('t_d').textContent = sig(hours/24);
   }
 
+  // ---- Module 3 ----
+  function calc3(){
+    const rate = num('drate') * parseFloat($('drateu').value);   // µSv/h
+    const hours = num('dur') * parseFloat($('duru').value);      // h
+    const vEl = $('verdict3');
+    const dot = vEl.querySelector('.dot'), txt = vEl.querySelector('span:last-child');
+    if(!isFinite(rate) || !isFinite(hours) || rate<0 || hours<0){
+      $('out3').innerHTML='—';
+      ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—');
+      dot.style.background='#5d6655'; txt.textContent=''; return;
+    }
+    const dose = rate * hours;                                   // µSv
+    let v=dose, u='µSv';
+    if(dose>=1000){ v=dose/1000; u='mSv'; }
+    if(dose>=1e6){ v=dose/1e6; u='Sv'; }
+    if(dose<1 && dose>0){ v=dose*1000; u='nSv'; }
+    $('out3').innerHTML = sig(v) + '<span class="u">'+u+'</span>';
+
+    $('dose_u').textContent = sig(dose);
+    $('dose_m').textContent = sig(dose/1000);
+    $('dose_pct').textContent = sig(dose/1000/1*100)+' %';   // / 1 mSv (limite publique annuelle)
+    $('dose_radio').textContent = sig(dose/20);              // 1 radio thorax ≈ 20 µSv
+
+    // repère qualitatif (dose efficace cumulée, µSv)
+    let c,t;
+    if(dose < 100){ c='#7dd957'; t='Très faible — ordre du fond naturel'; }
+    else if(dose < 1000){ c='#a8d957'; t='Faible — sous la limite publique annuelle'; }
+    else if(dose < 20000){ c='#ffb627'; t='Notable — entre limite public et travailleur'; }
+    else if(dose < 100000){ c='#ff8a3d'; t='Élevée — au-delà des limites réglementaires'; }
+    else { c='#ff5a4d'; t='Très élevée — domaine des effets sur la santé'; }
+    dot.style.background=c; txt.style.color=c; txt.textContent=t;
+  }
+
   // ---- liaisons ----
   ['d1','d1u','r1','r1u','r2','r2u'].forEach(i=>$(i).addEventListener('input',calc1));
   ['rate','rateu','budget','budgetu'].forEach(i=>$(i).addEventListener('input',()=>{clearPresetActive(); checkPreset(); calc2();}));
+  ['drate','drateu','dur','duru'].forEach(i=>$(i).addEventListener('input',calc3));
 
   $('pull').addEventListener('click',()=>{
     const D2 = calc1();
     if(isFinite(D2)){ $('rate').value = sig(D2); $('rateu').value='1'; calc2(); }
+  });
+  $('pull3').addEventListener('click',()=>{
+    const D2 = calc1();
+    if(isFinite(D2)){ $('drate').value = sig(D2); $('drateu').value='1'; calc3(); }
   });
 
   // presets
@@ -397,7 +483,7 @@
     });
   });
 
-  calc1(); calc2(); checkPreset();
+  calc1(); calc2(); calc3(); checkPreset();
 })();
 </script>
 <script>
