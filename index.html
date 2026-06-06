@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0d0f0c">
 <title>Dose · Distance · Temps</title>
 <link rel="manifest" href="manifest.json">
-<meta name="description" content="Calculateur de radioprotection : débit de dose selon la distance (loi de l'inverse du carré) et temps de séjour autorisé selon un budget de dose.">
+<meta name="description" content="Calculateur de radioprotection : débit de dose selon la distance, temps de séjour et dose reçue.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DoseCalc">
@@ -56,6 +56,11 @@
   h1{font-family:var(--disp);font-weight:700;font-size:clamp(20px,5vw,30px);letter-spacing:.04em;line-height:1}
   h1 span{color:var(--amber)}
   .sub{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .lang{display:flex;border:1px solid var(--panel-edge);border-radius:7px;overflow:hidden}
+  .lang button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:0;color:var(--ink-dim);padding:6px 12px;cursor:pointer;transition:.15s}
+  .lang button:hover{color:var(--ink)}
+  .lang button.active{background:var(--amber);color:var(--bg);font-weight:600}
   .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-faint);border:1px solid var(--panel-edge);padding:5px 9px;border-radius:6px;white-space:nowrap}
   .tag b{color:var(--phos);font-weight:600}
 
@@ -73,7 +78,7 @@
   .card-h{display:flex;align-items:center;gap:10px;margin-bottom:18px}
   .idx{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--bg);background:var(--amber);width:22px;height:22px;border-radius:5px;display:grid;place-items:center;flex:none}
   .card-h h2{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:.02em}
-  .card-h .hint{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-left:auto;letter-spacing:.08em}
+  .card-h .hint{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-left:auto;letter-spacing:.08em;text-align:right}
 
   /* ---- fields ---- */
   .row{display:grid;gap:14px;margin-bottom:14px}
@@ -86,8 +91,6 @@
   .ig input::-webkit-outer-spin-button,.ig input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .ig input[type=number]{-moz-appearance:textfield}
   .ig select{background:#1b2016;border:0;border-left:1px solid var(--panel-edge);color:var(--amber-soft);font-family:var(--mono);font-size:13px;padding:0 12px;outline:none;cursor:pointer;letter-spacing:.03em}
-  select.full{width:100%;background:#0e110b;border:1px solid var(--panel-edge);border-radius:9px;color:var(--ink);font-family:var(--mono);font-size:14px;padding:12px 14px;outline:none;cursor:pointer}
-  select.full:focus{border-color:var(--amber)}
 
   /* ---- readouts ---- */
   .readout{
@@ -134,37 +137,38 @@
   <header>
     <div class="brand">
       <div class="sym">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r="48" fill="none" stroke="#262b24" stroke-width="2"/>
-          <circle cx="50" cy="50" r="9" fill="#ffb627"/>
+        <svg viewBox="0 0 512 512" aria-hidden="true">
+          <circle cx="256" cy="256" r="172" fill="none" stroke="#262b24" stroke-width="5"/>
           <g fill="#ffb627">
-            <path d="M50 50 L50 8 A42 42 0 0 1 86.4 29 Z" opacity=".9"/>
-            <path d="M50 50 L86.4 71 A42 42 0 0 1 13.6 71 Z" opacity=".9"/>
-            <path d="M50 50 L13.6 29 A42 42 0 0 1 50 8 Z" opacity=".9"/>
+            <path d="M 181.00 126.10 A 150.0 150.0 0 0 1 331.00 126.10 L 278.50 217.03 A 45.0 45.0 0 0 0 233.50 217.03 Z"/><path d="M 406.00 256.00 A 150.0 150.0 0 0 1 331.00 385.90 L 278.50 294.97 A 45.0 45.0 0 0 0 301.00 256.00 Z"/><path d="M 181.00 385.90 A 150.0 150.0 0 0 1 106.00 256.00 L 211.00 256.00 A 45.0 45.0 0 0 0 233.50 294.97 Z"/>
           </g>
-          <circle cx="50" cy="50" r="14" fill="#0d0f0c"/>
-          <circle cx="50" cy="50" r="7" fill="#ffb627"/>
+          <circle cx="256" cy="256" r="30" fill="#ffb627"/>
         </svg>
       </div>
       <div>
-        <h1>DOSE · DISTANCE · <span>TEMPS</span></h1>
-        <div class="sub">Calculateur de radioprotection</div>
+        <h1 data-i18n-html="h1">DOSE · DISTANCE · <span>TEMPS</span></h1>
+        <div class="sub" data-i18n="sub">Calculateur de radioprotection</div>
       </div>
     </div>
-    <div class="tag">loi de l'inverse du carré · <b>γ</b></div>
+    <div class="head-right">
+      <div class="lang">
+        <button data-lang="fr">FR</button><button data-lang="en">EN</button>
+      </div>
+      <div class="tag" data-i18n-html="tag">loi de l'inverse du carré · <b>γ</b></div>
+    </div>
   </header>
 
   <!-- MODULE 1 -->
   <section class="card">
     <div class="card-h">
       <span class="idx">1</span>
-      <h2>Débit de dose selon la distance</h2>
+      <h2 data-i18n="m1_title">Débit de dose selon la distance</h2>
       <span class="hint">D₂ = D₁ · (d₁/d₂)²</span>
     </div>
 
     <div class="row r2">
       <div>
-        <label>Débit de dose connu (D₁)</label>
+        <label data-i18n="m1_d1">Débit de dose connu (D₁)</label>
         <div class="ig">
           <input type="number" id="d1" value="100" min="0" step="any" inputmode="decimal">
           <select id="d1u">
@@ -176,7 +180,7 @@
         </div>
       </div>
       <div>
-        <label>À la distance de référence (d₁)</label>
+        <label data-i18n="m1_ref">À la distance de référence (d₁)</label>
         <div class="ig">
           <input type="number" id="r1" value="10" min="0" step="any" inputmode="decimal">
           <select id="r1u">
@@ -189,7 +193,7 @@
 
     <div class="row">
       <div>
-        <label>Distance cible (d₂)</label>
+        <label data-i18n="m1_tgt">Distance cible (d₂)</label>
         <div class="ig">
           <input type="number" id="r2" value="100" min="0" step="any" inputmode="decimal">
           <select id="r2u">
@@ -201,21 +205,21 @@
     </div>
 
     <div class="readout">
-      <span class="ro-label">Débit de dose estimé à d₂</span>
+      <span class="ro-label" data-i18n="m1_out">Débit de dose estimé à d₂</span>
       <span class="ro-val" id="out1">—</span>
     </div>
 
     <div class="gauge">
       <div class="gauge-bar"><div class="gauge-marker" id="marker" style="left:0%"></div></div>
       <div class="gauge-labels">
-        <span>fond ~0.1</span><span>1</span><span>10</span><span>100</span><span>1000+ µSv/h</span>
+        <span data-i18n="g_bg">fond ~0.1</span><span>1</span><span>10</span><span>100</span><span>1000+ µSv/h</span>
       </div>
       <div class="verdict" id="verdict"><span class="dot"></span><span></span></div>
     </div>
 
     <div class="sub-readout">
-      <div class="chip">Facteur d'atténuation<b id="factor">—</b></div>
-      <div class="chip" id="safeChip">Distance pour 0,5 µSv/h<b id="safedist">—</b></div>
+      <div class="chip"><span data-i18n="m1_factor">Facteur d'atténuation</span><b id="factor">—</b></div>
+      <div class="chip"><span data-i18n="m1_safe">Distance pour 0,5 µSv/h</span><b id="safedist">—</b></div>
     </div>
   </section>
 
@@ -223,13 +227,13 @@
   <section class="card">
     <div class="card-h">
       <span class="idx">2</span>
-      <h2>Temps de séjour autorisé</h2>
-      <span class="hint">t = budget / débit</span>
+      <h2 data-i18n="m2_title">Temps de séjour autorisé</h2>
+      <span class="hint" data-i18n="m2_hint">t = budget / débit</span>
     </div>
 
     <div class="row r2">
       <div>
-        <label>Débit de dose au poste</label>
+        <label data-i18n="m2_rate">Débit de dose au poste</label>
         <div class="ig">
           <input type="number" id="rate" value="100" min="0" step="any" inputmode="decimal">
           <select id="rateu">
@@ -238,10 +242,10 @@
             <option value="1000000">Sv/h</option>
           </select>
         </div>
-        <button class="link-btn" id="pull" style="margin-top:8px">↑ Reprendre le résultat du module 1</button>
+        <button class="link-btn" id="pull" data-i18n="m2_pull" style="margin-top:8px">↑ Reprendre le résultat du module 1</button>
       </div>
       <div>
-        <label>Budget de dose à ne pas dépasser</label>
+        <label data-i18n="m2_budget">Budget de dose à ne pas dépasser</label>
         <div class="ig">
           <input type="number" id="budget" value="1" min="0" step="any" inputmode="decimal">
           <select id="budgetu">
@@ -250,24 +254,24 @@
           </select>
         </div>
         <div class="presets" id="presets">
-          <span class="preset" data-v="1" data-u="1000">Public 1 mSv/an</span>
-          <span class="preset" data-v="20" data-u="1000">Travailleur 20 mSv</span>
-          <span class="preset" data-v="6" data-u="1000">Cat. B 6 mSv</span>
-          <span class="preset" data-v="0.02" data-u="1000">Radio thorax</span>
-          <span class="preset" data-v="50" data-u="1">Vol transat.</span>
+          <span class="preset" data-v="1" data-u="1000" data-i18n="p_public">Public 1 mSv/an</span>
+          <span class="preset" data-v="20" data-u="1000" data-i18n="p_worker">Travailleur 20 mSv</span>
+          <span class="preset" data-v="6" data-u="1000" data-i18n="p_catb">Cat. B 6 mSv</span>
+          <span class="preset" data-v="0.02" data-u="1000" data-i18n="p_xray">Radio thorax</span>
+          <span class="preset" data-v="50" data-u="1" data-i18n="p_flight">Vol transat.</span>
         </div>
       </div>
     </div>
 
     <div class="readout">
-      <span class="ro-label">Durée maximale d'exposition</span>
+      <span class="ro-label" data-i18n="m2_out">Durée maximale d'exposition</span>
       <span class="ro-val amber" id="out2">—</span>
     </div>
     <div class="sub-readout">
-      <div class="chip">En secondes<b id="t_s">—</b></div>
-      <div class="chip">En minutes<b id="t_min">—</b></div>
-      <div class="chip">En heures<b id="t_h">—</b></div>
-      <div class="chip">En jours<b id="t_d">—</b></div>
+      <div class="chip"><span data-i18n="m2_s">En secondes</span><b id="t_s">—</b></div>
+      <div class="chip"><span data-i18n="m2_min">En minutes</span><b id="t_min">—</b></div>
+      <div class="chip"><span data-i18n="m2_h">En heures</span><b id="t_h">—</b></div>
+      <div class="chip"><span data-i18n="m2_d">En jours</span><b id="t_d">—</b></div>
     </div>
   </section>
 
@@ -275,13 +279,13 @@
   <section class="card">
     <div class="card-h">
       <span class="idx">3</span>
-      <h2>Dose reçue selon le temps</h2>
-      <span class="hint">D = débit × temps</span>
+      <h2 data-i18n="m3_title">Dose reçue selon le temps</h2>
+      <span class="hint" data-i18n="m3_hint">D = débit × temps</span>
     </div>
 
     <div class="row r2">
       <div>
-        <label>Débit de dose subi</label>
+        <label data-i18n="m3_rate">Débit de dose subi</label>
         <div class="ig">
           <input type="number" id="drate" value="100" min="0" step="any" inputmode="decimal">
           <select id="drateu">
@@ -290,38 +294,36 @@
             <option value="1000000">Sv/h</option>
           </select>
         </div>
-        <button class="link-btn" id="pull3" style="margin-top:8px">↑ Reprendre le débit du module 1</button>
+        <button class="link-btn" id="pull3" data-i18n="m3_pull" style="margin-top:8px">↑ Reprendre le débit du module 1</button>
       </div>
       <div>
-        <label>Durée d'exposition</label>
+        <label data-i18n="m3_dur">Durée d'exposition</label>
         <div class="ig">
           <input type="number" id="dur" value="30" min="0" step="any" inputmode="decimal">
           <select id="duru">
             <option value="0.0002777778">s</option>
             <option value="0.01666667" selected>min</option>
             <option value="1">h</option>
-            <option value="24">jours</option>
+            <option value="24" data-i18n="u_days">jours</option>
           </select>
         </div>
       </div>
     </div>
 
     <div class="readout">
-      <span class="ro-label">Dose efficace reçue</span>
+      <span class="ro-label" data-i18n="m3_out">Dose efficace reçue</span>
       <span class="ro-val" id="out3">—</span>
     </div>
     <div class="sub-readout">
-      <div class="chip">En µSv<b id="dose_u">—</b></div>
-      <div class="chip">En mSv<b id="dose_m">—</b></div>
-      <div class="chip">% limite publique<b id="dose_pct">—</b></div>
-      <div class="chip">≈ radios thorax<b id="dose_radio">—</b></div>
+      <div class="chip"><span data-i18n="m3_u">En µSv</span><b id="dose_u">—</b></div>
+      <div class="chip"><span data-i18n="m3_m">En mSv</span><b id="dose_m">—</b></div>
+      <div class="chip"><span data-i18n="m3_pct">% limite publique</span><b id="dose_pct">—</b></div>
+      <div class="chip"><span data-i18n="m3_radio">≈ radios thorax</span><b id="dose_radio">—</b></div>
     </div>
     <div class="verdict" id="verdict3" style="margin-top:14px"><span class="dot"></span><span></span></div>
   </section>
 
-  <div class="disc">
-    <b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b> dans le vide, sans blindage ni atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues, ni au rayonnement alpha/bêta (faible portée), ni en présence d'écran ou de diffusion. Les budgets de dose sont des <b>doses efficaces de référence</b> (réglementation FR / Euratom 2013/59) fournies à titre indicatif. Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR.
-  </div>
+  <div class="disc" data-i18n-html="disc"></div>
 
   <footer>FRENCH<span>CURIE</span> · 🇫🇷</footer>
 </div>
@@ -331,7 +333,108 @@
   const $ = id => document.getElementById(id);
   const num = el => { const v = parseFloat($(el).value); return isFinite(v) ? v : NaN; };
 
-  // formatte une valeur avec unité auto + précision lisible
+  /* ---------- traductions ---------- */
+  const I18N = {
+    fr: {
+      title:"Dose · Distance · Temps",
+      h1:"DOSE · DISTANCE · <span>TEMPS</span>",
+      sub:"Calculateur de radioprotection",
+      tag:"loi de l'inverse du carré · <b>γ</b>",
+      m1_title:"Débit de dose selon la distance",
+      m1_d1:"Débit de dose connu (D₁)",
+      m1_ref:"À la distance de référence (d₁)",
+      m1_tgt:"Distance cible (d₂)",
+      m1_out:"Débit de dose estimé à d₂",
+      g_bg:"fond ~0.1",
+      m1_factor:"Facteur d'atténuation",
+      m1_safe:"Distance pour 0,5 µSv/h",
+      m2_title:"Temps de séjour autorisé",
+      m2_hint:"t = budget / débit",
+      m2_rate:"Débit de dose au poste",
+      m2_pull:"↑ Reprendre le résultat du module 1",
+      m2_budget:"Budget de dose à ne pas dépasser",
+      p_public:"Public 1 mSv/an",
+      p_worker:"Travailleur 20 mSv",
+      p_catb:"Cat. B 6 mSv",
+      p_xray:"Radio thorax",
+      p_flight:"Vol transat.",
+      m2_out:"Durée maximale d'exposition",
+      m2_s:"En secondes", m2_min:"En minutes", m2_h:"En heures", m2_d:"En jours",
+      m3_title:"Dose reçue selon le temps",
+      m3_hint:"D = débit × temps",
+      m3_rate:"Débit de dose subi",
+      m3_pull:"↑ Reprendre le débit du module 1",
+      m3_dur:"Durée d'exposition",
+      u_days:"jours",
+      m3_out:"Dose efficace reçue",
+      m3_u:"En µSv", m3_m:"En mSv", m3_pct:"% limite publique", m3_radio:"≈ radios thorax",
+      u_yrs:"ans",
+      v1_bg:"Niveau de fond naturel",
+      v1_above:"Légèrement au-dessus du fond",
+      v1_elev:"Débit élevé — vigilance",
+      v1_notable:"Source notable — limiter l'exposition",
+      v1_danger:"Débit important — danger, éloignement requis",
+      v3_vlow:"Très faible — ordre du fond naturel",
+      v3_low:"Faible — sous la limite publique annuelle",
+      v3_notable:"Notable — entre limite public et travailleur",
+      v3_high:"Élevée — au-delà des limites réglementaires",
+      v3_vhigh:"Très élevée — domaine des effets sur la santé",
+      disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b> dans le vide, sans blindage ni atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues, ni au rayonnement alpha/bêta (faible portée), ni en présence d'écran ou de diffusion. La dose reçue suppose un débit constant. Les budgets de dose sont des <b>doses efficaces de référence</b> (réglementation FR / Euratom 2013/59) fournies à titre indicatif. Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
+    },
+    en: {
+      title:"Dose · Distance · Time",
+      h1:"DOSE · DISTANCE · <span>TIME</span>",
+      sub:"Radiation protection calculator",
+      tag:"inverse-square law · <b>γ</b>",
+      m1_title:"Dose rate by distance",
+      m1_d1:"Known dose rate (D₁)",
+      m1_ref:"At reference distance (d₁)",
+      m1_tgt:"Target distance (d₂)",
+      m1_out:"Estimated dose rate at d₂",
+      g_bg:"bg ~0.1",
+      m1_factor:"Attenuation factor",
+      m1_safe:"Distance for 0.5 µSv/h",
+      m2_title:"Allowed stay time",
+      m2_hint:"t = budget / rate",
+      m2_rate:"Dose rate at your position",
+      m2_pull:"↑ Use result from module 1",
+      m2_budget:"Dose budget not to exceed",
+      p_public:"Public 1 mSv/yr",
+      p_worker:"Worker 20 mSv",
+      p_catb:"Cat. B 6 mSv",
+      p_xray:"Chest X-ray",
+      p_flight:"Transatl. flight",
+      m2_out:"Maximum exposure time",
+      m2_s:"In seconds", m2_min:"In minutes", m2_h:"In hours", m2_d:"In days",
+      m3_title:"Dose received over time",
+      m3_hint:"D = rate × time",
+      m3_rate:"Dose rate experienced",
+      m3_pull:"↑ Use rate from module 1",
+      m3_dur:"Exposure duration",
+      u_days:"days",
+      m3_out:"Effective dose received",
+      m3_u:"In µSv", m3_m:"In mSv", m3_pct:"% public limit", m3_radio:"≈ chest X-rays",
+      u_yrs:"yrs",
+      v1_bg:"Natural background level",
+      v1_above:"Slightly above background",
+      v1_elev:"Elevated rate — caution",
+      v1_notable:"Notable source — limit exposure",
+      v1_danger:"High rate — danger, keep your distance",
+      v3_vlow:"Very low — natural background range",
+      v3_low:"Low — below the public annual limit",
+      v3_notable:"Notable — between public and worker limits",
+      v3_high:"High — beyond regulatory limits",
+      v3_vhigh:"Very high — health-effects range",
+      disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b> in vacuum, with no shielding or air attenuation. The inverse-square law does not apply as-is to extended sources, to alpha/beta radiation (short range), or in the presence of shielding or scattering. The received dose assumes a constant dose rate. Dose budgets are <b>reference effective doses</b> (FR / Euratom 2013/59 regulations) given for indication only. An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
+    }
+  };
+
+  let lang = 'fr';
+  try { const s = localStorage.getItem('dosecalc_lang'); if(s==='fr'||s==='en') lang = s;
+        else if((navigator.language||'').toLowerCase().startsWith('en')) lang='en'; } catch(e){}
+  const T = k => (I18N[lang][k]!==undefined ? I18N[lang][k] : k);
+
+  /* ---------- formatage ---------- */
   function fmtDose(uSvh){
     if(!isFinite(uSvh)) return ['—',''];
     let v = uSvh, u = 'µSv/h';
@@ -352,62 +455,53 @@
   }
   function fmtTime(hours){
     if(!isFinite(hours)) return ['—',''];
-    if(hours >= 8760) return [sig(hours/8760),'ans'];
-    if(hours >= 24) return [sig(hours/24),'jours'];
+    if(hours >= 8760) return [sig(hours/8760), T('u_yrs')];
+    if(hours >= 24) return [sig(hours/24), T('u_days')];
     if(hours >= 1) return [sig(hours),'h'];
     if(hours*60 >= 1) return [sig(hours*60),'min'];
     return [sig(hours*3600),'s'];
   }
 
-  // ---- Module 1 ----
+  /* ---------- Module 1 ---------- */
   function calc1(){
-    const D1 = num('d1') * parseFloat($('d1u').value);      // -> µSv/h
-    const ref = num('r1') * parseFloat($('r1u').value);     // -> m
-    const tgt = num('r2') * parseFloat($('r2u').value);     // -> m
-
+    const D1 = num('d1') * parseFloat($('d1u').value);
+    const ref = num('r1') * parseFloat($('r1u').value);
+    const tgt = num('r2') * parseFloat($('r2u').value);
     if(!isFinite(D1) || !isFinite(ref) || !isFinite(tgt) || ref<=0 || tgt<=0){
       $('out1').innerHTML = '—'; $('factor').textContent='—'; $('safedist').textContent='—';
       setGauge(NaN); return;
     }
-    const D2 = D1 * Math.pow(ref/tgt, 2);                   // µSv/h
+    const D2 = D1 * Math.pow(ref/tgt, 2);
     const [v,u] = fmtDose(D2);
     $('out1').innerHTML = v + '<span class="u">'+u+'</span>';
-
     const factor = Math.pow(ref/tgt,2);
     $('factor').textContent = factor>=1 ? '×'+sig(factor) : '÷'+sig(1/factor);
-
-    // distance pour atteindre 0,5 µSv/h : d = ref * sqrt(D1/0.5)
-    const target = 0.5;
-    const dSafe = ref * Math.sqrt(D1/target);
+    const dSafe = ref * Math.sqrt(D1/0.5);
     $('safedist').textContent = dSafe>=1 ? sig(dSafe)+' m' : sig(dSafe*100)+' cm';
-
     setGauge(D2);
     return D2;
   }
-
   function setGauge(D2){
     const m = $('marker'), vEl = $('verdict');
     const dot = vEl.querySelector('.dot'), txt = vEl.querySelector('span:last-child');
     if(!isFinite(D2)){ m.style.left='0%'; dot.style.background='#5d6655'; txt.textContent=''; return; }
-    // échelle log : 0.1 -> 0%, 1000 -> 100%
     const lo=Math.log10(0.1), hi=Math.log10(1000);
     let p = (Math.log10(Math.max(D2,0.01))-lo)/(hi-lo)*100;
     p = Math.max(0,Math.min(100,p));
     m.style.left = p+'%';
-
-    let c,t;
-    if(D2 < 0.3){ c='#7dd957'; t='Niveau de fond naturel'; }
-    else if(D2 < 1){ c='#a8d957'; t='Légèrement au-dessus du fond'; }
-    else if(D2 < 10){ c='#ffb627'; t='Débit élevé — vigilance'; }
-    else if(D2 < 100){ c='#ff8a3d'; t='Source notable — limiter l\'exposition'; }
-    else { c='#ff5a4d'; t='Débit important — danger, éloignement requis'; }
-    dot.style.background=c; txt.style.color=c; txt.textContent=t;
+    let c,k;
+    if(D2 < 0.3){ c='#7dd957'; k='v1_bg'; }
+    else if(D2 < 1){ c='#a8d957'; k='v1_above'; }
+    else if(D2 < 10){ c='#ffb627'; k='v1_elev'; }
+    else if(D2 < 100){ c='#ff8a3d'; k='v1_notable'; }
+    else { c='#ff5a4d'; k='v1_danger'; }
+    dot.style.background=c; txt.style.color=c; txt.textContent=T(k);
   }
 
-  // ---- Module 2 ----
+  /* ---------- Module 2 ---------- */
   function calc2(){
-    const rate = num('rate') * parseFloat($('rateu').value);   // µSv/h
-    const budget = num('budget') * parseFloat($('budgetu').value); // µSv
+    const rate = num('rate') * parseFloat($('rateu').value);
+    const budget = num('budget') * parseFloat($('budgetu').value);
     if(!isFinite(rate) || !isFinite(budget) || rate<=0){
       $('out2').innerHTML='—'; ['t_s','t_min','t_h','t_d'].forEach(i=>$(i).textContent='—'); return;
     }
@@ -420,10 +514,10 @@
     $('t_d').textContent = sig(hours/24);
   }
 
-  // ---- Module 3 ----
+  /* ---------- Module 3 ---------- */
   function calc3(){
-    const rate = num('drate') * parseFloat($('drateu').value);   // µSv/h
-    const hours = num('dur') * parseFloat($('duru').value);      // h
+    const rate = num('drate') * parseFloat($('drateu').value);
+    const hours = num('dur') * parseFloat($('duru').value);
     const vEl = $('verdict3');
     const dot = vEl.querySelector('.dot'), txt = vEl.querySelector('span:last-child');
     if(!isFinite(rate) || !isFinite(hours) || rate<0 || hours<0){
@@ -431,29 +525,42 @@
       ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—');
       dot.style.background='#5d6655'; txt.textContent=''; return;
     }
-    const dose = rate * hours;                                   // µSv
+    const dose = rate * hours;
     let v=dose, u='µSv';
     if(dose>=1000){ v=dose/1000; u='mSv'; }
     if(dose>=1e6){ v=dose/1e6; u='Sv'; }
     if(dose<1 && dose>0){ v=dose*1000; u='nSv'; }
     $('out3').innerHTML = sig(v) + '<span class="u">'+u+'</span>';
-
     $('dose_u').textContent = sig(dose);
     $('dose_m').textContent = sig(dose/1000);
-    $('dose_pct').textContent = sig(dose/1000/1*100)+' %';   // / 1 mSv (limite publique annuelle)
-    $('dose_radio').textContent = sig(dose/20);              // 1 radio thorax ≈ 20 µSv
-
-    // repère qualitatif (dose efficace cumulée, µSv)
-    let c,t;
-    if(dose < 100){ c='#7dd957'; t='Très faible — ordre du fond naturel'; }
-    else if(dose < 1000){ c='#a8d957'; t='Faible — sous la limite publique annuelle'; }
-    else if(dose < 20000){ c='#ffb627'; t='Notable — entre limite public et travailleur'; }
-    else if(dose < 100000){ c='#ff8a3d'; t='Élevée — au-delà des limites réglementaires'; }
-    else { c='#ff5a4d'; t='Très élevée — domaine des effets sur la santé'; }
-    dot.style.background=c; txt.style.color=c; txt.textContent=t;
+    $('dose_pct').textContent = sig(dose/1000*100)+' %';
+    $('dose_radio').textContent = sig(dose/20);
+    let c,k;
+    if(dose < 100){ c='#7dd957'; k='v3_vlow'; }
+    else if(dose < 1000){ c='#a8d957'; k='v3_low'; }
+    else if(dose < 20000){ c='#ffb627'; k='v3_notable'; }
+    else if(dose < 100000){ c='#ff8a3d'; k='v3_high'; }
+    else { c='#ff5a4d'; k='v3_vhigh'; }
+    dot.style.background=c; txt.style.color=c; txt.textContent=T(k);
   }
 
-  // ---- liaisons ----
+  /* ---------- application de la langue ---------- */
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.title = T('title');
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.getAttribute('data-i18n');
+      if(I18N[lang][k]!==undefined) el.textContent = I18N[lang][k];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el=>{
+      const k = el.getAttribute('data-i18n-html');
+      if(I18N[lang][k]!==undefined) el.innerHTML = I18N[lang][k];
+    });
+    document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+    calc1(); calc2(); calc3();
+  }
+
+  /* ---------- liaisons ---------- */
   ['d1','d1u','r1','r1u','r2','r2u'].forEach(i=>$(i).addEventListener('input',calc1));
   ['rate','rateu','budget','budgetu'].forEach(i=>$(i).addEventListener('input',()=>{clearPresetActive(); checkPreset(); calc2();}));
   ['drate','drateu','dur','duru'].forEach(i=>$(i).addEventListener('input',calc3));
@@ -467,7 +574,6 @@
     if(isFinite(D2)){ $('drate').value = sig(D2); $('drateu').value='1'; calc3(); }
   });
 
-  // presets
   function clearPresetActive(){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active')); }
   function checkPreset(){
     const v=num('budget'), u=$('budgetu').value;
@@ -483,7 +589,15 @@
     });
   });
 
-  calc1(); calc2(); calc3(); checkPreset();
+  document.querySelectorAll('.lang button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      lang = b.dataset.lang;
+      try { localStorage.setItem('dosecalc_lang', lang); } catch(e){}
+      applyLang();
+    });
+  });
+
+  applyLang(); checkPreset();
 })();
 </script>
 <script>
