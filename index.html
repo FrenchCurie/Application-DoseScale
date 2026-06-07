@@ -261,6 +261,25 @@
     co60: {pb:1.2,   concrete:6.2,  water:13.0, steel:2.1}
   };
 
+  /* ---- échelle de couleur radiation (vert -> rouge) ---- */
+  const RATE_BANDS=[
+    {max:0.3,      c:'#7dd957', d:'#3a8a2a', g:'rgba(125,217,87,.28)'},
+    {max:1,        c:'#a8d957', d:'#5b8a2a', g:'rgba(168,217,87,.26)'},
+    {max:10,       c:'#ffce5e', d:'#9a6a10', g:'rgba(255,182,39,.26)'},
+    {max:100,      c:'#ff8a3d', d:'#a8501f', g:'rgba(255,138,61,.26)'},
+    {max:Infinity, c:'#ff5a4d', d:'#9a2a22', g:'rgba(255,90,77,.30)'}
+  ];
+  const DOSE_BANDS=[
+    {max:100,      c:'#7dd957', d:'#3a8a2a', g:'rgba(125,217,87,.28)'},
+    {max:1000,     c:'#a8d957', d:'#5b8a2a', g:'rgba(168,217,87,.26)'},
+    {max:20000,    c:'#ffce5e', d:'#9a6a10', g:'rgba(255,182,39,.26)'},
+    {max:100000,   c:'#ff8a3d', d:'#a8501f', g:'rgba(255,138,61,.26)'},
+    {max:Infinity, c:'#ff5a4d', d:'#9a2a22', g:'rgba(255,90,77,.30)'}
+  ];
+  function bandOf(bands,v){ for(let i=0;i<bands.length;i++){ if(v<bands[i].max) return bands[i]; } return bands[bands.length-1]; }
+  function paint(el,band){ el.style.color=band.c; el.style.textShadow='0 0 18px '+band.g; const u=el.querySelector('.u'); if(u) u.style.color=band.d; }
+  function resetPaint(el){ el.style.color=''; el.style.textShadow=''; }
+
   const I18N = {
     fr: {
       title:"FrenchCurie · Radioprotection", h1:"FRENCH<span>CURIE</span>", sub:"Boîte à outils · Radioprotection", tag:"rayonnement <b>γ</b>",
@@ -322,8 +341,8 @@
 
   function calc1(){
     const D1=num('d1')*parseFloat($('d1u').value), ref=num('r1')*parseFloat($('r1u').value), tgt=num('r2')*parseFloat($('r2u').value);
-    if(!isFinite(D1)||!isFinite(ref)||!isFinite(tgt)||ref<=0||tgt<=0){ $('out1').innerHTML='—'; $('factor').textContent='—'; $('safedist').textContent='—'; setGauge(NaN); return; }
-    const D2=D1*Math.pow(ref/tgt,2), r=fmtDose(D2); $('out1').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    if(!isFinite(D1)||!isFinite(ref)||!isFinite(tgt)||ref<=0||tgt<=0){ $('out1').innerHTML='—'; resetPaint($('out1')); $('factor').textContent='—'; $('safedist').textContent='—'; setGauge(NaN); return; }
+    const D2=D1*Math.pow(ref/tgt,2), r=fmtDose(D2); $('out1').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>'; paint($('out1'), bandOf(RATE_BANDS,D2));
     const f=Math.pow(ref/tgt,2); $('factor').textContent=f>=1?'×'+sig(f):'÷'+sig(1/f);
     const dS=ref*Math.sqrt(D1/0.5); $('safedist').textContent=dS>=1?sig(dS)+' m':sig(dS*100)+' cm';
     setGauge(D2); return D2;
@@ -337,24 +356,24 @@
   }
   function calc2(){
     const rate=num('rate')*parseFloat($('rateu').value), budget=num('budget')*parseFloat($('budgetu').value);
-    if(!isFinite(rate)||!isFinite(budget)||rate<=0){ $('out2').innerHTML='—'; ['t_s','t_min','t_h','t_d'].forEach(i=>$(i).textContent='—'); return; }
-    const hours=budget/rate, r=fmtTime(hours); $('out2').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    if(!isFinite(rate)||!isFinite(budget)||rate<=0){ $('out2').innerHTML='—'; resetPaint($('out2')); ['t_s','t_min','t_h','t_d'].forEach(i=>$(i).textContent='—'); return; }
+    const hours=budget/rate, r=fmtTime(hours); $('out2').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>'; paint($('out2'), bandOf(RATE_BANDS,rate));
     $('t_s').textContent=sig(hours*3600); $('t_min').textContent=sig(hours*60); $('t_h').textContent=sig(hours); $('t_d').textContent=sig(hours/24);
   }
   function calc3(){
     const rate=num('drate')*parseFloat($('drateu').value), hours=num('dur')*parseFloat($('duru').value);
     const vEl=$('verdict3'), dot=vEl.querySelector('.dot'), txt=vEl.querySelector('span:last-child');
-    if(!isFinite(rate)||!isFinite(hours)||rate<0||hours<0){ $('out3').innerHTML='—'; ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—'); dot.style.background='#5d6655'; txt.textContent=''; return; }
+    if(!isFinite(rate)||!isFinite(hours)||rate<0||hours<0){ $('out3').innerHTML='—'; resetPaint($('out3')); ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—'); dot.style.background='#5d6655'; txt.textContent=''; return; }
     const dose=rate*hours; let v=dose,u='µSv'; if(dose>=1000){v=dose/1000;u='mSv';} if(dose>=1e6){v=dose/1e6;u='Sv';} if(dose<1&&dose>0){v=dose*1000;u='nSv';}
-    $('out3').innerHTML=sig(v)+'<span class="u">'+u+'</span>';
+    $('out3').innerHTML=sig(v)+'<span class="u">'+u+'</span>'; paint($('out3'), bandOf(DOSE_BANDS,dose));
     $('dose_u').textContent=sig(dose); $('dose_m').textContent=sig(dose/1000); $('dose_pct').textContent=sig(dose/1000*100)+' %'; $('dose_radio').textContent=sig(dose/20);
     let c,k; if(dose<100){c='#7dd957';k='v3_vlow';} else if(dose<1000){c='#a8d957';k='v3_low';} else if(dose<20000){c='#ffb627';k='v3_notable';} else if(dose<100000){c='#ff8a3d';k='v3_high';} else {c='#ff5a4d';k='v3_vhigh';}
     dot.style.background=c; txt.style.color=c; txt.textContent=T(k);
   }
   function calc4(){
     const I0=num('srate')*parseFloat($('srateu').value), x=num('thick')*parseFloat($('thicku').value), hvl=HVL[$('iso').value][$('mat').value];
-    if(!isFinite(I0)||!isFinite(x)||x<0||I0<0||!isFinite(hvl)||hvl<=0){ $('out4').innerHTML='—'; ['s_red','s_n','s_hvl','s_trans'].forEach(i=>$(i).textContent='—'); return; }
-    const n=x/hvl, trans=Math.pow(0.5,n), I=I0*trans, r=fmtDose(I); $('out4').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    if(!isFinite(I0)||!isFinite(x)||x<0||I0<0||!isFinite(hvl)||hvl<=0){ $('out4').innerHTML='—'; resetPaint($('out4')); ['s_red','s_n','s_hvl','s_trans'].forEach(i=>$(i).textContent='—'); return; }
+    const n=x/hvl, trans=Math.pow(0.5,n), I=I0*trans, r=fmtDose(I); $('out4').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>'; paint($('out4'), bandOf(RATE_BANDS,I));
     const red=trans>0?1/trans:Infinity; $('s_red').textContent=isFinite(red)?'÷'+sig(red):'÷∞'; $('s_n').textContent=sig(n); $('s_hvl').textContent=sig(hvl)+' cm'; $('s_trans').textContent=sig(trans*100)+' %';
   }
 
