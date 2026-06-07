@@ -7,6 +7,15 @@
 <title>FrenchCurie · Radioprotection</title>
 <link rel="manifest" href="manifest.json">
 <meta name="description" content="Boîte à outils de radioprotection FrenchCurie : distance, temps, dose reçue et blindage.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="FrenchCurie · Radioprotection">
+<meta property="og:description" content="Boîte à outils de radioprotection : distance, temps, dose et blindage. Gratuit, installable.">
+<meta property="og:image" content="https://frenchcurie.github.io/Application-DoseScale/og-image.png">
+<meta property="og:url" content="https://frenchcurie.github.io/Application-DoseScale/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FrenchCurie · Radioprotection">
+<meta name="twitter:description" content="Boîte à outils de radioprotection : distance, temps, dose et blindage.">
+<meta name="twitter:image" content="https://frenchcurie.github.io/Application-DoseScale/og-image.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FrenchCurie">
@@ -110,6 +119,12 @@
   .preset.active{background:var(--phos);color:var(--bg);border-color:var(--phos);font-weight:600}
   .card-cta{display:block;width:100%;max-width:340px;margin:2px auto 0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--amber);background:none;border:1px solid var(--panel-edge);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
   .card-cta:hover{border-color:var(--amber);background:rgba(255,182,39,.07)}
+  .abt{font-size:13px;line-height:1.7;color:var(--ink-dim)}
+  .abt b{color:var(--ink);font-weight:600}
+  .abt ul{margin:8px 0 0;padding-left:18px}
+  .abt li{margin:5px 0}
+  .abt a{color:var(--amber);text-decoration:none}
+  .abt a:hover{text-decoration:underline}
   .note{font-family:var(--mono);font-size:11px;line-height:1.5;color:var(--ink-faint);margin:2px 0 2px;letter-spacing:.01em}
   .warn{display:none;align-items:flex-start;gap:9px;font-family:var(--mono);font-size:11.5px;line-height:1.5;color:#ffce5e;background:rgba(255,182,39,.07);border:1px solid #5a4a1a;border-radius:9px;padding:11px 13px;margin-top:14px}
   .warn.show{display:flex}
@@ -158,6 +173,7 @@
   <!-- ===================== ACCUEIL ===================== -->
   <section id="view-home">
     <p class="home-intro" data-i18n="home_intro">Une suite d'outils de radioprotection à glisser dans ta poche. Choisis un calcul.</p>
+    <button class="card-cta hidden" id="installBtn" data-i18n="install_btn" style="margin:0 0 22px">📲 Installer l'app</button>
     <div class="cat-h" data-i18n="cat_calc">Calculs de radioprotection</div>
     <div class="tiles">
       <a href="#distance" class="tile">
@@ -187,6 +203,11 @@
       <a href="#effets" class="tile">
         <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 3.5 12 2.5-8 2 2H21"/></svg></div>
         <div class="tile-tx"><h3 data-i18n="tile_effets">Effets de la dose</h3><p data-i18n="tile_effets_d">Effets déterministes & stochastiques</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+      <a href="#apropos" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_apropos">Méthodologie</h3><p data-i18n="tile_apropos_d">Modèles, sources & bonne pratique</p></div>
         <span class="tile-ar">›</span>
       </a>
     </div>
@@ -305,6 +326,15 @@
     </div>
   </section>
 
+  <!-- ===================== À PROPOS ===================== -->
+  <section id="view-about" class="hidden">
+    <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></svg></span><h2 data-i18n="ap_h_about">À propos</h2></div><div class="abt" data-i18n-html="ap_about"></div></div>
+    <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/></svg></span><h2 data-i18n="ap_h_iss">Loi de l'inverse du carré & mesure</h2></div><div class="abt" data-i18n-html="ap_iss"></div></div>
+    <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.2c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V5.8z"/></svg></span><h2 data-i18n="ap_h_shield">Blindage</h2></div><div class="abt" data-i18n-html="ap_shield"></div></div>
+    <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg></span><h2 data-i18n="ap_h_dose">Doses, limites et effets</h2></div><div class="abt" data-i18n-html="ap_dose"></div></div>
+    <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9z"/></svg></span><h2 data-i18n="ap_h_credits">Crédits</h2></div><div class="abt" data-i18n-html="ap_credits"></div></div>
+  </section>
+
   <div class="disc" data-i18n-html="disc"></div>
   <footer>FRENCH<span>CURIE</span> · 🇫🇷</footer>
 
@@ -380,6 +410,12 @@
       ef_dose:"Dose efficace / aiguë (corps entier)", ef_risk:"Risque stochastique — cancer mortel additionnel (LNT ~5 %/Sv)", ef_det:"Effet déterministe (si dose aiguë)", ef_chance:"soit 1 chance sur",
       ef_ref_t:"Repères de dose aiguë (corps entier)", ef_note:"Les effets déterministes supposent une dose aiguë unique. Le risque stochastique suit le modèle LNT, débattu aux faibles doses. Repères éducatifs — pas un avis médical.",
       efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
+      tile_apropos:"Méthodologie", tile_apropos_d:"Modèles, sources & bonne pratique", install_btn:"📲 Installer l'app",
+      ap_h_about:"À propos", ap_about:"FrenchCurie est une boîte à outils de <b>vulgarisation</b> de la radioprotection. Les calculs sont des <b>estimations</b> à but pédagogique : ils ne remplacent ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR (personne compétente en radioprotection).",
+      ap_h_iss:"Loi de l'inverse du carré & mesure", ap_iss:"L'outil Distance modélise une <b>source ponctuelle de rayonnement γ</b> : le débit décroît en 1/distance². Ce modèle n'est valable qu'en <b>champ lointain</b> et pour le γ. En pratique :<ul><li>une source se comporte comme ponctuelle à partir d'environ <b>3 à 5× sa plus grande dimension</b> ;</li><li>au contact, le rayonnement <b>β</b> et les photons de basse énergie (absorbés en quelques dizaines de cm d'air) gonflent la lecture ;</li><li>mesure ta référence à <b>≥ 50 cm</b>, cristal orienté vers la source, et soustrais ton fond ;</li><li>pour isoler le β, refais la mesure derrière <b>quelques mm d'aluminium</b> (la chute = part β).</li></ul>",
+      ap_h_shield:"Blindage", ap_shield:"L'atténuation suit I = I₀ · ½^(x/CDA), avec des couches de demi-atténuation <b>indicatives</b> (faisceau étroit). En géométrie réelle, le rayonnement diffusé (facteur de build-up) réduit l'efficacité du blindage. Pour l'uranium naturel et le radium, le γ pénétrant provient des <b>descendants de la chaîne</b> (Bi-214…) ; une énergie effective est utilisée.",
+      ap_h_dose:"Doses, limites et effets", ap_dose:"Les budgets de dose sont des <b>doses efficaces de référence</b> (réglementation FR / directive Euratom 2013/59) : public <b>1 mSv/an</b>, travailleur exposé <b>20 mSv/an</b>. Les effets <b>déterministes</b> (seuil, dose aiguë) et <b>stochastiques</b> (probabilité, modèle LNT ~5 %/Sv, débattu aux faibles doses) sont présentés séparément. Le code couleur vert→rouge est un <b>repère de vulgarisation</b>, pas une norme réglementaire.",
+      ap_h_credits:"Crédits", ap_credits:"Créé par <b>FrenchCurie</b> 🇫🇷 — vulgarisation de la radioactivité et du nucléaire. Mesures et contenu sur Instagram : <a href=\"https://instagram.com/frenchcurie\" target=\"_blank\" rel=\"noopener\">@frenchcurie</a>.<br>Sur iPhone : Partager → « Sur l'écran d'accueil » pour installer l'app.",
       efd_none:"Aucun effet déterministe", efd_blood:"Modifications sanguines possibles", efd_ars:"Syndrome aigu — nausées (seuil ~1 Sv)", efd_severe:"Syndrome aigu sévère, épilation", efd_ld50:"DL50/60 — mortel sans traitement", efd_gi:"Syndrome gastro-intestinal — souvent fatal",
       ef_r1:"~0,1 Sv — seuil des effets déterministes", ef_r2:"~1 Sv — seuil du syndrome aigu (nausées)", ef_r3:"~4–4,5 Sv — DL50/60 sans traitement", ef_r4:"~6 Sv — syndrome gastro-intestinal", ef_r5:">8 Sv — généralement fatal", ef_r6:"Cristallin : ~0,5 Sv · érythème cutané : ~2 Sv",
       disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b>, sans atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues ni au rayonnement alpha/bêta (faible portée). La dose reçue suppose un débit constant. Les CDA sont des <b>valeurs indicatives</b> (faisceau étroit) ; en géométrie réelle, le rayonnement diffusé (build-up) réduit l'efficacité du blindage. Pour l'uranium naturel et le radium, le γ pénétrant provient des descendants de la chaîne (Bi-214…) ; une énergie effective est utilisée. Les budgets de dose sont des doses efficaces de référence (réglementation FR / Euratom 2013/59). Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
@@ -415,6 +451,12 @@
       ef_dose:"Effective / acute dose (whole body)", ef_risk:"Stochastic risk — additional fatal cancer (LNT ~5%/Sv)", ef_det:"Deterministic effect (if acute dose)", ef_chance:"i.e. 1 in",
       ef_ref_t:"Acute whole-body dose landmarks", ef_note:"Deterministic effects assume a single acute dose. Stochastic risk follows the LNT model, debated at low doses. Educational landmarks — not medical advice.",
       efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
+      tile_apropos:"Methodology", tile_apropos_d:"Models, sources & good practice", install_btn:"📲 Install the app",
+      ap_h_about:"About", ap_about:"FrenchCurie is an <b>educational</b> radiation-protection toolbox. The calculations are <b>estimates</b> for learning: they replace neither a real measurement, a dosimeter, nor the advice of a radiation protection officer.",
+      ap_h_iss:"Inverse-square law & measurement", ap_iss:"The Distance tool models a <b>point γ source</b>: dose rate falls as 1/distance². This model only holds in the <b>far field</b> and for γ. In practice:<ul><li>a source behaves as point-like beyond about <b>3–5× its largest dimension</b>;</li><li>up close, <b>β</b> radiation and low-energy photons (absorbed within tens of cm of air) inflate the reading;</li><li>take your reference at <b>≥ 50 cm</b>, crystal facing the source, and subtract background;</li><li>to isolate β, repeat behind <b>a few mm of aluminium</b> (the drop = β contribution).</li></ul>",
+      ap_h_shield:"Shielding", ap_shield:"Attenuation follows I = I₀ · ½^(x/HVL), with <b>indicative</b> half-value layers (narrow beam). In real geometry, scattered radiation (build-up factor) reduces effectiveness. For natural uranium and radium, the penetrating γ comes from <b>decay-chain daughters</b> (Bi-214…); an effective energy is used.",
+      ap_h_dose:"Doses, limits and effects", ap_dose:"Dose budgets are <b>reference effective doses</b> (FR / Euratom 2013/59): public <b>1 mSv/yr</b>, exposed worker <b>20 mSv/yr</b>. <b>Deterministic</b> (threshold, acute dose) and <b>stochastic</b> (probability, LNT ~5%/Sv, debated at low doses) effects are shown separately. The green→red colour code is an <b>educational landmark</b>, not a regulatory standard.",
+      ap_h_credits:"Credits", ap_credits:"Created by <b>FrenchCurie</b> 🇫🇷 — radioactivity & nuclear science outreach. Measurements and content on Instagram: <a href=\"https://instagram.com/frenchcurie\" target=\"_blank\" rel=\"noopener\">@frenchcurie</a>.<br>On iPhone: Share → \"Add to Home Screen\" to install the app.",
       efd_none:"No deterministic effect", efd_blood:"Possible blood-count changes", efd_ars:"Acute syndrome — nausea (threshold ~1 Sv)", efd_severe:"Severe acute syndrome, epilation", efd_ld50:"LD50/60 — fatal without treatment", efd_gi:"Gastrointestinal syndrome — often fatal",
       ef_r1:"~0.1 Sv — deterministic-effect threshold", ef_r2:"~1 Sv — acute syndrome threshold (nausea)", ef_r3:"~4–4.5 Sv — LD50/60 without treatment", ef_r4:"~6 Sv — gastrointestinal syndrome", ef_r5:">8 Sv — generally fatal", ef_r6:"Eye lens: ~0.5 Sv · skin erythema: ~2 Sv",
       disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b>, with no air attenuation. The inverse-square law does not apply as-is to extended sources or to alpha/beta radiation (short range). The received dose assumes a constant dose rate. HVL values are <b>indicative</b> (narrow beam); in real geometry, scattered radiation (build-up) reduces shielding effectiveness. For natural uranium and radium, the penetrating γ comes from decay-chain daughters (Bi-214…); an effective energy is used. Dose budgets are reference effective doses (FR / Euratom 2013/59 regulations). An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
@@ -514,7 +556,7 @@
   }
 
   /* ---- routage par vues ---- */
-  const ROUTES={accueil:'view-home', distance:'view-distance', temps:'view-temps', dose:'view-dose', blindage:'view-blindage', effets:'view-effets', conversion:'view-conversion'};
+  const ROUTES={accueil:'view-home', distance:'view-distance', temps:'view-temps', dose:'view-dose', blindage:'view-blindage', effets:'view-effets', conversion:'view-conversion', apropos:'view-about'};
   function route(){
     let h=(location.hash||'').replace('#',''); if(!ROUTES[h]) h='accueil';
     Object.values(ROUTES).forEach(id=>$(id).classList.add('hidden'));
@@ -565,6 +607,12 @@
   $('convCat').addEventListener('change',fillConvUnits);
   ['convVal','convUnit'].forEach(i=>$(i).addEventListener('input',convert));
   ['efDose','efDoseU'].forEach(i=>$(i).addEventListener('input',calcEffects));
+
+  /* ---- bouton Installer (PWA) ---- */
+  let deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredPrompt=e; const b=$('installBtn'); if(b) b.classList.remove('hidden'); });
+  window.addEventListener('appinstalled', ()=>{ const b=$('installBtn'); if(b) b.classList.add('hidden'); });
+  $('installBtn').addEventListener('click', ()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); deferredPrompt.userChoice.catch(()=>{}); deferredPrompt=null; $('installBtn').classList.add('hidden'); });
   function clearPresetActive(){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active')); }
   function checkPreset(){ const v=num('budget'), u=$('budgetu').value; document.querySelectorAll('.preset').forEach(p=>{ if(parseFloat(p.dataset.v)===v && p.dataset.u===u) p.classList.add('active'); }); }
   document.querySelectorAll('.preset').forEach(p=>{ p.addEventListener('click',()=>{ clearPresetActive(); p.classList.add('active'); $('budget').value=p.dataset.v; $('budgetu').value=p.dataset.u; calc2(); }); });
