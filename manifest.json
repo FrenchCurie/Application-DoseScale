@@ -1,7 +1,7 @@
 {
-  "name": "Dose · Distance · Temps",
-  "short_name": "DoseCalc",
-  "description": "Calculateur de radioprotection : débit de dose selon la distance et temps de séjour autorisé.",
+  "name": "FrenchCurie · Radioprotection",
+  "short_name": "FrenchCurie",
+  "description": "Boîte à outils de radioprotection : distance, temps, dose reçue et blindage.",
   "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",

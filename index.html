@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d0f0c">
-<title>Dose · Distance · Temps</title>
+<title>FrenchCurie · Radioprotection</title>
 <link rel="manifest" href="manifest.json">
-<meta name="description" content="Calculateur de radioprotection : débit de dose selon la distance, temps de séjour et dose reçue.">
+<meta name="description" content="Boîte à outils de radioprotection FrenchCurie : distance, temps, dose reçue et blindage.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DoseCalc">
+<meta name="apple-mobile-web-app-title" content="FrenchCurie">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,29 +17,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0d0f0c;
-    --panel:#15181400;
-    --panel-solid:#161a15;
-    --panel-edge:#262b24;
-    --ink:#e8ecdf;
-    --ink-dim:#9aa491;
-    --ink-faint:#5d6655;
-    --amber:#ffb627;
-    --amber-soft:#ffcf6b;
-    --phos:#7dd957;
-    --phos-deep:#3a8a2a;
-    --danger:#ff5a4d;
-    --danger-deep:#c0271b;
+    --bg:#0d0f0c; --panel-edge:#262b24; --ink:#e8ecdf; --ink-dim:#9aa491; --ink-faint:#5d6655;
+    --amber:#ffb627; --amber-soft:#ffcf6b; --phos:#7dd957; --phos-deep:#3a8a2a; --danger:#ff5a4d;
     --grid:rgba(125,217,87,.06);
-    --mono:'IBM Plex Mono',monospace;
-    --disp:'Chakra Petch',sans-serif;
-    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace; --disp:'Chakra Petch',sans-serif; --body:'IBM Plex Sans',sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
   body{
-    min-height:100dvh;
-    padding:clamp(14px,4vw,40px) clamp(12px,4vw,40px) 64px;
+    min-height:100dvh; padding:clamp(14px,4vw,40px) clamp(12px,4vw,40px) 56px;
     background-image:
       linear-gradient(var(--grid) 1px,transparent 1px),
       linear-gradient(90deg,var(--grid) 1px,transparent 1px),
@@ -47,13 +33,11 @@
     background-size:38px 38px, 38px 38px, 100% 100%;
   }
   .wrap{max-width:840px;margin:0 auto}
-
-  /* ---- header ---- */
-  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid var(--panel-edge)}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--panel-edge)}
   .brand{display:flex;align-items:center;gap:14px}
-  .sym{width:46px;height:46px;flex:none;position:relative}
+  .sym{width:46px;height:46px;flex:none}
   .sym svg{display:block;width:100%;height:100%}
-  h1{font-family:var(--disp);font-weight:700;font-size:clamp(20px,5vw,30px);letter-spacing:.04em;line-height:1}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(19px,5vw,28px);letter-spacing:.04em;line-height:1}
   h1 span{color:var(--amber)}
   .sub{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
   .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
@@ -64,23 +48,33 @@
   .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-faint);border:1px solid var(--panel-edge);padding:5px 9px;border-radius:6px;white-space:nowrap}
   .tag b{color:var(--phos);font-weight:600}
 
-  /* ---- cards ---- */
-  .card{
-    border:1px solid var(--panel-edge);
-    border-radius:14px;
-    background:linear-gradient(180deg,#181c16,#12150f);
-    padding:clamp(16px,3.5vw,26px);
-    margin-bottom:18px;
-    position:relative;
-    overflow:hidden;
-  }
+  /* ---- accueil ---- */
+  .home-intro{color:var(--ink-dim);font-size:14px;line-height:1.6;margin-bottom:24px;max-width:580px}
+  .cat-h{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin:4px 0 14px}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.tiles{grid-template-columns:1fr}}
+  .tile{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;border:1px solid var(--panel-edge);border-radius:14px;background:linear-gradient(180deg,#181c16,#12150f);padding:18px;transition:.15s;position:relative;overflow:hidden}
+  .tile::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 100% 0%,rgba(255,182,39,.06),transparent 55%);pointer-events:none}
+  .tile:hover{border-color:var(--amber);transform:translateY(-2px)}
+  .tile-ic{width:46px;height:46px;flex:none;display:grid;place-items:center;border:1px solid var(--panel-edge);border-radius:12px;background:#0e110b}
+  .tile-ic svg{width:25px;height:25px;stroke:var(--amber);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tile-tx{flex:1;min-width:0}
+  .tile-tx h3{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:.01em}
+  .tile-tx p{font-size:12px;color:var(--ink-dim);margin-top:4px;line-height:1.45}
+  .tile-ar{color:var(--ink-faint);font-family:var(--mono);font-size:18px;flex:none}
+
+  /* ---- nav retour ---- */
+  .back{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--amber);background:none;border:1px solid var(--panel-edge);border-radius:9px;padding:9px 14px;cursor:pointer;margin-bottom:18px;text-decoration:none;transition:.15s}
+  .back:hover{border-color:var(--amber);background:rgba(255,182,39,.07)}
+
+  /* ---- cartes outils ---- */
+  .card{border:1px solid var(--panel-edge);border-radius:14px;background:linear-gradient(180deg,#181c16,#12150f);padding:clamp(16px,3.5vw,26px);margin-bottom:18px;position:relative;overflow:hidden}
   .card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 60% at 100% 0%,rgba(255,182,39,.05),transparent 50%);pointer-events:none}
   .card-h{display:flex;align-items:center;gap:10px;margin-bottom:18px}
-  .idx{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--bg);background:var(--amber);width:22px;height:22px;border-radius:5px;display:grid;place-items:center;flex:none}
-  .card-h h2{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:.02em}
-  .card-h .hint{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-left:auto;letter-spacing:.08em;text-align:right}
-
-  /* ---- fields ---- */
+  .idx{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:7px;background:#0e110b;border:1px solid var(--panel-edge)}
+  .idx svg{width:16px;height:16px;stroke:var(--amber);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .card-h h2{font-family:var(--disp);font-weight:600;font-size:17px;letter-spacing:.02em}
+  .card-h .hint{font-family:var(--mono);font-size:10px;color:var(--ink-faint);margin-left:auto;letter-spacing:.06em;text-align:right}
   .row{display:grid;gap:14px;margin-bottom:14px}
   .r2{grid-template-columns:1fr 1fr}
   @media(max-width:560px){.r2{grid-template-columns:1fr}}
@@ -91,44 +85,43 @@
   .ig input::-webkit-outer-spin-button,.ig input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .ig input[type=number]{-moz-appearance:textfield}
   .ig select{background:#1b2016;border:0;border-left:1px solid var(--panel-edge);color:var(--amber-soft);font-family:var(--mono);font-size:13px;padding:0 12px;outline:none;cursor:pointer;letter-spacing:.03em}
-
-  /* ---- readouts ---- */
-  .readout{
-    margin-top:16px;border-top:1px dashed var(--panel-edge);padding-top:16px;
-    display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;
-  }
+  select.full{width:100%;background:#0e110b;border:1px solid var(--panel-edge);border-radius:9px;color:var(--ink);font-family:var(--mono);font-size:14px;padding:12px 14px;outline:none;cursor:pointer;letter-spacing:.02em}
+  select.full:focus{border-color:var(--amber)}
+  .readout{margin-top:16px;border-top:1px dashed var(--panel-edge);padding-top:16px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .ro-label{font-size:12px;color:var(--ink-dim);letter-spacing:.02em}
   .ro-val{font-family:var(--mono);font-weight:600;font-size:clamp(24px,6vw,34px);color:var(--phos);text-shadow:0 0 18px rgba(125,217,87,.25);line-height:1}
   .ro-val .u{font-size:.5em;color:var(--phos-deep);font-weight:500;margin-left:5px;letter-spacing:.05em}
   .ro-val.amber{color:var(--amber-soft);text-shadow:0 0 18px rgba(255,182,39,.25)}
   .ro-val.amber .u{color:var(--amber)}
-
   .sub-readout{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
   .chip{font-family:var(--mono);font-size:11px;color:var(--ink-dim);background:#0e110b;border:1px solid var(--panel-edge);border-radius:7px;padding:8px 11px;flex:1;min-width:130px}
   .chip b{display:block;color:var(--ink);font-size:15px;margin-top:4px;font-weight:600}
-
   .link-btn{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--amber);background:none;border:1px solid var(--panel-edge);border-radius:7px;padding:7px 11px;cursor:pointer;transition:.15s}
   .link-btn:hover{border-color:var(--amber);background:rgba(255,182,39,.07)}
-
-  /* ---- scale gauge ---- */
   .gauge{margin-top:16px}
   .gauge-bar{height:10px;border-radius:6px;background:linear-gradient(90deg,#2f7d2a 0%,#7dd957 22%,#ffb627 52%,#ff8a3d 74%,#ff5a4d 100%);position:relative;overflow:visible}
   .gauge-marker{position:absolute;top:50%;width:3px;height:22px;background:#fff;transform:translate(-50%,-50%);border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6);transition:left .3s ease}
   .gauge-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--ink-faint);margin-top:7px;letter-spacing:.04em}
   .verdict{margin-top:12px;font-family:var(--mono);font-size:12px;letter-spacing:.03em;display:flex;align-items:center;gap:8px}
   .dot{width:9px;height:9px;border-radius:50%;flex:none}
-
-  /* ---- presets ---- */
   .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
   .preset{font-family:var(--mono);font-size:11px;color:var(--ink-dim);background:#0e110b;border:1px solid var(--panel-edge);border-radius:20px;padding:6px 12px;cursor:pointer;transition:.15s}
   .preset:hover{border-color:var(--phos);color:var(--phos)}
   .preset.active{background:var(--phos);color:var(--bg);border-color:var(--phos);font-weight:600}
-
-  /* ---- disclaimer ---- */
-  .disc{font-size:11.5px;line-height:1.6;color:var(--ink-faint);border:1px solid var(--panel-edge);border-radius:12px;padding:16px 18px;background:#11140e}
+  .card-cta{display:block;width:100%;max-width:340px;margin:2px auto 0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--amber);background:none;border:1px solid var(--panel-edge);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
+  .card-cta:hover{border-color:var(--amber);background:rgba(255,182,39,.07)}
+  .disc{font-size:11.5px;line-height:1.6;color:var(--ink-faint);border:1px solid var(--panel-edge);border-radius:12px;padding:16px 18px;background:#11140e;margin-top:22px}
   .disc b{color:var(--ink-dim)}
-  footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:.1em;margin-top:24px}
+  footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:.1em;margin-top:18px}
   footer span{color:var(--phos)}
+  .overlay{position:fixed;inset:0;background:rgba(5,6,4,.93);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:20px;z-index:50}
+  .overlay.show{display:flex}
+  .overlay img{max-width:min(92vw,360px);max-height:66vh;border-radius:14px;border:1px solid var(--panel-edge);box-shadow:0 24px 70px rgba(0,0,0,.6)}
+  .overlay .hintline{font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.03em;text-align:center;max-width:340px}
+  .overlay-actions{display:flex;gap:10px}
+  .ob{font-family:var(--mono);font-size:13px;letter-spacing:.04em;border-radius:9px;padding:12px 20px;cursor:pointer;border:1px solid var(--panel-edge);background:#11140e;color:var(--ink)}
+  .ob.primary{background:var(--amber);color:var(--bg);border-color:var(--amber);font-weight:600}
+  .hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -146,186 +139,114 @@
         </svg>
       </div>
       <div>
-        <h1 data-i18n-html="h1">DOSE · DISTANCE · <span>TEMPS</span></h1>
-        <div class="sub" data-i18n="sub">Calculateur de radioprotection</div>
+        <h1 data-i18n-html="h1">FRENCH<span>CURIE</span></h1>
+        <div class="sub" data-i18n="sub">Boîte à outils · Radioprotection</div>
       </div>
     </div>
     <div class="head-right">
-      <div class="lang">
-        <button data-lang="fr">FR</button><button data-lang="en">EN</button>
-      </div>
-      <div class="tag" data-i18n-html="tag">loi de l'inverse du carré · <b>γ</b></div>
+      <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+      <div class="tag" data-i18n-html="tag">rayonnement <b>γ</b></div>
     </div>
   </header>
 
-  <!-- MODULE 1 -->
-  <section class="card">
-    <div class="card-h">
-      <span class="idx">1</span>
-      <h2 data-i18n="m1_title">Débit de dose selon la distance</h2>
-      <span class="hint">D₂ = D₁ · (d₁/d₂)²</span>
-    </div>
+  <a href="#accueil" class="back hidden" id="back" data-i18n="nav_back">← Accueil</a>
 
-    <div class="row r2">
-      <div>
-        <label data-i18n="m1_d1">Débit de dose connu (D₁)</label>
-        <div class="ig">
-          <input type="number" id="d1" value="100" min="0" step="any" inputmode="decimal">
-          <select id="d1u">
-            <option value="0.001">nSv/h</option>
-            <option value="1">µSv/h</option>
-            <option value="1000">mSv/h</option>
-            <option value="1000000">Sv/h</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label data-i18n="m1_ref">À la distance de référence (d₁)</label>
-        <div class="ig">
-          <input type="number" id="r1" value="10" min="0" step="any" inputmode="decimal">
-          <select id="r1u">
-            <option value="0.01">cm</option>
-            <option value="1" selected>m</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <label data-i18n="m1_tgt">Distance cible (d₂)</label>
-        <div class="ig">
-          <input type="number" id="r2" value="100" min="0" step="any" inputmode="decimal">
-          <select id="r2u">
-            <option value="0.01">cm</option>
-            <option value="1" selected>m</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="readout">
-      <span class="ro-label" data-i18n="m1_out">Débit de dose estimé à d₂</span>
-      <span class="ro-val" id="out1">—</span>
-    </div>
-
-    <div class="gauge">
-      <div class="gauge-bar"><div class="gauge-marker" id="marker" style="left:0%"></div></div>
-      <div class="gauge-labels">
-        <span data-i18n="g_bg">fond ~0.1</span><span>1</span><span>10</span><span>100</span><span>1000+ µSv/h</span>
-      </div>
-      <div class="verdict" id="verdict"><span class="dot"></span><span></span></div>
-    </div>
-
-    <div class="sub-readout">
-      <div class="chip"><span data-i18n="m1_factor">Facteur d'atténuation</span><b id="factor">—</b></div>
-      <div class="chip"><span data-i18n="m1_safe">Distance pour 0,5 µSv/h</span><b id="safedist">—</b></div>
+  <!-- ===================== ACCUEIL ===================== -->
+  <section id="view-home">
+    <p class="home-intro" data-i18n="home_intro">Une suite d'outils de radioprotection à glisser dans ta poche. Choisis un calcul.</p>
+    <div class="cat-h" data-i18n="cat_radio">Radioprotection</div>
+    <div class="tiles">
+      <a href="#distance" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/><path d="M17 19a12 12 0 0 0-12-12"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_distance">Distance</h3><p data-i18n="tile_distance_d">Débit de dose selon la distance</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+      <a href="#temps" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_temps">Temps de séjour</h3><p data-i18n="tile_temps_d">Durée selon un budget de dose</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+      <a href="#dose" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_dose">Dose reçue</h3><p data-i18n="tile_dose_d">Dose cumulée selon le temps</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+      <a href="#blindage" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.2c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V5.8z"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_blindage">Blindage</h3><p data-i18n="tile_blindage_d">Atténuation par un écran</p></div>
+        <span class="tile-ar">›</span>
+      </a>
     </div>
   </section>
 
-  <!-- MODULE 2 -->
-  <section class="card">
-    <div class="card-h">
-      <span class="idx">2</span>
-      <h2 data-i18n="m2_title">Temps de séjour autorisé</h2>
-      <span class="hint" data-i18n="m2_hint">t = budget / débit</span>
-    </div>
-
-    <div class="row r2">
-      <div>
-        <label data-i18n="m2_rate">Débit de dose au poste</label>
-        <div class="ig">
-          <input type="number" id="rate" value="100" min="0" step="any" inputmode="decimal">
-          <select id="rateu">
-            <option value="1">µSv/h</option>
-            <option value="1000">mSv/h</option>
-            <option value="1000000">Sv/h</option>
-          </select>
-        </div>
-        <button class="link-btn" id="pull" data-i18n="m2_pull" style="margin-top:8px">↑ Reprendre le résultat du module 1</button>
+  <!-- ===================== DISTANCE ===================== -->
+  <section id="view-distance" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/></svg></span><h2 data-i18n="m1_title">Débit de dose selon la distance</h2><span class="hint">D₂ = D₁·(d₁/d₂)²</span></div>
+      <div class="row r2">
+        <div><label data-i18n="m1_d1">Débit de dose connu (D₁)</label><div class="ig"><input type="number" id="d1" value="100" min="0" step="any" inputmode="decimal"><select id="d1u"><option value="0.001">nSv/h</option><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div></div>
+        <div><label data-i18n="m1_ref">À la distance de référence (d₁)</label><div class="ig"><input type="number" id="r1" value="10" min="0" step="any" inputmode="decimal"><select id="r1u"><option value="0.01">cm</option><option value="1" selected>m</option></select></div></div>
       </div>
-      <div>
-        <label data-i18n="m2_budget">Budget de dose à ne pas dépasser</label>
-        <div class="ig">
-          <input type="number" id="budget" value="1" min="0" step="any" inputmode="decimal">
-          <select id="budgetu">
-            <option value="1">µSv</option>
-            <option value="1000" selected>mSv</option>
-          </select>
-        </div>
-        <div class="presets" id="presets">
-          <span class="preset" data-v="1" data-u="1000" data-i18n="p_public">Public 1 mSv/an</span>
-          <span class="preset" data-v="20" data-u="1000" data-i18n="p_worker">Travailleur 20 mSv</span>
-          <span class="preset" data-v="6" data-u="1000" data-i18n="p_catb">Cat. B 6 mSv</span>
-          <span class="preset" data-v="0.02" data-u="1000" data-i18n="p_xray">Radio thorax</span>
-          <span class="preset" data-v="50" data-u="1" data-i18n="p_flight">Vol transat.</span>
+      <div class="row"><div><label data-i18n="m1_tgt">Distance cible (d₂)</label><div class="ig"><input type="number" id="r2" value="100" min="0" step="any" inputmode="decimal"><select id="r2u"><option value="0.01">cm</option><option value="1" selected>m</option></select></div></div></div>
+      <div class="readout"><span class="ro-label" data-i18n="m1_out">Débit de dose estimé à d₂</span><span class="ro-val" id="out1">—</span></div>
+      <div class="gauge"><div class="gauge-bar"><div class="gauge-marker" id="marker" style="left:0%"></div></div><div class="gauge-labels"><span data-i18n="g_bg">fond ~0.1</span><span>1</span><span>10</span><span>100</span><span>1000+ µSv/h</span></div><div class="verdict" id="verdict"><span class="dot"></span><span></span></div></div>
+      <div class="sub-readout"><div class="chip"><span data-i18n="m1_factor">Facteur d'atténuation</span><b id="factor">—</b></div><div class="chip"><span data-i18n="m1_safe">Distance pour 0,5 µSv/h</span><b id="safedist">—</b></div></div>
+    </div>
+    <button class="card-cta" id="shareBtn" data-i18n="share_btn">📷 Carte partageable</button>
+  </section>
+
+  <!-- ===================== TEMPS ===================== -->
+  <section id="view-temps" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span><h2 data-i18n="m2_title">Temps de séjour autorisé</h2><span class="hint" data-i18n="m2_hint">t = budget / débit</span></div>
+      <div class="row r2">
+        <div><label data-i18n="m2_rate">Débit de dose au poste</label><div class="ig"><input type="number" id="rate" value="100" min="0" step="any" inputmode="decimal"><select id="rateu"><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div><button class="link-btn" id="pull" data-i18n="m2_pull" style="margin-top:8px">↑ Reprendre le débit Distance</button></div>
+        <div><label data-i18n="m2_budget">Budget de dose à ne pas dépasser</label><div class="ig"><input type="number" id="budget" value="1" min="0" step="any" inputmode="decimal"><select id="budgetu"><option value="1">µSv</option><option value="1000" selected>mSv</option></select></div>
+          <div class="presets" id="presets"><span class="preset" data-v="1" data-u="1000" data-i18n="p_public">Public 1 mSv/an</span><span class="preset" data-v="20" data-u="1000" data-i18n="p_worker">Travailleur 20 mSv</span><span class="preset" data-v="6" data-u="1000" data-i18n="p_catb">Cat. B 6 mSv</span><span class="preset" data-v="0.02" data-u="1000" data-i18n="p_xray">Radio thorax</span><span class="preset" data-v="50" data-u="1" data-i18n="p_flight">Vol transat.</span></div>
         </div>
       </div>
-    </div>
-
-    <div class="readout">
-      <span class="ro-label" data-i18n="m2_out">Durée maximale d'exposition</span>
-      <span class="ro-val amber" id="out2">—</span>
-    </div>
-    <div class="sub-readout">
-      <div class="chip"><span data-i18n="m2_s">En secondes</span><b id="t_s">—</b></div>
-      <div class="chip"><span data-i18n="m2_min">En minutes</span><b id="t_min">—</b></div>
-      <div class="chip"><span data-i18n="m2_h">En heures</span><b id="t_h">—</b></div>
-      <div class="chip"><span data-i18n="m2_d">En jours</span><b id="t_d">—</b></div>
+      <div class="readout"><span class="ro-label" data-i18n="m2_out">Durée maximale d'exposition</span><span class="ro-val amber" id="out2">—</span></div>
+      <div class="sub-readout"><div class="chip"><span data-i18n="m2_s">En secondes</span><b id="t_s">—</b></div><div class="chip"><span data-i18n="m2_min">En minutes</span><b id="t_min">—</b></div><div class="chip"><span data-i18n="m2_h">En heures</span><b id="t_h">—</b></div><div class="chip"><span data-i18n="m2_d">En jours</span><b id="t_d">—</b></div></div>
     </div>
   </section>
 
-  <!-- MODULE 3 -->
-  <section class="card">
-    <div class="card-h">
-      <span class="idx">3</span>
-      <h2 data-i18n="m3_title">Dose reçue selon le temps</h2>
-      <span class="hint" data-i18n="m3_hint">D = débit × temps</span>
-    </div>
-
-    <div class="row r2">
-      <div>
-        <label data-i18n="m3_rate">Débit de dose subi</label>
-        <div class="ig">
-          <input type="number" id="drate" value="100" min="0" step="any" inputmode="decimal">
-          <select id="drateu">
-            <option value="1">µSv/h</option>
-            <option value="1000">mSv/h</option>
-            <option value="1000000">Sv/h</option>
-          </select>
-        </div>
-        <button class="link-btn" id="pull3" data-i18n="m3_pull" style="margin-top:8px">↑ Reprendre le débit du module 1</button>
+  <!-- ===================== DOSE ===================== -->
+  <section id="view-dose" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z"/></svg></span><h2 data-i18n="m3_title">Dose reçue selon le temps</h2><span class="hint" data-i18n="m3_hint">D = débit × temps</span></div>
+      <div class="row r2">
+        <div><label data-i18n="m3_rate">Débit de dose subi</label><div class="ig"><input type="number" id="drate" value="100" min="0" step="any" inputmode="decimal"><select id="drateu"><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div><button class="link-btn" id="pull3" data-i18n="m3_pull" style="margin-top:8px">↑ Reprendre le débit Distance</button></div>
+        <div><label data-i18n="m3_dur">Durée d'exposition</label><div class="ig"><input type="number" id="dur" value="30" min="0" step="any" inputmode="decimal"><select id="duru"><option value="0.0002777778">s</option><option value="0.01666667" selected>min</option><option value="1">h</option><option value="24" data-i18n="u_days">jours</option></select></div></div>
       </div>
-      <div>
-        <label data-i18n="m3_dur">Durée d'exposition</label>
-        <div class="ig">
-          <input type="number" id="dur" value="30" min="0" step="any" inputmode="decimal">
-          <select id="duru">
-            <option value="0.0002777778">s</option>
-            <option value="0.01666667" selected>min</option>
-            <option value="1">h</option>
-            <option value="24" data-i18n="u_days">jours</option>
-          </select>
-        </div>
-      </div>
+      <div class="readout"><span class="ro-label" data-i18n="m3_out">Dose efficace reçue</span><span class="ro-val" id="out3">—</span></div>
+      <div class="sub-readout"><div class="chip"><span data-i18n="m3_u">En µSv</span><b id="dose_u">—</b></div><div class="chip"><span data-i18n="m3_m">En mSv</span><b id="dose_m">—</b></div><div class="chip"><span data-i18n="m3_pct">% limite publique</span><b id="dose_pct">—</b></div><div class="chip"><span data-i18n="m3_radio">≈ radios thorax</span><b id="dose_radio">—</b></div></div>
+      <div class="verdict" id="verdict3" style="margin-top:14px"><span class="dot"></span><span></span></div>
     </div>
+  </section>
 
-    <div class="readout">
-      <span class="ro-label" data-i18n="m3_out">Dose efficace reçue</span>
-      <span class="ro-val" id="out3">—</span>
+  <!-- ===================== BLINDAGE ===================== -->
+  <section id="view-blindage" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.2c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V5.8z"/></svg></span><h2 data-i18n="m4_title">Atténuation par blindage</h2><span class="hint">I = I₀·½^(x/CDA)</span></div>
+      <div class="row"><div><label data-i18n="m4_rate">Débit de dose avant écran (I₀)</label><div class="ig"><input type="number" id="srate" value="100" min="0" step="any" inputmode="decimal"><select id="srateu"><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div><button class="link-btn" id="pull4" data-i18n="m4_pull" style="margin-top:8px">↑ Reprendre le débit Distance</button></div></div>
+      <div class="row r2">
+        <div><label data-i18n="m4_iso">Source / énergie γ</label><select class="full" id="iso"><option value="am241">Am-241 · 59,5 keV</option><option value="i131">I-131 · 364 keV</option><option value="cs137" selected>Cs-137 · 662 keV</option><option value="co60">Co-60 · 1,25 MeV</option></select></div>
+        <div><label data-i18n="m4_mat">Matériau de l'écran</label><select class="full" id="mat"><option value="pb" data-i18n="mat_pb">Plomb</option><option value="concrete" data-i18n="mat_concrete">Béton</option><option value="water" data-i18n="mat_water">Eau</option><option value="steel" data-i18n="mat_steel">Acier</option></select></div>
+      </div>
+      <div class="row"><div><label data-i18n="m4_thick">Épaisseur de l'écran (x)</label><div class="ig"><input type="number" id="thick" value="2" min="0" step="any" inputmode="decimal"><select id="thicku"><option value="0.1">mm</option><option value="1" selected>cm</option></select></div></div></div>
+      <div class="readout"><span class="ro-label" data-i18n="m4_out">Débit de dose après écran</span><span class="ro-val" id="out4">—</span></div>
+      <div class="sub-readout"><div class="chip"><span data-i18n="m4_red">Facteur de réduction</span><b id="s_red">—</b></div><div class="chip"><span data-i18n="m4_n">Nombre de CDA</span><b id="s_n">—</b></div><div class="chip"><span data-i18n="m4_hvl">CDA (½ valeur)</span><b id="s_hvl">—</b></div><div class="chip"><span data-i18n="m4_trans">Rayonnement transmis</span><b id="s_trans">—</b></div></div>
     </div>
-    <div class="sub-readout">
-      <div class="chip"><span data-i18n="m3_u">En µSv</span><b id="dose_u">—</b></div>
-      <div class="chip"><span data-i18n="m3_m">En mSv</span><b id="dose_m">—</b></div>
-      <div class="chip"><span data-i18n="m3_pct">% limite publique</span><b id="dose_pct">—</b></div>
-      <div class="chip"><span data-i18n="m3_radio">≈ radios thorax</span><b id="dose_radio">—</b></div>
-    </div>
-    <div class="verdict" id="verdict3" style="margin-top:14px"><span class="dot"></span><span></span></div>
   </section>
 
   <div class="disc" data-i18n-html="disc"></div>
-
   <footer>FRENCH<span>CURIE</span> · 🇫🇷</footer>
+
+  <div class="overlay" id="overlay">
+    <img id="cardImg" alt="">
+    <div class="hintline" data-i18n="card_hint">Astuce : appui long sur l'image pour l'enregistrer, ou utilisez Télécharger.</div>
+    <div class="overlay-actions"><button class="ob primary" id="cardDl" data-i18n="card_dl">Télécharger</button><button class="ob" id="cardClose" data-i18n="card_close">Fermer</button></div>
+  </div>
 </div>
 
 <script>
@@ -333,279 +254,180 @@
   const $ = id => document.getElementById(id);
   const num = el => { const v = parseFloat($(el).value); return isFinite(v) ? v : NaN; };
 
-  /* ---------- traductions ---------- */
+  const HVL = {
+    am241:{pb:0.012, concrete:1.1,  water:3.4,  steel:0.073},
+    i131: {pb:0.30,  concrete:3.0,  water:6.3,  steel:0.88},
+    cs137:{pb:0.65,  concrete:4.8,  water:8.2,  steel:1.6},
+    co60: {pb:1.2,   concrete:6.2,  water:13.0, steel:2.1}
+  };
+
   const I18N = {
     fr: {
-      title:"Dose · Distance · Temps",
-      h1:"DOSE · DISTANCE · <span>TEMPS</span>",
-      sub:"Calculateur de radioprotection",
-      tag:"loi de l'inverse du carré · <b>γ</b>",
-      m1_title:"Débit de dose selon la distance",
-      m1_d1:"Débit de dose connu (D₁)",
-      m1_ref:"À la distance de référence (d₁)",
-      m1_tgt:"Distance cible (d₂)",
-      m1_out:"Débit de dose estimé à d₂",
-      g_bg:"fond ~0.1",
-      m1_factor:"Facteur d'atténuation",
-      m1_safe:"Distance pour 0,5 µSv/h",
-      m2_title:"Temps de séjour autorisé",
-      m2_hint:"t = budget / débit",
-      m2_rate:"Débit de dose au poste",
-      m2_pull:"↑ Reprendre le résultat du module 1",
-      m2_budget:"Budget de dose à ne pas dépasser",
-      p_public:"Public 1 mSv/an",
-      p_worker:"Travailleur 20 mSv",
-      p_catb:"Cat. B 6 mSv",
-      p_xray:"Radio thorax",
-      p_flight:"Vol transat.",
-      m2_out:"Durée maximale d'exposition",
-      m2_s:"En secondes", m2_min:"En minutes", m2_h:"En heures", m2_d:"En jours",
-      m3_title:"Dose reçue selon le temps",
-      m3_hint:"D = débit × temps",
-      m3_rate:"Débit de dose subi",
-      m3_pull:"↑ Reprendre le débit du module 1",
-      m3_dur:"Durée d'exposition",
-      u_days:"jours",
-      m3_out:"Dose efficace reçue",
-      m3_u:"En µSv", m3_m:"En mSv", m3_pct:"% limite publique", m3_radio:"≈ radios thorax",
+      title:"FrenchCurie · Radioprotection", h1:"FRENCH<span>CURIE</span>", sub:"Boîte à outils · Radioprotection", tag:"rayonnement <b>γ</b>",
+      home_intro:"Une suite d'outils de radioprotection à glisser dans ta poche. Choisis un calcul.", cat_radio:"Radioprotection", nav_back:"← Accueil",
+      tile_distance:"Distance", tile_distance_d:"Débit de dose selon la distance",
+      tile_temps:"Temps de séjour", tile_temps_d:"Durée selon un budget de dose",
+      tile_dose:"Dose reçue", tile_dose_d:"Dose cumulée selon le temps",
+      tile_blindage:"Blindage", tile_blindage_d:"Atténuation par un écran",
+      m1_title:"Débit de dose selon la distance", m1_d1:"Débit de dose connu (D₁)", m1_ref:"À la distance de référence (d₁)", m1_tgt:"Distance cible (d₂)", m1_out:"Débit de dose estimé à d₂",
+      g_bg:"fond ~0.1", m1_factor:"Facteur d'atténuation", m1_safe:"Distance pour 0,5 µSv/h",
+      m2_title:"Temps de séjour autorisé", m2_hint:"t = budget / débit", m2_rate:"Débit de dose au poste", m2_pull:"↑ Reprendre le débit Distance", m2_budget:"Budget de dose à ne pas dépasser",
+      p_public:"Public 1 mSv/an", p_worker:"Travailleur 20 mSv", p_catb:"Cat. B 6 mSv", p_xray:"Radio thorax", p_flight:"Vol transat.",
+      m2_out:"Durée maximale d'exposition", m2_s:"En secondes", m2_min:"En minutes", m2_h:"En heures", m2_d:"En jours",
+      m3_title:"Dose reçue selon le temps", m3_hint:"D = débit × temps", m3_rate:"Débit de dose subi", m3_pull:"↑ Reprendre le débit Distance", m3_dur:"Durée d'exposition", u_days:"jours",
+      m3_out:"Dose efficace reçue", m3_u:"En µSv", m3_m:"En mSv", m3_pct:"% limite publique", m3_radio:"≈ radios thorax",
+      m4_title:"Atténuation par blindage", m4_rate:"Débit de dose avant écran (I₀)", m4_pull:"↑ Reprendre le débit Distance", m4_iso:"Source / énergie γ", m4_mat:"Matériau de l'écran",
+      mat_pb:"Plomb", mat_concrete:"Béton", mat_water:"Eau", mat_steel:"Acier",
+      m4_thick:"Épaisseur de l'écran (x)", m4_out:"Débit de dose après écran", m4_red:"Facteur de réduction", m4_n:"Nombre de CDA", m4_hvl:"CDA (½ valeur)", m4_trans:"Rayonnement transmis",
       u_yrs:"ans",
-      v1_bg:"Niveau de fond naturel",
-      v1_above:"Légèrement au-dessus du fond",
-      v1_elev:"Débit élevé — vigilance",
-      v1_notable:"Source notable — limiter l'exposition",
-      v1_danger:"Débit important — danger, éloignement requis",
-      v3_vlow:"Très faible — ordre du fond naturel",
-      v3_low:"Faible — sous la limite publique annuelle",
-      v3_notable:"Notable — entre limite public et travailleur",
-      v3_high:"Élevée — au-delà des limites réglementaires",
-      v3_vhigh:"Très élevée — domaine des effets sur la santé",
-      disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b> dans le vide, sans blindage ni atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues, ni au rayonnement alpha/bêta (faible portée), ni en présence d'écran ou de diffusion. La dose reçue suppose un débit constant. Les budgets de dose sont des <b>doses efficaces de référence</b> (réglementation FR / Euratom 2013/59) fournies à titre indicatif. Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
+      v1_bg:"Niveau de fond naturel", v1_above:"Légèrement au-dessus du fond", v1_elev:"Débit élevé — vigilance", v1_notable:"Source notable — limiter l'exposition", v1_danger:"Débit important — danger, éloignement requis",
+      v3_vlow:"Très faible — ordre du fond naturel", v3_low:"Faible — sous la limite publique annuelle", v3_notable:"Notable — entre limite public et travailleur", v3_high:"Élevée — au-delà des limites réglementaires", v3_vhigh:"Très élevée — domaine des effets sur la santé",
+      share_btn:"📷 Carte partageable", card_dl:"Télécharger", card_close:"Fermer", card_hint:"Astuce : appui long sur l'image pour l'enregistrer, ou utilisez Télécharger.",
+      card_kicker:"Radioprotection", card_src:"Source", card_at:"à", card_law:"Loi de l'inverse du carré : dose ∝ 1/distance²",
+      disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b>, sans atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues ni au rayonnement alpha/bêta (faible portée). La dose reçue suppose un débit constant. Les CDA sont des <b>valeurs indicatives</b> (faisceau étroit) ; en géométrie réelle, le rayonnement diffusé (build-up) réduit l'efficacité du blindage. Les budgets de dose sont des doses efficaces de référence (réglementation FR / Euratom 2013/59). Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
     },
     en: {
-      title:"Dose · Distance · Time",
-      h1:"DOSE · DISTANCE · <span>TIME</span>",
-      sub:"Radiation protection calculator",
-      tag:"inverse-square law · <b>γ</b>",
-      m1_title:"Dose rate by distance",
-      m1_d1:"Known dose rate (D₁)",
-      m1_ref:"At reference distance (d₁)",
-      m1_tgt:"Target distance (d₂)",
-      m1_out:"Estimated dose rate at d₂",
-      g_bg:"bg ~0.1",
-      m1_factor:"Attenuation factor",
-      m1_safe:"Distance for 0.5 µSv/h",
-      m2_title:"Allowed stay time",
-      m2_hint:"t = budget / rate",
-      m2_rate:"Dose rate at your position",
-      m2_pull:"↑ Use result from module 1",
-      m2_budget:"Dose budget not to exceed",
-      p_public:"Public 1 mSv/yr",
-      p_worker:"Worker 20 mSv",
-      p_catb:"Cat. B 6 mSv",
-      p_xray:"Chest X-ray",
-      p_flight:"Transatl. flight",
-      m2_out:"Maximum exposure time",
-      m2_s:"In seconds", m2_min:"In minutes", m2_h:"In hours", m2_d:"In days",
-      m3_title:"Dose received over time",
-      m3_hint:"D = rate × time",
-      m3_rate:"Dose rate experienced",
-      m3_pull:"↑ Use rate from module 1",
-      m3_dur:"Exposure duration",
-      u_days:"days",
-      m3_out:"Effective dose received",
-      m3_u:"In µSv", m3_m:"In mSv", m3_pct:"% public limit", m3_radio:"≈ chest X-rays",
+      title:"FrenchCurie · Radiation protection", h1:"FRENCH<span>CURIE</span>", sub:"Toolbox · Radiation protection", tag:"<b>γ</b> radiation",
+      home_intro:"A pocket suite of radiation-protection tools. Pick a calculation.", cat_radio:"Radiation protection", nav_back:"← Home",
+      tile_distance:"Distance", tile_distance_d:"Dose rate by distance",
+      tile_temps:"Stay time", tile_temps_d:"Duration for a dose budget",
+      tile_dose:"Received dose", tile_dose_d:"Cumulative dose over time",
+      tile_blindage:"Shielding", tile_blindage_d:"Attenuation through a shield",
+      m1_title:"Dose rate by distance", m1_d1:"Known dose rate (D₁)", m1_ref:"At reference distance (d₁)", m1_tgt:"Target distance (d₂)", m1_out:"Estimated dose rate at d₂",
+      g_bg:"bg ~0.1", m1_factor:"Attenuation factor", m1_safe:"Distance for 0.5 µSv/h",
+      m2_title:"Allowed stay time", m2_hint:"t = budget / rate", m2_rate:"Dose rate at your position", m2_pull:"↑ Use Distance rate", m2_budget:"Dose budget not to exceed",
+      p_public:"Public 1 mSv/yr", p_worker:"Worker 20 mSv", p_catb:"Cat. B 6 mSv", p_xray:"Chest X-ray", p_flight:"Transatl. flight",
+      m2_out:"Maximum exposure time", m2_s:"In seconds", m2_min:"In minutes", m2_h:"In hours", m2_d:"In days",
+      m3_title:"Dose received over time", m3_hint:"D = rate × time", m3_rate:"Dose rate experienced", m3_pull:"↑ Use Distance rate", m3_dur:"Exposure duration", u_days:"days",
+      m3_out:"Effective dose received", m3_u:"In µSv", m3_m:"In mSv", m3_pct:"% public limit", m3_radio:"≈ chest X-rays",
+      m4_title:"Shielding attenuation", m4_rate:"Dose rate before shield (I₀)", m4_pull:"↑ Use Distance rate", m4_iso:"Source / γ energy", m4_mat:"Shield material",
+      mat_pb:"Lead", mat_concrete:"Concrete", mat_water:"Water", mat_steel:"Steel",
+      m4_thick:"Shield thickness (x)", m4_out:"Dose rate after shield", m4_red:"Reduction factor", m4_n:"Number of HVL", m4_hvl:"HVL (½ value)", m4_trans:"Transmitted radiation",
       u_yrs:"yrs",
-      v1_bg:"Natural background level",
-      v1_above:"Slightly above background",
-      v1_elev:"Elevated rate — caution",
-      v1_notable:"Notable source — limit exposure",
-      v1_danger:"High rate — danger, keep your distance",
-      v3_vlow:"Very low — natural background range",
-      v3_low:"Low — below the public annual limit",
-      v3_notable:"Notable — between public and worker limits",
-      v3_high:"High — beyond regulatory limits",
-      v3_vhigh:"Very high — health-effects range",
-      disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b> in vacuum, with no shielding or air attenuation. The inverse-square law does not apply as-is to extended sources, to alpha/beta radiation (short range), or in the presence of shielding or scattering. The received dose assumes a constant dose rate. Dose budgets are <b>reference effective doses</b> (FR / Euratom 2013/59 regulations) given for indication only. An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
+      v1_bg:"Natural background level", v1_above:"Slightly above background", v1_elev:"Elevated rate — caution", v1_notable:"Notable source — limit exposure", v1_danger:"High rate — danger, keep your distance",
+      v3_vlow:"Very low — natural background range", v3_low:"Low — below the public annual limit", v3_notable:"Notable — between public and worker limits", v3_high:"High — beyond regulatory limits", v3_vhigh:"Very high — health-effects range",
+      share_btn:"📷 Shareable card", card_dl:"Download", card_close:"Close", card_hint:"Tip: long-press the image to save it, or use Download.",
+      card_kicker:"Radiation protection", card_src:"Source", card_at:"at", card_law:"Inverse-square law: dose ∝ 1/distance²",
+      disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b>, with no air attenuation. The inverse-square law does not apply as-is to extended sources or to alpha/beta radiation (short range). The received dose assumes a constant dose rate. HVL values are <b>indicative</b> (narrow beam); in real geometry, scattered radiation (build-up) reduces shielding effectiveness. Dose budgets are reference effective doses (FR / Euratom 2013/59 regulations). An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
     }
   };
 
-  let lang = 'fr';
-  try { const s = localStorage.getItem('dosecalc_lang'); if(s==='fr'||s==='en') lang = s;
-        else if((navigator.language||'').toLowerCase().startsWith('en')) lang='en'; } catch(e){}
+  let lang='fr';
+  try { const s=localStorage.getItem('dosecalc_lang'); if(s==='fr'||s==='en') lang=s; else if((navigator.language||'').toLowerCase().startsWith('en')) lang='en'; } catch(e){}
   const T = k => (I18N[lang][k]!==undefined ? I18N[lang][k] : k);
 
-  /* ---------- formatage ---------- */
-  function fmtDose(uSvh){
-    if(!isFinite(uSvh)) return ['—',''];
-    let v = uSvh, u = 'µSv/h';
-    if(v >= 1000){ v = uSvh/1000; u = 'mSv/h'; }
-    if(uSvh >= 1e6){ v = uSvh/1e6; u = 'Sv/h'; }
-    if(uSvh < 0.01 && uSvh > 0){ v = uSvh*1000; u = 'nSv/h'; }
-    return [sig(v), u];
-  }
-  function sig(v){
-    if(!isFinite(v)) return '—';
-    if(v === 0) return '0';
-    const a = Math.abs(v);
-    if(a >= 1e5 || a < 1e-3) return v.toExponential(2);
-    if(a >= 100) return v.toFixed(0);
-    if(a >= 10) return v.toFixed(1);
-    if(a >= 1) return v.toFixed(2);
-    return v.toFixed(3);
-  }
-  function fmtTime(hours){
-    if(!isFinite(hours)) return ['—',''];
-    if(hours >= 8760) return [sig(hours/8760), T('u_yrs')];
-    if(hours >= 24) return [sig(hours/24), T('u_days')];
-    if(hours >= 1) return [sig(hours),'h'];
-    if(hours*60 >= 1) return [sig(hours*60),'min'];
-    return [sig(hours*3600),'s'];
-  }
+  function fmtDose(uSvh){ if(!isFinite(uSvh)) return ['—','']; let v=uSvh,u='µSv/h'; if(v>=1000){v=uSvh/1000;u='mSv/h';} if(uSvh>=1e6){v=uSvh/1e6;u='Sv/h';} if(uSvh<0.01&&uSvh>0){v=uSvh*1000;u='nSv/h';} return [sig(v),u]; }
+  function sig(v){ if(!isFinite(v)) return '—'; if(v===0) return '0'; const a=Math.abs(v); if(a>=1e5||a<1e-3) return v.toExponential(2); if(a>=100) return v.toFixed(0); if(a>=10) return v.toFixed(1); if(a>=1) return v.toFixed(2); return v.toFixed(3); }
+  function fmtTime(hours){ if(!isFinite(hours)) return ['—','']; if(hours>=8760) return [sig(hours/8760),T('u_yrs')]; if(hours>=24) return [sig(hours/24),T('u_days')]; if(hours>=1) return [sig(hours),'h']; if(hours*60>=1) return [sig(hours*60),'min']; return [sig(hours*3600),'s']; }
 
-  /* ---------- Module 1 ---------- */
   function calc1(){
-    const D1 = num('d1') * parseFloat($('d1u').value);
-    const ref = num('r1') * parseFloat($('r1u').value);
-    const tgt = num('r2') * parseFloat($('r2u').value);
-    if(!isFinite(D1) || !isFinite(ref) || !isFinite(tgt) || ref<=0 || tgt<=0){
-      $('out1').innerHTML = '—'; $('factor').textContent='—'; $('safedist').textContent='—';
-      setGauge(NaN); return;
-    }
-    const D2 = D1 * Math.pow(ref/tgt, 2);
-    const [v,u] = fmtDose(D2);
-    $('out1').innerHTML = v + '<span class="u">'+u+'</span>';
-    const factor = Math.pow(ref/tgt,2);
-    $('factor').textContent = factor>=1 ? '×'+sig(factor) : '÷'+sig(1/factor);
-    const dSafe = ref * Math.sqrt(D1/0.5);
-    $('safedist').textContent = dSafe>=1 ? sig(dSafe)+' m' : sig(dSafe*100)+' cm';
-    setGauge(D2);
-    return D2;
+    const D1=num('d1')*parseFloat($('d1u').value), ref=num('r1')*parseFloat($('r1u').value), tgt=num('r2')*parseFloat($('r2u').value);
+    if(!isFinite(D1)||!isFinite(ref)||!isFinite(tgt)||ref<=0||tgt<=0){ $('out1').innerHTML='—'; $('factor').textContent='—'; $('safedist').textContent='—'; setGauge(NaN); return; }
+    const D2=D1*Math.pow(ref/tgt,2), r=fmtDose(D2); $('out1').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    const f=Math.pow(ref/tgt,2); $('factor').textContent=f>=1?'×'+sig(f):'÷'+sig(1/f);
+    const dS=ref*Math.sqrt(D1/0.5); $('safedist').textContent=dS>=1?sig(dS)+' m':sig(dS*100)+' cm';
+    setGauge(D2); return D2;
   }
   function setGauge(D2){
-    const m = $('marker'), vEl = $('verdict');
-    const dot = vEl.querySelector('.dot'), txt = vEl.querySelector('span:last-child');
+    const m=$('marker'), vEl=$('verdict'), dot=vEl.querySelector('.dot'), txt=vEl.querySelector('span:last-child');
     if(!isFinite(D2)){ m.style.left='0%'; dot.style.background='#5d6655'; txt.textContent=''; return; }
-    const lo=Math.log10(0.1), hi=Math.log10(1000);
-    let p = (Math.log10(Math.max(D2,0.01))-lo)/(hi-lo)*100;
-    p = Math.max(0,Math.min(100,p));
-    m.style.left = p+'%';
-    let c,k;
-    if(D2 < 0.3){ c='#7dd957'; k='v1_bg'; }
-    else if(D2 < 1){ c='#a8d957'; k='v1_above'; }
-    else if(D2 < 10){ c='#ffb627'; k='v1_elev'; }
-    else if(D2 < 100){ c='#ff8a3d'; k='v1_notable'; }
-    else { c='#ff5a4d'; k='v1_danger'; }
+    const lo=Math.log10(0.1), hi=Math.log10(1000); let p=(Math.log10(Math.max(D2,0.01))-lo)/(hi-lo)*100; p=Math.max(0,Math.min(100,p)); m.style.left=p+'%';
+    let c,k; if(D2<0.3){c='#7dd957';k='v1_bg';} else if(D2<1){c='#a8d957';k='v1_above';} else if(D2<10){c='#ffb627';k='v1_elev';} else if(D2<100){c='#ff8a3d';k='v1_notable';} else {c='#ff5a4d';k='v1_danger';}
     dot.style.background=c; txt.style.color=c; txt.textContent=T(k);
   }
-
-  /* ---------- Module 2 ---------- */
   function calc2(){
-    const rate = num('rate') * parseFloat($('rateu').value);
-    const budget = num('budget') * parseFloat($('budgetu').value);
-    if(!isFinite(rate) || !isFinite(budget) || rate<=0){
-      $('out2').innerHTML='—'; ['t_s','t_min','t_h','t_d'].forEach(i=>$(i).textContent='—'); return;
-    }
-    const hours = budget / rate;
-    const [v,u] = fmtTime(hours);
-    $('out2').innerHTML = v + '<span class="u">'+u+'</span>';
-    $('t_s').textContent = sig(hours*3600);
-    $('t_min').textContent = sig(hours*60);
-    $('t_h').textContent = sig(hours);
-    $('t_d').textContent = sig(hours/24);
+    const rate=num('rate')*parseFloat($('rateu').value), budget=num('budget')*parseFloat($('budgetu').value);
+    if(!isFinite(rate)||!isFinite(budget)||rate<=0){ $('out2').innerHTML='—'; ['t_s','t_min','t_h','t_d'].forEach(i=>$(i).textContent='—'); return; }
+    const hours=budget/rate, r=fmtTime(hours); $('out2').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    $('t_s').textContent=sig(hours*3600); $('t_min').textContent=sig(hours*60); $('t_h').textContent=sig(hours); $('t_d').textContent=sig(hours/24);
   }
-
-  /* ---------- Module 3 ---------- */
   function calc3(){
-    const rate = num('drate') * parseFloat($('drateu').value);
-    const hours = num('dur') * parseFloat($('duru').value);
-    const vEl = $('verdict3');
-    const dot = vEl.querySelector('.dot'), txt = vEl.querySelector('span:last-child');
-    if(!isFinite(rate) || !isFinite(hours) || rate<0 || hours<0){
-      $('out3').innerHTML='—';
-      ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—');
-      dot.style.background='#5d6655'; txt.textContent=''; return;
-    }
-    const dose = rate * hours;
-    let v=dose, u='µSv';
-    if(dose>=1000){ v=dose/1000; u='mSv'; }
-    if(dose>=1e6){ v=dose/1e6; u='Sv'; }
-    if(dose<1 && dose>0){ v=dose*1000; u='nSv'; }
-    $('out3').innerHTML = sig(v) + '<span class="u">'+u+'</span>';
-    $('dose_u').textContent = sig(dose);
-    $('dose_m').textContent = sig(dose/1000);
-    $('dose_pct').textContent = sig(dose/1000*100)+' %';
-    $('dose_radio').textContent = sig(dose/20);
-    let c,k;
-    if(dose < 100){ c='#7dd957'; k='v3_vlow'; }
-    else if(dose < 1000){ c='#a8d957'; k='v3_low'; }
-    else if(dose < 20000){ c='#ffb627'; k='v3_notable'; }
-    else if(dose < 100000){ c='#ff8a3d'; k='v3_high'; }
-    else { c='#ff5a4d'; k='v3_vhigh'; }
+    const rate=num('drate')*parseFloat($('drateu').value), hours=num('dur')*parseFloat($('duru').value);
+    const vEl=$('verdict3'), dot=vEl.querySelector('.dot'), txt=vEl.querySelector('span:last-child');
+    if(!isFinite(rate)||!isFinite(hours)||rate<0||hours<0){ $('out3').innerHTML='—'; ['dose_u','dose_m','dose_pct','dose_radio'].forEach(i=>$(i).textContent='—'); dot.style.background='#5d6655'; txt.textContent=''; return; }
+    const dose=rate*hours; let v=dose,u='µSv'; if(dose>=1000){v=dose/1000;u='mSv';} if(dose>=1e6){v=dose/1e6;u='Sv';} if(dose<1&&dose>0){v=dose*1000;u='nSv';}
+    $('out3').innerHTML=sig(v)+'<span class="u">'+u+'</span>';
+    $('dose_u').textContent=sig(dose); $('dose_m').textContent=sig(dose/1000); $('dose_pct').textContent=sig(dose/1000*100)+' %'; $('dose_radio').textContent=sig(dose/20);
+    let c,k; if(dose<100){c='#7dd957';k='v3_vlow';} else if(dose<1000){c='#a8d957';k='v3_low';} else if(dose<20000){c='#ffb627';k='v3_notable';} else if(dose<100000){c='#ff8a3d';k='v3_high';} else {c='#ff5a4d';k='v3_vhigh';}
     dot.style.background=c; txt.style.color=c; txt.textContent=T(k);
   }
-
-  /* ---------- application de la langue ---------- */
-  function applyLang(){
-    document.documentElement.lang = lang;
-    document.title = T('title');
-    document.querySelectorAll('[data-i18n]').forEach(el=>{
-      const k = el.getAttribute('data-i18n');
-      if(I18N[lang][k]!==undefined) el.textContent = I18N[lang][k];
-    });
-    document.querySelectorAll('[data-i18n-html]').forEach(el=>{
-      const k = el.getAttribute('data-i18n-html');
-      if(I18N[lang][k]!==undefined) el.innerHTML = I18N[lang][k];
-    });
-    document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-    calc1(); calc2(); calc3();
+  function calc4(){
+    const I0=num('srate')*parseFloat($('srateu').value), x=num('thick')*parseFloat($('thicku').value), hvl=HVL[$('iso').value][$('mat').value];
+    if(!isFinite(I0)||!isFinite(x)||x<0||I0<0||!isFinite(hvl)||hvl<=0){ $('out4').innerHTML='—'; ['s_red','s_n','s_hvl','s_trans'].forEach(i=>$(i).textContent='—'); return; }
+    const n=x/hvl, trans=Math.pow(0.5,n), I=I0*trans, r=fmtDose(I); $('out4').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>';
+    const red=trans>0?1/trans:Infinity; $('s_red').textContent=isFinite(red)?'÷'+sig(red):'÷∞'; $('s_n').textContent=sig(n); $('s_hvl').textContent=sig(hvl)+' cm'; $('s_trans').textContent=sig(trans*100)+' %';
   }
 
-  /* ---------- liaisons ---------- */
+  function applyLang(){
+    document.documentElement.lang=lang; document.title=T('title');
+    document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[lang][k]!==undefined) el.textContent=I18N[lang][k]; });
+    document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); if(I18N[lang][k]!==undefined) el.innerHTML=I18N[lang][k]; });
+    document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+    calc1(); calc2(); calc3(); calc4();
+  }
+
+  /* ---- routage par vues ---- */
+  const ROUTES={accueil:'view-home', distance:'view-distance', temps:'view-temps', dose:'view-dose', blindage:'view-blindage'};
+  function route(){
+    let h=(location.hash||'').replace('#',''); if(!ROUTES[h]) h='accueil';
+    Object.values(ROUTES).forEach(id=>$(id).classList.add('hidden'));
+    $(ROUTES[h]).classList.remove('hidden');
+    $('back').classList.toggle('hidden', h==='accueil');
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',route);
+
+  /* ---- carte partageable ---- */
+  let lastCardURL=null;
+  function drawTrefoil(ctx,cx,cy,ro,color){ const unit=ro/5, ri=1.5*unit; ctx.fillStyle=color; [-90,30,150].forEach(cd=>{ const a0=(cd-30)*Math.PI/180, a1=(cd+30)*Math.PI/180; ctx.beginPath(); ctx.arc(cx,cy,ro,a0,a1,false); ctx.arc(cx,cy,ri,a1,a0,true); ctx.closePath(); ctx.fill(); }); ctx.beginPath(); ctx.arc(cx,cy,unit,0,2*Math.PI); ctx.fill(); }
+  function renderCard(){
+    const W=1080,H=1920,c=document.createElement('canvas'); c.width=W;c.height=H; const ctx=c.getContext('2d');
+    ctx.fillStyle='#0d0f0c'; ctx.fillRect(0,0,W,H);
+    let g=ctx.createRadialGradient(W/2,200,0,W/2,200,950); g.addColorStop(0,'rgba(255,182,39,0.10)'); g.addColorStop(1,'rgba(255,182,39,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#262b24'; ctx.lineWidth=2; ctx.strokeRect(40,40,W-80,H-80);
+    drawTrefoil(ctx,W/2,300,150,'#ffb627');
+    ctx.textAlign='center'; ctx.fillStyle='#e8ecdf'; ctx.font='700 72px "Chakra Petch", sans-serif'; ctx.fillText('FRENCHCURIE',W/2,560);
+    ctx.fillStyle='#5d6655'; ctx.font='500 26px "IBM Plex Mono", monospace'; ctx.fillText(T('card_kicker').toUpperCase(),W/2,606);
+    ctx.strokeStyle='#262b24'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(120,660); ctx.lineTo(W-120,660); ctx.stroke();
+    const d1v=$('d1').value, d1u=$('d1u').selectedOptions[0].textContent, r1v=$('r1').value, r1u=$('r1u').selectedOptions[0].textContent, r2v=$('r2').value, r2u=$('r2u').selectedOptions[0].textContent;
+    const D1=parseFloat(d1v)*parseFloat($('d1u').value), ref=parseFloat(r1v)*parseFloat($('r1u').value), tgt=parseFloat(r2v)*parseFloat($('r2u').value);
+    const D2=D1*Math.pow(ref/tgt,2); let rv='—',ru=''; if(isFinite(D2)){ const f=fmtDose(D2); rv=f[0]; ru=f[1]; }
+    ctx.fillStyle='#9aa491'; ctx.font='500 30px "IBM Plex Mono", monospace'; ctx.fillText(T('card_src')+' : '+d1v+' '+d1u+' '+T('card_at')+' '+r1v+' '+r1u, W/2, 790);
+    ctx.fillStyle='#ffb627'; ctx.font='600 40px "IBM Plex Mono", monospace'; ctx.fillText('↓  '+r2v+' '+r2u, W/2, 868);
+    ctx.fillStyle='#7dd957'; ctx.font='700 132px "IBM Plex Mono", monospace'; ctx.fillText(rv, W/2, 1030);
+    ctx.fillStyle='#3a8a2a'; ctx.font='600 44px "IBM Plex Mono", monospace'; ctx.fillText(ru, W/2, 1092);
+    const bx=160,by=1230,bw=W-320,bh=320; ctx.strokeStyle='#262b24'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+    if(isFinite(ref)&&isFinite(tgt)&&ref>0&&tgt>0){ const dmin=ref, dmax=Math.max(tgt,ref*5); ctx.beginPath(); for(let i=0;i<=120;i++){ const d=dmin+(dmax-dmin)*i/120, rel=Math.pow(ref/d,2); const px=bx+(d-dmin)/(dmax-dmin)*bw, py=by+bh-rel*bh*0.9; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.strokeStyle='#7dd957'; ctx.lineWidth=5; ctx.stroke(); if(tgt>=dmin&&tgt<=dmax){ const rt=Math.pow(ref/tgt,2), px=bx+(tgt-dmin)/(dmax-dmin)*bw, py=by+bh-rt*bh*0.9; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(px,py,9,0,2*Math.PI); ctx.fill(); } }
+    ctx.fillStyle='#5d6655'; ctx.font='500 22px "IBM Plex Mono", monospace'; ctx.textAlign='left'; ctx.fillText('dose', bx+10, by+30); ctx.textAlign='right'; ctx.fillText('distance →', bx+bw-10, by+bh-12); ctx.textAlign='center';
+    ctx.fillStyle='#9aa491'; ctx.font='500 26px "IBM Plex Mono", monospace'; ctx.fillText(T('card_law'), W/2, by+bh+60);
+    ctx.fillStyle='#5d6655'; ctx.font='500 28px "IBM Plex Mono", monospace'; ctx.fillText('frenchcurie.github.io/Application-DoseScale', W/2, H-150);
+    const tw=120,th=26,tx=W/2-tw/2,ty=H-118; ctx.fillStyle='#0055A4'; ctx.fillRect(tx,ty,tw/3,th); ctx.fillStyle='#ffffff'; ctx.fillRect(tx+tw/3,ty,tw/3,th); ctx.fillStyle='#EF4135'; ctx.fillRect(tx+2*tw/3,ty,tw/3,th); ctx.strokeStyle='#262b24'; ctx.lineWidth=1; ctx.strokeRect(tx,ty,tw,th);
+    return c.toDataURL('image/png');
+  }
+  function generateCard(){ const ready=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve(); ready.then(()=>{ try{ const url=renderCard(); lastCardURL=url; $('cardImg').src=url; $('overlay').classList.add('show'); }catch(e){} }); }
+
+  /* ---- liaisons ---- */
   ['d1','d1u','r1','r1u','r2','r2u'].forEach(i=>$(i).addEventListener('input',calc1));
   ['rate','rateu','budget','budgetu'].forEach(i=>$(i).addEventListener('input',()=>{clearPresetActive(); checkPreset(); calc2();}));
   ['drate','drateu','dur','duru'].forEach(i=>$(i).addEventListener('input',calc3));
-
-  $('pull').addEventListener('click',()=>{
-    const D2 = calc1();
-    if(isFinite(D2)){ $('rate').value = sig(D2); $('rateu').value='1'; calc2(); }
-  });
-  $('pull3').addEventListener('click',()=>{
-    const D2 = calc1();
-    if(isFinite(D2)){ $('drate').value = sig(D2); $('drateu').value='1'; calc3(); }
-  });
-
+  ['srate','srateu','iso','mat','thick','thicku'].forEach(i=>$(i).addEventListener('input',calc4));
+  $('pull').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('rate').value=sig(D2); $('rateu').value='1'; calc2(); } });
+  $('pull3').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('drate').value=sig(D2); $('drateu').value='1'; calc3(); } });
+  $('pull4').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('srate').value=sig(D2); $('srateu').value='1'; calc4(); } });
   function clearPresetActive(){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active')); }
-  function checkPreset(){
-    const v=num('budget'), u=$('budgetu').value;
-    document.querySelectorAll('.preset').forEach(p=>{
-      if(parseFloat(p.dataset.v)===v && p.dataset.u===u) p.classList.add('active');
-    });
-  }
-  document.querySelectorAll('.preset').forEach(p=>{
-    p.addEventListener('click',()=>{
-      clearPresetActive(); p.classList.add('active');
-      $('budget').value = p.dataset.v; $('budgetu').value = p.dataset.u;
-      calc2();
-    });
-  });
+  function checkPreset(){ const v=num('budget'), u=$('budgetu').value; document.querySelectorAll('.preset').forEach(p=>{ if(parseFloat(p.dataset.v)===v && p.dataset.u===u) p.classList.add('active'); }); }
+  document.querySelectorAll('.preset').forEach(p=>{ p.addEventListener('click',()=>{ clearPresetActive(); p.classList.add('active'); $('budget').value=p.dataset.v; $('budgetu').value=p.dataset.u; calc2(); }); });
+  document.querySelectorAll('.lang button').forEach(b=>{ b.addEventListener('click',()=>{ lang=b.dataset.lang; try{ localStorage.setItem('dosecalc_lang',lang); }catch(e){} applyLang(); }); });
+  $('shareBtn').addEventListener('click',generateCard);
+  $('cardClose').addEventListener('click',()=>$('overlay').classList.remove('show'));
+  $('overlay').addEventListener('click',e=>{ if(e.target===$('overlay')) $('overlay').classList.remove('show'); });
+  $('cardDl').addEventListener('click',()=>{ if(!lastCardURL) return; const a=document.createElement('a'); a.href=lastCardURL; a.download='frenchcurie-radioprotection.png'; document.body.appendChild(a); a.click(); a.remove(); });
 
-  document.querySelectorAll('.lang button').forEach(b=>{
-    b.addEventListener('click',()=>{
-      lang = b.dataset.lang;
-      try { localStorage.setItem('dosecalc_lang', lang); } catch(e){}
-      applyLang();
-    });
-  });
-
-  applyLang(); checkPreset();
+  applyLang(); checkPreset(); route();
 })();
 </script>
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-  });
-}
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }); }
 </script>
 </body>
 </html>
