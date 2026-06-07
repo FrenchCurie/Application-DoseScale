@@ -154,7 +154,7 @@
   <!-- ===================== ACCUEIL ===================== -->
   <section id="view-home">
     <p class="home-intro" data-i18n="home_intro">Une suite d'outils de radioprotection à glisser dans ta poche. Choisis un calcul.</p>
-    <div class="cat-h" data-i18n="cat_radio">Radioprotection</div>
+    <div class="cat-h" data-i18n="cat_calc">Calculs de radioprotection</div>
     <div class="tiles">
       <a href="#distance" class="tile">
         <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/><path d="M17 19a12 12 0 0 0-12-12"/></svg></div>
@@ -174,6 +174,24 @@
       <a href="#blindage" class="tile">
         <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.2c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V5.8z"/></svg></div>
         <div class="tile-tx"><h3 data-i18n="tile_blindage">Blindage</h3><p data-i18n="tile_blindage_d">Atténuation par un écran</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+    </div>
+
+    <div class="cat-h" data-i18n="cat_understand" style="margin-top:28px">Comprendre la dose</div>
+    <div class="tiles">
+      <a href="#effets" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 3.5 12 2.5-8 2 2H21"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_effets">Effets de la dose</h3><p data-i18n="tile_effets_d">Effets déterministes & stochastiques</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+    </div>
+
+    <div class="cat-h" data-i18n="cat_convert" style="margin-top:28px">Conversion</div>
+    <div class="tiles">
+      <a href="#conversion" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3.5-3.5M17 17H6l3.5 3.5"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_conv">Convertisseur d'unités</h3><p data-i18n="tile_conv_d">Bq, Ci, Gy, Sv, rem, R…</p></div>
         <span class="tile-ar">›</span>
       </a>
     </div>
@@ -236,6 +254,48 @@
       <div class="row"><div><label data-i18n="m4_thick">Épaisseur de l'écran (x)</label><div class="ig"><input type="number" id="thick" value="2" min="0" step="any" inputmode="decimal"><select id="thicku"><option value="0.1">mm</option><option value="1" selected>cm</option></select></div></div></div>
       <div class="readout"><span class="ro-label" data-i18n="m4_out">Débit de dose après écran</span><span class="ro-val" id="out4">—</span></div>
       <div class="sub-readout"><div class="chip"><span data-i18n="m4_red">Facteur de réduction</span><b id="s_red">—</b></div><div class="chip"><span data-i18n="m4_n">Nombre de CDA</span><b id="s_n">—</b></div><div class="chip"><span data-i18n="m4_hvl">CDA (½ valeur)</span><b id="s_hvl">—</b></div><div class="chip"><span data-i18n="m4_trans">Rayonnement transmis</span><b id="s_trans">—</b></div></div>
+    </div>
+  </section>
+
+  <!-- ===================== CONVERSION ===================== -->
+  <section id="view-conversion" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M7 7h11l-3.5-3.5M17 17H6l3.5 3.5"/></svg></span><h2 data-i18n="cv_title">Convertisseur d'unités</h2></div>
+      <div class="row"><div><label data-i18n="cv_cat">Grandeur</label>
+        <select class="full" id="convCat"><option value="activity" data-i18n="cv_activity">Activité</option><option value="absorbed" data-i18n="cv_absorbed">Dose absorbée</option><option value="equiv" selected data-i18n="cv_equiv">Dose équivalente / efficace</option><option value="exposure" data-i18n="cv_exposure">Exposition</option></select>
+      </div></div>
+      <div class="row"><div><label data-i18n="cv_val">Valeur à convertir</label>
+        <div class="ig"><input type="number" id="convVal" value="1" step="any" inputmode="decimal"><select id="convUnit"></select></div>
+      </div></div>
+      <div class="readout"><span class="ro-label" data-i18n="cv_out">Équivalences</span></div>
+      <div class="sub-readout" id="convOut"></div>
+    </div>
+  </section>
+
+  <!-- ===================== EFFETS ===================== -->
+  <section id="view-effets" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 3.5 12 2.5-8 2 2H21"/></svg></span><h2 data-i18n="ef_title">Effets de la dose</h2></div>
+      <p class="home-intro" style="margin-bottom:16px" data-i18n="ef_intro">Deux familles d'effets.</p>
+      <div class="row"><div><label data-i18n="ef_dose">Dose efficace / aiguë (corps entier)</label>
+        <div class="ig"><input type="number" id="efDose" value="100" min="0" step="any" inputmode="decimal"><select id="efDoseU"><option value="0.001">µSv</option><option value="1" selected>mSv</option><option value="1000">Sv</option></select></div>
+      </div></div>
+      <div class="readout"><span class="ro-label" data-i18n="ef_risk">Risque stochastique</span><span class="ro-val" id="efRisk">—</span></div>
+      <div class="verdict" id="efVerdictS"><span class="dot"></span><span></span></div>
+      <div class="readout"><span class="ro-label" data-i18n="ef_det">Effet déterministe (si dose aiguë)</span><span class="ro-val" id="efDet" style="font-size:clamp(15px,3.6vw,20px);text-align:right">—</span></div>
+      <div class="verdict" id="efVerdictD"><span class="dot"></span><span></span></div>
+      <p style="font-size:11.5px;color:var(--ink-faint);line-height:1.6;margin-top:16px" data-i18n="ef_note">Repères éducatifs.</p>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><h2 data-i18n="ef_ref_t">Repères de dose aiguë</h2></div>
+      <div class="sub-readout">
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r1">…</span></div>
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r2">…</span></div>
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r3">…</span></div>
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r4">…</span></div>
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r5">…</span></div>
+        <div class="chip" style="min-width:100%"><span data-i18n="ef_r6">…</span></div>
+      </div>
     </div>
   </section>
 
@@ -303,6 +363,15 @@
       v3_vlow:"Très faible — ordre du fond naturel", v3_low:"Faible — sous la limite publique annuelle", v3_notable:"Notable — entre limite public et travailleur", v3_high:"Élevée — au-delà des limites réglementaires", v3_vhigh:"Très élevée — domaine des effets sur la santé",
       share_btn:"📷 Carte partageable", card_dl:"Télécharger", card_close:"Fermer", card_hint:"Astuce : appui long sur l'image pour l'enregistrer, ou utilisez Télécharger.",
       card_kicker:"Radioprotection", card_src:"Source", card_at:"à", card_law:"Loi de l'inverse du carré : dose ∝ 1/distance²",
+      cat_calc:"Calculs de radioprotection", cat_understand:"Comprendre la dose", cat_convert:"Conversion",
+      tile_effets:"Effets de la dose", tile_effets_d:"Effets déterministes & stochastiques", tile_conv:"Convertisseur d'unités", tile_conv_d:"Bq, Ci, Gy, Sv, rem, R…",
+      cv_title:"Convertisseur d'unités", cv_cat:"Grandeur", cv_activity:"Activité", cv_absorbed:"Dose absorbée", cv_equiv:"Dose équivalente / efficace", cv_exposure:"Exposition", cv_val:"Valeur à convertir", cv_out:"Équivalences",
+      ef_title:"Effets de la dose", ef_intro:"Deux familles d'effets. Les effets stochastiques (cancers) augmentent en probabilité avec la dose, sans seuil. Les effets déterministes n'apparaissent qu'au-delà d'un seuil de dose aiguë, et leur gravité croît ensuite.",
+      ef_dose:"Dose efficace / aiguë (corps entier)", ef_risk:"Risque stochastique — cancer mortel additionnel (LNT ~5 %/Sv)", ef_det:"Effet déterministe (si dose aiguë)", ef_chance:"soit 1 chance sur",
+      ef_ref_t:"Repères de dose aiguë (corps entier)", ef_note:"Les effets déterministes supposent une dose aiguë unique. Le risque stochastique suit le modèle LNT, débattu aux faibles doses. Repères éducatifs — pas un avis médical.",
+      efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
+      efd_none:"Aucun effet déterministe", efd_blood:"Modifications sanguines possibles", efd_ars:"Syndrome aigu — nausées (seuil ~1 Sv)", efd_severe:"Syndrome aigu sévère, épilation", efd_ld50:"DL50/60 — mortel sans traitement", efd_gi:"Syndrome gastro-intestinal — souvent fatal",
+      ef_r1:"~0,1 Sv — seuil des effets déterministes", ef_r2:"~1 Sv — seuil du syndrome aigu (nausées)", ef_r3:"~4–4,5 Sv — DL50/60 sans traitement", ef_r4:"~6 Sv — syndrome gastro-intestinal", ef_r5:">8 Sv — généralement fatal", ef_r6:"Cristallin : ~0,5 Sv · érythème cutané : ~2 Sv",
       disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b>, sans atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues ni au rayonnement alpha/bêta (faible portée). La dose reçue suppose un débit constant. Les CDA sont des <b>valeurs indicatives</b> (faisceau étroit) ; en géométrie réelle, le rayonnement diffusé (build-up) réduit l'efficacité du blindage. Les budgets de dose sont des doses efficaces de référence (réglementation FR / Euratom 2013/59). Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
     },
     en: {
@@ -327,6 +396,15 @@
       v3_vlow:"Very low — natural background range", v3_low:"Low — below the public annual limit", v3_notable:"Notable — between public and worker limits", v3_high:"High — beyond regulatory limits", v3_vhigh:"Very high — health-effects range",
       share_btn:"📷 Shareable card", card_dl:"Download", card_close:"Close", card_hint:"Tip: long-press the image to save it, or use Download.",
       card_kicker:"Radiation protection", card_src:"Source", card_at:"at", card_law:"Inverse-square law: dose ∝ 1/distance²",
+      cat_calc:"Radiation-protection calculations", cat_understand:"Understanding dose", cat_convert:"Conversion",
+      tile_effets:"Dose effects", tile_effets_d:"Deterministic & stochastic effects", tile_conv:"Unit converter", tile_conv_d:"Bq, Ci, Gy, Sv, rem, R…",
+      cv_title:"Unit converter", cv_cat:"Quantity", cv_activity:"Activity", cv_absorbed:"Absorbed dose", cv_equiv:"Equivalent / effective dose", cv_exposure:"Exposure", cv_val:"Value to convert", cv_out:"Equivalents",
+      ef_title:"Dose effects", ef_intro:"Two families of effects. Stochastic effects (cancers) rise in probability with dose, with no threshold. Deterministic effects appear only above an acute-dose threshold, and their severity then increases.",
+      ef_dose:"Effective / acute dose (whole body)", ef_risk:"Stochastic risk — additional fatal cancer (LNT ~5%/Sv)", ef_det:"Deterministic effect (if acute dose)", ef_chance:"i.e. 1 in",
+      ef_ref_t:"Acute whole-body dose landmarks", ef_note:"Deterministic effects assume a single acute dose. Stochastic risk follows the LNT model, debated at low doses. Educational landmarks — not medical advice.",
+      efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
+      efd_none:"No deterministic effect", efd_blood:"Possible blood-count changes", efd_ars:"Acute syndrome — nausea (threshold ~1 Sv)", efd_severe:"Severe acute syndrome, epilation", efd_ld50:"LD50/60 — fatal without treatment", efd_gi:"Gastrointestinal syndrome — often fatal",
+      ef_r1:"~0.1 Sv — deterministic-effect threshold", ef_r2:"~1 Sv — acute syndrome threshold (nausea)", ef_r3:"~4–4.5 Sv — LD50/60 without treatment", ef_r4:"~6 Sv — gastrointestinal syndrome", ef_r5:">8 Sv — generally fatal", ef_r6:"Eye lens: ~0.5 Sv · skin erythema: ~2 Sv",
       disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b>, with no air attenuation. The inverse-square law does not apply as-is to extended sources or to alpha/beta radiation (short range). The received dose assumes a constant dose rate. HVL values are <b>indicative</b> (narrow beam); in real geometry, scattered radiation (build-up) reduces shielding effectiveness. Dose budgets are reference effective doses (FR / Euratom 2013/59 regulations). An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
     }
   };
@@ -377,16 +455,53 @@
     const red=trans>0?1/trans:Infinity; $('s_red').textContent=isFinite(red)?'÷'+sig(red):'÷∞'; $('s_n').textContent=sig(n); $('s_hvl').textContent=sig(hvl)+' cm'; $('s_trans').textContent=sig(trans*100)+' %';
   }
 
+  /* ---- convertisseur d'unités ---- */
+  const UNITS={
+    activity:{order:['Bq','kBq','MBq','GBq','µCi','mCi','Ci'], f:{Bq:1,kBq:1e3,MBq:1e6,GBq:1e9,'µCi':3.7e4,mCi:3.7e7,Ci:3.7e10}},
+    absorbed:{order:['µGy','mGy','Gy','mrad','rad'], f:{'µGy':1e-6,mGy:1e-3,Gy:1,mrad:1e-5,rad:1e-2}},
+    equiv:{order:['µSv','mSv','Sv','mrem','rem'], f:{'µSv':1e-6,mSv:1e-3,Sv:1,mrem:1e-5,rem:1e-2}},
+    exposure:{order:['mR','R','C/kg'], f:{mR:2.58e-7,R:2.58e-4,'C/kg':1}}
+  };
+  function fmtNum(v){ if(!isFinite(v)) return '—'; if(v===0) return '0'; const a=Math.abs(v); if(a>=1e6||a<1e-4) return v.toExponential(3); if(a>=1) return parseFloat(v.toPrecision(6)).toString(); return parseFloat(v.toPrecision(4)).toString(); }
+  function fillConvUnits(){
+    const g=UNITS[$('convCat').value], sel=$('convUnit'), prev=sel.value; sel.innerHTML='';
+    g.order.forEach(u=>{ const o=document.createElement('option'); o.value=u; o.textContent=u; sel.appendChild(o); });
+    sel.value = g.order.indexOf(prev)>=0 ? prev : (g.order.find(u=>g.f[u]===1)||g.order[0]);
+    convert();
+  }
+  function convert(){
+    const g=UNITS[$('convCat').value], from=$('convUnit').value, val=parseFloat($('convVal').value), out=$('convOut'); out.innerHTML='';
+    if(!isFinite(val)||!g.f[from]) return;
+    const si=val*g.f[from];
+    g.order.forEach(u=>{ const chip=document.createElement('div'); chip.className='chip'; const l=document.createElement('span'); l.textContent=u; const b=document.createElement('b'); b.textContent=fmtNum(si/g.f[u]); if(u===from){ b.style.color='var(--phos)'; } chip.appendChild(l); chip.appendChild(b); out.appendChild(chip); });
+  }
+
+  /* ---- effets de la dose ---- */
+  function calcEffects(){
+    const mSv=num('efDose')*parseFloat($('efDoseU').value);
+    const rEl=$('efRisk'), sDot=$('efVerdictS').querySelector('.dot'), sTxt=$('efVerdictS').querySelector('span:last-child');
+    const dEl=$('efDet'), dDot=$('efVerdictD').querySelector('.dot'), dTxt=$('efVerdictD').querySelector('span:last-child');
+    if(!isFinite(mSv)||mSv<0){ rEl.innerHTML='—'; rEl.style.color=''; rEl.style.textShadow=''; dEl.textContent='—'; dEl.style.color=''; sDot.style.background='#5d6655'; sTxt.textContent=''; dDot.style.background='#5d6655'; dTxt.textContent=''; return; }
+    const Sv=mSv/1000, riskPct=Sv*5;
+    rEl.innerHTML=fmtNum(riskPct)+'<span class="u">%</span>';
+    let chance=''; if(riskPct>0){ chance=' · '+T('ef_chance')+' '+fmtNum(100/riskPct); }
+    let sc,sk; if(mSv<1){sc='#7dd957';sk='efs_negl';} else if(mSv<100){sc='#a8d957';sk='efs_low';} else if(mSv<1000){sc='#ffce5e';sk='efs_notable';} else {sc='#ff5a4d';sk='efs_high';}
+    rEl.style.color=sc; rEl.style.textShadow='0 0 18px '+sc+'44'; const ru=rEl.querySelector('.u'); if(ru) ru.style.color=sc;
+    sDot.style.background=sc; sTxt.style.color=sc; sTxt.textContent=T(sk)+chance;
+    let dc,dk; if(mSv<100){dc='#7dd957';dk='efd_none';} else if(mSv<1000){dc='#ffce5e';dk='efd_blood';} else if(mSv<2000){dc='#ff8a3d';dk='efd_ars';} else if(mSv<4000){dc='#ff8a3d';dk='efd_severe';} else if(mSv<6000){dc='#ff5a4d';dk='efd_ld50';} else {dc='#c0271b';dk='efd_gi';}
+    dEl.textContent=T(dk); dEl.style.color=dc; dDot.style.background=dc; dTxt.textContent='';
+  }
+
   function applyLang(){
     document.documentElement.lang=lang; document.title=T('title');
     document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[lang][k]!==undefined) el.textContent=I18N[lang][k]; });
     document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); if(I18N[lang][k]!==undefined) el.innerHTML=I18N[lang][k]; });
     document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-    calc1(); calc2(); calc3(); calc4();
+    calc1(); calc2(); calc3(); calc4(); convert(); calcEffects();
   }
 
   /* ---- routage par vues ---- */
-  const ROUTES={accueil:'view-home', distance:'view-distance', temps:'view-temps', dose:'view-dose', blindage:'view-blindage'};
+  const ROUTES={accueil:'view-home', distance:'view-distance', temps:'view-temps', dose:'view-dose', blindage:'view-blindage', effets:'view-effets', conversion:'view-conversion'};
   function route(){
     let h=(location.hash||'').replace('#',''); if(!ROUTES[h]) h='accueil';
     Object.values(ROUTES).forEach(id=>$(id).classList.add('hidden'));
@@ -433,6 +548,9 @@
   $('pull').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('rate').value=sig(D2); $('rateu').value='1'; calc2(); } });
   $('pull3').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('drate').value=sig(D2); $('drateu').value='1'; calc3(); } });
   $('pull4').addEventListener('click',()=>{ const D2=calc1(); if(isFinite(D2)){ $('srate').value=sig(D2); $('srateu').value='1'; calc4(); } });
+  $('convCat').addEventListener('change',fillConvUnits);
+  ['convVal','convUnit'].forEach(i=>$(i).addEventListener('input',convert));
+  ['efDose','efDoseU'].forEach(i=>$(i).addEventListener('input',calcEffects));
   function clearPresetActive(){ document.querySelectorAll('.preset').forEach(p=>p.classList.remove('active')); }
   function checkPreset(){ const v=num('budget'), u=$('budgetu').value; document.querySelectorAll('.preset').forEach(p=>{ if(parseFloat(p.dataset.v)===v && p.dataset.u===u) p.classList.add('active'); }); }
   document.querySelectorAll('.preset').forEach(p=>{ p.addEventListener('click',()=>{ clearPresetActive(); p.classList.add('active'); $('budget').value=p.dataset.v; $('budgetu').value=p.dataset.u; calc2(); }); });
@@ -442,7 +560,7 @@
   $('overlay').addEventListener('click',e=>{ if(e.target===$('overlay')) $('overlay').classList.remove('show'); });
   $('cardDl').addEventListener('click',()=>{ if(!lastCardURL) return; const a=document.createElement('a'); a.href=lastCardURL; a.download='frenchcurie-radioprotection.png'; document.body.appendChild(a); a.click(); a.remove(); });
 
-  applyLang(); checkPreset(); route();
+  fillConvUnits(); applyLang(); checkPreset(); route();
 })();
 </script>
 <script>
