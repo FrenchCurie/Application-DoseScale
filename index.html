@@ -248,7 +248,7 @@
       <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.2c0 4.4-3 7.4-7 9-4-1.6-7-4.6-7-9V5.8z"/></svg></span><h2 data-i18n="m4_title">Atténuation par blindage</h2><span class="hint">I = I₀·½^(x/CDA)</span></div>
       <div class="row"><div><label data-i18n="m4_rate">Débit de dose avant écran (I₀)</label><div class="ig"><input type="number" id="srate" value="100" min="0" step="any" inputmode="decimal"><select id="srateu"><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div><button class="link-btn" id="pull4" data-i18n="m4_pull" style="margin-top:8px">↑ Reprendre le débit Distance</button></div></div>
       <div class="row r2">
-        <div><label data-i18n="m4_iso">Source / énergie γ</label><select class="full" id="iso"><option value="am241">Am-241 · 59,5 keV</option><option value="i131">I-131 · 364 keV</option><option value="cs137" selected>Cs-137 · 662 keV</option><option value="co60">Co-60 · 1,25 MeV</option></select></div>
+        <div><label data-i18n="m4_iso">Source / énergie γ</label><select class="full" id="iso"><option value="am241">Am-241 · 59,5 keV</option><option value="i131">I-131 · 364 keV</option><option value="cs137" selected>Cs-137 · 662 keV</option><option value="co60">Co-60 · 1,25 MeV</option><option value="ra226">Ra-226 · ~0,8 MeV</option><option value="unat">U naturel · ~1 MeV</option></select></div>
         <div><label data-i18n="m4_mat">Matériau de l'écran</label><select class="full" id="mat"><option value="pb" data-i18n="mat_pb">Plomb</option><option value="concrete" data-i18n="mat_concrete">Béton</option><option value="water" data-i18n="mat_water">Eau</option><option value="steel" data-i18n="mat_steel">Acier</option></select></div>
       </div>
       <div class="row"><div><label data-i18n="m4_thick">Épaisseur de l'écran (x)</label><div class="ig"><input type="number" id="thick" value="2" min="0" step="any" inputmode="decimal"><select id="thicku"><option value="0.1">mm</option><option value="1" selected>cm</option></select></div></div></div>
@@ -318,7 +318,9 @@
     am241:{pb:0.012, concrete:1.1,  water:3.4,  steel:0.073},
     i131: {pb:0.30,  concrete:3.0,  water:6.3,  steel:0.88},
     cs137:{pb:0.65,  concrete:4.8,  water:8.2,  steel:1.6},
-    co60: {pb:1.2,   concrete:6.2,  water:13.0, steel:2.1}
+    co60: {pb:1.2,   concrete:6.2,  water:13.0, steel:2.1},
+    ra226:{pb:1.4,   concrete:6.5,  water:10.5, steel:1.9},
+    unat: {pb:0.9,   concrete:5.0,  water:9.8,  steel:1.5}
   };
 
   /* ---- échelle de couleur radiation (vert -> rouge) ---- */
@@ -362,7 +364,7 @@
       v1_bg:"Niveau de fond naturel", v1_above:"Légèrement au-dessus du fond", v1_elev:"Débit élevé — vigilance", v1_notable:"Source notable — limiter l'exposition", v1_danger:"Débit important — danger, éloignement requis",
       v3_vlow:"Très faible — ordre du fond naturel", v3_low:"Faible — sous la limite publique annuelle", v3_notable:"Notable — entre limite public et travailleur", v3_high:"Élevée — au-delà des limites réglementaires", v3_vhigh:"Très élevée — domaine des effets sur la santé",
       share_btn:"📷 Carte partageable", card_dl:"Télécharger", card_close:"Fermer", card_hint:"Astuce : appui long sur l'image pour l'enregistrer, ou utilisez Télécharger.",
-      card_kicker:"Radioprotection", card_src:"Source", card_at:"à", card_law:"Loi de l'inverse du carré : dose ∝ 1/distance²",
+      card_kicker:"Radioprotection", card_src:"Source", card_at:"à", card_law:"Loi de l'inverse du carré : dose ∝ 1/distance²", card_safe:"En sécurité dès",
       cat_calc:"Calculs de radioprotection", cat_understand:"Comprendre la dose", cat_convert:"Conversion",
       tile_effets:"Effets de la dose", tile_effets_d:"Effets déterministes & stochastiques", tile_conv:"Convertisseur d'unités", tile_conv_d:"Bq, Ci, Gy, Sv, rem, R…",
       cv_title:"Convertisseur d'unités", cv_cat:"Grandeur", cv_activity:"Activité", cv_absorbed:"Dose absorbée", cv_equiv:"Dose équivalente / efficace", cv_exposure:"Exposition", cv_val:"Valeur à convertir", cv_out:"Équivalences",
@@ -372,7 +374,7 @@
       efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
       efd_none:"Aucun effet déterministe", efd_blood:"Modifications sanguines possibles", efd_ars:"Syndrome aigu — nausées (seuil ~1 Sv)", efd_severe:"Syndrome aigu sévère, épilation", efd_ld50:"DL50/60 — mortel sans traitement", efd_gi:"Syndrome gastro-intestinal — souvent fatal",
       ef_r1:"~0,1 Sv — seuil des effets déterministes", ef_r2:"~1 Sv — seuil du syndrome aigu (nausées)", ef_r3:"~4–4,5 Sv — DL50/60 sans traitement", ef_r4:"~6 Sv — syndrome gastro-intestinal", ef_r5:">8 Sv — généralement fatal", ef_r6:"Cristallin : ~0,5 Sv · érythème cutané : ~2 Sv",
-      disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b>, sans atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues ni au rayonnement alpha/bêta (faible portée). La dose reçue suppose un débit constant. Les CDA sont des <b>valeurs indicatives</b> (faisceau étroit) ; en géométrie réelle, le rayonnement diffusé (build-up) réduit l'efficacité du blindage. Les budgets de dose sont des doses efficaces de référence (réglementation FR / Euratom 2013/59). Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
+      disc:"<b>À propos du modèle.</b> Calculs basés sur une <b>source ponctuelle de rayonnement gamma</b>, sans atténuation dans l'air. La loi de l'inverse du carré ne s'applique pas telle quelle aux sources étendues ni au rayonnement alpha/bêta (faible portée). La dose reçue suppose un débit constant. Les CDA sont des <b>valeurs indicatives</b> (faisceau étroit) ; en géométrie réelle, le rayonnement diffusé (build-up) réduit l'efficacité du blindage. Pour l'uranium naturel et le radium, le γ pénétrant provient des descendants de la chaîne (Bi-214…) ; une énergie effective est utilisée. Les budgets de dose sont des doses efficaces de référence (réglementation FR / Euratom 2013/59). Outil de vulgarisation et d'estimation — il ne remplace ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR."
     },
     en: {
       title:"FrenchCurie · Radiation protection", h1:"FRENCH<span>CURIE</span>", sub:"Toolbox · Radiation protection", tag:"<b>γ</b> radiation",
@@ -395,7 +397,7 @@
       v1_bg:"Natural background level", v1_above:"Slightly above background", v1_elev:"Elevated rate — caution", v1_notable:"Notable source — limit exposure", v1_danger:"High rate — danger, keep your distance",
       v3_vlow:"Very low — natural background range", v3_low:"Low — below the public annual limit", v3_notable:"Notable — between public and worker limits", v3_high:"High — beyond regulatory limits", v3_vhigh:"Very high — health-effects range",
       share_btn:"📷 Shareable card", card_dl:"Download", card_close:"Close", card_hint:"Tip: long-press the image to save it, or use Download.",
-      card_kicker:"Radiation protection", card_src:"Source", card_at:"at", card_law:"Inverse-square law: dose ∝ 1/distance²",
+      card_kicker:"Radiation protection", card_src:"Source", card_at:"at", card_law:"Inverse-square law: dose ∝ 1/distance²", card_safe:"Safe from",
       cat_calc:"Radiation-protection calculations", cat_understand:"Understanding dose", cat_convert:"Conversion",
       tile_effets:"Dose effects", tile_effets_d:"Deterministic & stochastic effects", tile_conv:"Unit converter", tile_conv_d:"Bq, Ci, Gy, Sv, rem, R…",
       cv_title:"Unit converter", cv_cat:"Quantity", cv_activity:"Activity", cv_absorbed:"Absorbed dose", cv_equiv:"Equivalent / effective dose", cv_exposure:"Exposure", cv_val:"Value to convert", cv_out:"Equivalents",
@@ -405,7 +407,7 @@
       efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
       efd_none:"No deterministic effect", efd_blood:"Possible blood-count changes", efd_ars:"Acute syndrome — nausea (threshold ~1 Sv)", efd_severe:"Severe acute syndrome, epilation", efd_ld50:"LD50/60 — fatal without treatment", efd_gi:"Gastrointestinal syndrome — often fatal",
       ef_r1:"~0.1 Sv — deterministic-effect threshold", ef_r2:"~1 Sv — acute syndrome threshold (nausea)", ef_r3:"~4–4.5 Sv — LD50/60 without treatment", ef_r4:"~6 Sv — gastrointestinal syndrome", ef_r5:">8 Sv — generally fatal", ef_r6:"Eye lens: ~0.5 Sv · skin erythema: ~2 Sv",
-      disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b>, with no air attenuation. The inverse-square law does not apply as-is to extended sources or to alpha/beta radiation (short range). The received dose assumes a constant dose rate. HVL values are <b>indicative</b> (narrow beam); in real geometry, scattered radiation (build-up) reduces shielding effectiveness. Dose budgets are reference effective doses (FR / Euratom 2013/59 regulations). An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
+      disc:"<b>About the model.</b> Calculations based on a <b>point source of gamma radiation</b>, with no air attenuation. The inverse-square law does not apply as-is to extended sources or to alpha/beta radiation (short range). The received dose assumes a constant dose rate. HVL values are <b>indicative</b> (narrow beam); in real geometry, scattered radiation (build-up) reduces shielding effectiveness. For natural uranium and radium, the penetrating γ comes from decay-chain daughters (Bi-214…); an effective energy is used. Dose budgets are reference effective doses (FR / Euratom 2013/59 regulations). An educational and estimation tool — it replaces neither a real measurement, a dosimeter, nor the advice of a radiation protection officer."
     }
   };
 
@@ -530,10 +532,11 @@
     ctx.fillStyle='#ffb627'; ctx.font='600 40px "IBM Plex Mono", monospace'; ctx.fillText('↓  '+r2v+' '+r2u, W/2, 868);
     ctx.fillStyle='#7dd957'; ctx.font='700 132px "IBM Plex Mono", monospace'; ctx.fillText(rv, W/2, 1030);
     ctx.fillStyle='#3a8a2a'; ctx.font='600 44px "IBM Plex Mono", monospace'; ctx.fillText(ru, W/2, 1092);
-    const bx=160,by=1230,bw=W-320,bh=320; ctx.strokeStyle='#262b24'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
-    if(isFinite(ref)&&isFinite(tgt)&&ref>0&&tgt>0){ const dmin=ref, dmax=Math.max(tgt,ref*5); ctx.beginPath(); for(let i=0;i<=120;i++){ const d=dmin+(dmax-dmin)*i/120, rel=Math.pow(ref/d,2); const px=bx+(d-dmin)/(dmax-dmin)*bw, py=by+bh-rel*bh*0.9; if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);} ctx.strokeStyle='#7dd957'; ctx.lineWidth=5; ctx.stroke(); if(tgt>=dmin&&tgt<=dmax){ const rt=Math.pow(ref/tgt,2), px=bx+(tgt-dmin)/(dmax-dmin)*bw, py=by+bh-rt*bh*0.9; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(px,py,9,0,2*Math.PI); ctx.fill(); } }
-    ctx.fillStyle='#5d6655'; ctx.font='500 22px "IBM Plex Mono", monospace'; ctx.textAlign='left'; ctx.fillText('dose', bx+10, by+30); ctx.textAlign='right'; ctx.fillText('distance →', bx+bw-10, by+bh-12); ctx.textAlign='center';
-    ctx.fillStyle='#9aa491'; ctx.font='500 26px "IBM Plex Mono", monospace'; ctx.fillText(T('card_law'), W/2, by+bh+60);
+    const dSafe=ref*Math.sqrt(D1/0.5); let safeStr='—'; if(isFinite(dSafe)) safeStr=(dSafe>=1?'≈ '+sig(dSafe)+' m':'≈ '+sig(dSafe*100)+' cm');
+    const bx=170,by=1255,bw=W-340,bh=280; ctx.fillStyle='rgba(125,217,87,.06)'; ctx.fillRect(bx,by,bw,bh); ctx.strokeStyle='#3a8a2a'; ctx.lineWidth=2; ctx.strokeRect(bx,by,bw,bh);
+    ctx.fillStyle='#9aa491'; ctx.font='500 32px "IBM Plex Mono", monospace'; ctx.fillText(T('card_safe'), W/2, by+92);
+    ctx.fillStyle='#7dd957'; ctx.font='700 104px "IBM Plex Mono", monospace'; ctx.fillText(safeStr, W/2, by+200);
+    ctx.fillStyle='#5d6655'; ctx.font='500 26px "IBM Plex Mono", monospace'; ctx.fillText('< 0,5 µSv/h', W/2, by+250);
     ctx.fillStyle='#5d6655'; ctx.font='500 28px "IBM Plex Mono", monospace'; ctx.fillText('frenchcurie.github.io/Application-DoseScale', W/2, H-150);
     const tw=120,th=26,tx=W/2-tw/2,ty=H-118; ctx.fillStyle='#0055A4'; ctx.fillRect(tx,ty,tw/3,th); ctx.fillStyle='#ffffff'; ctx.fillRect(tx+tw/3,ty,tw/3,th); ctx.fillStyle='#EF4135'; ctx.fillRect(tx+2*tw/3,ty,tw/3,th); ctx.strokeStyle='#262b24'; ctx.lineWidth=1; ctx.strokeRect(tx,ty,tw,th);
     return c.toDataURL('image/png');
