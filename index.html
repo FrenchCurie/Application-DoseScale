@@ -124,6 +124,27 @@
   .step-h .step-n{width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--amber);color:#0a0e14;font-family:var(--disp);font-weight:700;font-size:13px}
   .step-h .step-t{font-family:var(--disp);font-weight:600;font-size:15px;letter-spacing:.01em}
   .step-h .hint{margin-left:auto}
+  .iso-filters{display:flex;gap:7px;flex-wrap:wrap;margin:14px 0 12px}
+  .iso-fchip{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-dim);background:#0b1017;border:1px solid var(--panel-edge);border-radius:7px;padding:7px 12px;cursor:pointer;transition:.15s}
+  .iso-fchip:hover{border-color:var(--amber);color:var(--amber)}
+  .iso-fchip.active{background:var(--amber);color:#0a0e14;border-color:var(--amber);font-weight:600}
+  .iso-legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+  .iso-legend span{display:inline-flex;align-items:center;gap:6px}
+  .rb{display:inline-grid;place-items:center;min-width:22px;height:20px;padding:0 5px;border-radius:5px;font-family:var(--mono);font-weight:600;font-size:11px;font-style:normal;line-height:1}
+  .rb-a{color:#ff8a6b;background:rgba(255,138,107,.12);border:1px solid #5a2f24}
+  .rb-b{color:#6bb6ff;background:rgba(107,182,255,.12);border:1px solid #24405a}
+  .rb-bp{color:#c08bff;background:rgba(192,139,255,.12);border:1px solid #3f2a5a}
+  .rb-g{color:#2dd4a7;background:rgba(45,212,167,.12);border:1px solid #1a5a48}
+  .iso-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--panel-edge);border-radius:11px;background:linear-gradient(180deg,#10161f,#0b1017);padding:13px 15px;margin-bottom:8px}
+  .iso-name{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink);min-width:78px}
+  .iso-hl{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:2px}
+  .iso-rads{display:flex;gap:5px;flex:none}
+  .iso-g{flex:1;min-width:140px;font-family:var(--mono);font-size:12px;color:var(--ink-dim);text-align:right}
+  .iso-g b{color:#2dd4a7;font-weight:600}
+  .iso-g .none{color:var(--ink-faint)}
+  .iso-src{width:100%;font-size:11px;color:var(--ink-faint);margin-top:2px}
+  .iso-cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:2px 6px;border-radius:4px;border:1px solid var(--panel-edge);color:var(--ink-faint);flex:none}
+  .iso-cat.nat{color:#7dd957;border-color:#3a5a2a}.iso-cat.art{color:#ff8a6b;border-color:#5a2f24}
   .card-cta:hover{border-color:var(--amber);background:rgba(255,182,39,.07)}
   .abt{font-size:13px;line-height:1.7;color:var(--ink-dim)}
   .abt b{color:var(--ink);font-weight:600}
@@ -222,6 +243,11 @@
       <a href="spectro.html" class="tile">
         <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M4 15l4-5 4 3 4-7 4 5"/></svg></div>
         <div class="tile-tx"><h3 data-i18n="tile_spectro">Analyse de spectre</h3><p data-i18n="tile_spectro_d">Fichiers Radiacode · identification d'isotopes</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+      <a href="#isotopes" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_isotopes">Bibliothèque d'isotopes</h3><p data-i18n="tile_isotopes_d">α/β/γ · raies gamma théoriques</p></div>
         <span class="tile-ar">›</span>
       </a>
     </div>
@@ -338,6 +364,29 @@
     <div class="card"><div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9z"/></svg></span><h2 data-i18n="ap_h_credits">Crédits</h2></div><div class="abt" data-i18n-html="ap_credits"></div></div>
   </section>
 
+  <!-- ===================== BIBLIOTHÈQUE D'ISOTOPES ===================== -->
+  <section id="view-isotopes" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="9" ry="4" fill="none"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)" fill="none"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)" fill="none"/></svg></span><h2 data-i18n="iso_title">Bibliothèque d'isotopes</h2></div>
+      <p class="note" data-i18n="iso_intro">Type de rayonnement et principales raies gamma (théoriques, en keV) des isotopes courants.</p>
+      <div class="row"><div><input type="text" id="isoSearch" class="full" placeholder="Rechercher (Cs-137, radium…)"></div></div>
+      <div class="iso-filters" id="isoFilters">
+        <span class="iso-fchip active" data-f="all" data-i18n="iso_all">Tous</span>
+        <span class="iso-fchip" data-f="nat" data-i18n="iso_nat">Naturels</span>
+        <span class="iso-fchip" data-f="art" data-i18n="iso_art">Artificiels</span>
+        <span class="iso-fchip" data-f="gamma" data-i18n="iso_gammaonly">Émetteurs γ</span>
+      </div>
+      <div class="iso-legend">
+        <span><i class="rb rb-a">α</i> <span data-i18n="iso_alpha">alpha</span></span>
+        <span><i class="rb rb-b">β</i> <span data-i18n="iso_beta">bêta</span></span>
+        <span><i class="rb rb-bp">β⁺</i> <span data-i18n="iso_betap">bêta+</span></span>
+        <span><i class="rb rb-g">γ</i> <span data-i18n="iso_gamma">gamma</span></span>
+      </div>
+    </div>
+    <div id="isoList"></div>
+    <p class="disc" data-i18n="iso_note" style="margin-top:6px">Demi-vies et raies indicatives (valeurs de référence usuelles). Les émetteurs β purs (Sr-90, H-3, C-14…) n'ont pas de raie γ exploitable.</p>
+  </section>
+
   <div class="disc" data-i18n-html="disc"></div>
   <footer>FRENCH<span>CURIE</span> · 🇫🇷</footer>
 
@@ -422,6 +471,12 @@
       efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
       tile_apropos:"Méthodologie", tile_apropos_d:"Modèles, sources & bonne pratique", install_btn:"📲 Installer l'app",
       cat_spectro:"Spectrométrie", tile_spectro:"Analyse de spectre", tile_spectro_d:"Fichiers Radiacode · identification d'isotopes",
+      tile_isotopes:"Bibliothèque d'isotopes", tile_isotopes_d:"α/β/γ · raies gamma théoriques",
+      iso_title:"Bibliothèque d'isotopes", iso_intro:"Type de rayonnement et principales raies gamma (théoriques, en keV) des isotopes courants.",
+      iso_all:"Tous", iso_nat:"Naturel", iso_art:"Artificiel", iso_gammaonly:"Émetteurs γ",
+      iso_alpha:"alpha", iso_beta:"bêta", iso_betap:"bêta+", iso_gamma:"gamma",
+      iso_glabel:"γ :", iso_nogamma:"pas de raie γ exploitable", iso_empty:"Aucun isotope ne correspond.",
+      iso_note:"Demi-vies et raies indicatives (valeurs de référence usuelles). Les émetteurs β purs (Sr-90, H-3, C-14…) n'ont pas de raie γ exploitable.",
       ap_h_about:"À propos", ap_about:"FrenchCurie est une boîte à outils de <b>vulgarisation</b> de la radioprotection. Les calculs sont des <b>estimations</b> à but pédagogique : ils ne remplacent ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR (personne compétente en radioprotection).",
       ap_h_iss:"Loi de l'inverse du carré & mesure", ap_iss:"L'outil Distance modélise une <b>source ponctuelle de rayonnement γ</b> : le débit décroît en 1/distance². Ce modèle n'est valable qu'en <b>champ lointain</b> et pour le γ. En pratique :<ul><li>une source se comporte comme ponctuelle à partir d'environ <b>3 à 5× sa plus grande dimension</b> ;</li><li>au contact, le rayonnement <b>β</b> et les photons de basse énergie (absorbés en quelques dizaines de cm d'air) gonflent la lecture ;</li><li>mesure ta référence à <b>≥ 50 cm</b>, cristal orienté vers la source, et soustrais ton fond ;</li><li>pour isoler le β, refais la mesure derrière <b>quelques mm d'aluminium</b> (la chute = part β).</li></ul>",
       ap_h_shield:"Blindage", ap_shield:"L'atténuation suit I = I₀ · ½^(x/CDA), avec des couches de demi-atténuation <b>indicatives</b> (faisceau étroit). En géométrie réelle, le rayonnement diffusé (facteur de build-up) réduit l'efficacité du blindage. Pour l'uranium naturel et le radium, le γ pénétrant provient des <b>descendants de la chaîne</b> (Bi-214…) ; une énergie effective est utilisée.",
@@ -471,6 +526,12 @@
       efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
       tile_apropos:"Methodology", tile_apropos_d:"Models, sources & good practice", install_btn:"📲 Install the app",
       cat_spectro:"Spectrometry", tile_spectro:"Spectrum analysis", tile_spectro_d:"Radiacode files · isotope identification",
+      tile_isotopes:"Isotope library", tile_isotopes_d:"α/β/γ · theoretical gamma lines",
+      iso_title:"Isotope library", iso_intro:"Radiation type and main gamma lines (theoretical, in keV) of common isotopes.",
+      iso_all:"All", iso_nat:"Natural", iso_art:"Artificial", iso_gammaonly:"γ emitters",
+      iso_alpha:"alpha", iso_beta:"beta", iso_betap:"beta+", iso_gamma:"gamma",
+      iso_glabel:"γ:", iso_nogamma:"no usable γ line", iso_empty:"No matching isotope.",
+      iso_note:"Indicative half-lives and lines (usual reference values). Pure β emitters (Sr-90, H-3, C-14…) have no usable γ line.",
       ap_h_about:"About", ap_about:"FrenchCurie is an <b>educational</b> radiation-protection toolbox. The calculations are <b>estimates</b> for learning: they replace neither a real measurement, a dosimeter, nor the advice of a radiation protection officer.",
       ap_h_iss:"Inverse-square law & measurement", ap_iss:"The Distance tool models a <b>point γ source</b>: dose rate falls as 1/distance². This model only holds in the <b>far field</b> and for γ. In practice:<ul><li>a source behaves as point-like beyond about <b>3–5× its largest dimension</b>;</li><li>up close, <b>β</b> radiation and low-energy photons (absorbed within tens of cm of air) inflate the reading;</li><li>take your reference at <b>≥ 50 cm</b>, crystal facing the source, and subtract background;</li><li>to isolate β, repeat behind <b>a few mm of aluminium</b> (the drop = β contribution).</li></ul>",
       ap_h_shield:"Shielding", ap_shield:"Attenuation follows I = I₀ · ½^(x/HVL), with <b>indicative</b> half-value layers (narrow beam). In real geometry, scattered radiation (build-up factor) reduces effectiveness. For natural uranium and radium, the penetrating γ comes from <b>decay-chain daughters</b> (Bi-214…); an effective energy is used.",
@@ -577,11 +638,11 @@
     document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); if(I18N[lang][k]!==undefined) el.textContent=I18N[lang][k]; });
     document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); if(I18N[lang][k]!==undefined) el.innerHTML=I18N[lang][k]; });
     document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-    calcSource(); calc2(); calc4(); convert();
+    calcSource(); calc2(); calc4(); convert(); if(typeof renderIsotopes==='function') renderIsotopes();
   }
 
   /* ---- routage par vues ---- */
-  const ROUTES={accueil:'view-home', source:'view-source', temps:'view-temps', blindage:'view-blindage', conversion:'view-conversion', apropos:'view-about'};
+  const ROUTES={accueil:'view-home', source:'view-source', temps:'view-temps', blindage:'view-blindage', conversion:'view-conversion', apropos:'view-about', isotopes:'view-isotopes'};
   function route(){
     let h=(location.hash||'').replace('#',''); if(!ROUTES[h]) h='accueil';
     Object.values(ROUTES).forEach(id=>$(id).classList.add('hidden'));
@@ -621,7 +682,77 @@
   }
   function generateCard(){ const ready=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve(); ready.then(()=>{ try{ const url=renderCard(); lastCardURL=url; $('cardImg').src=url; $('overlay').classList.add('show'); }catch(e){} }); }
 
+  /* ---- bibliothèque d'isotopes ---- */
+  const ISOTOPES=[
+    // --- naturels (chaîne U-238) ---
+    {n:'U-238', cat:'nat', hl:'4,47 Md a', rad:['α'], g:[], src:'Tête de chaîne U-238'},
+    {n:'Th-234', cat:'nat', hl:'24,1 j', rad:['β','γ'], g:[63.3,92.6], src:'Chaîne U-238'},
+    {n:'Pa-234m', cat:'nat', hl:'1,17 min', rad:['β','γ'], g:[1001.0], src:'Chaîne U-238'},
+    {n:'U-234', cat:'nat', hl:'245 ka', rad:['α'], g:[], src:'Chaîne U-238'},
+    {n:'Ra-226', cat:'nat', hl:'1600 a', rad:['α','γ'], g:[186.2], src:'Chaîne U-238 (radium)'},
+    {n:'Rn-222', cat:'nat', hl:'3,82 j', rad:['α'], g:[], src:'Radon (gaz)'},
+    {n:'Pb-214', cat:'nat', hl:'26,8 min', rad:['β','γ'], g:[351.9,295.2,242.0], src:'Chaîne U-238'},
+    {n:'Bi-214', cat:'nat', hl:'19,9 min', rad:['β','γ'], g:[609.3,1764.5,1120.3,1238.1,768.4], src:'Chaîne U-238'},
+    {n:'Pb-210', cat:'nat', hl:'22,2 a', rad:['β','γ'], g:[46.5], src:'Chaîne U-238'},
+    {n:'Po-210', cat:'nat', hl:'138 j', rad:['α'], g:[], src:'Chaîne U-238'},
+    // --- naturels (chaîne Th-232) ---
+    {n:'Th-232', cat:'nat', hl:'14 Md a', rad:['α'], g:[], src:'Tête de chaîne Th-232'},
+    {n:'Ac-228', cat:'nat', hl:'6,15 h', rad:['β','γ'], g:[911.2,969.0,338.3], src:'Chaîne Th-232'},
+    {n:'Pb-212', cat:'nat', hl:'10,6 h', rad:['β','γ'], g:[238.6], src:'Chaîne Th-232'},
+    {n:'Bi-212', cat:'nat', hl:'60,5 min', rad:['α','β','γ'], g:[727.3], src:'Chaîne Th-232'},
+    {n:'Tl-208', cat:'nat', hl:'3,05 min', rad:['β','γ'], g:[2614.5,583.2,510.8], src:'Chaîne Th-232'},
+    // --- naturels (U-235 & primordial) ---
+    {n:'U-235', cat:'nat', hl:'704 Ma', rad:['α','γ'], g:[185.7,143.8,163.3,205.3], src:'Chaîne U-235'},
+    {n:'K-40', cat:'nat', hl:'1,25 Md a', rad:['β','γ'], g:[1460.8], src:'Primordial (potassium)'},
+    // --- artificiels ---
+    {n:'Cs-137', cat:'art', hl:'30,1 a', rad:['β','γ'], g:[661.7], src:'Fission · contamination'},
+    {n:'Cs-134', cat:'art', hl:'2,06 a', rad:['β','γ'], g:[604.7,795.9], src:'Fission'},
+    {n:'Co-60', cat:'art', hl:'5,27 a', rad:['β','γ'], g:[1173.2,1332.5], src:'Activation · industriel'},
+    {n:'Co-57', cat:'art', hl:'272 j', rad:['γ'], g:[122.1,136.5], src:'Médical · étalonnage'},
+    {n:'Am-241', cat:'art', hl:'432 a', rad:['α','γ'], g:[59.5], src:'Détecteurs de fumée'},
+    {n:'I-131', cat:'art', hl:'8,02 j', rad:['β','γ'], g:[364.5,637.0,284.3], src:'Médical (thyroïde)'},
+    {n:'I-125', cat:'art', hl:'59,4 j', rad:['γ'], g:[35.5,27.5], src:'Médical (curiethérapie)'},
+    {n:'Tc-99m', cat:'art', hl:'6,01 h', rad:['γ'], g:[140.5], src:'Médical (imagerie)'},
+    {n:'Na-22', cat:'art', hl:'2,60 a', rad:['β⁺','γ'], g:[1274.5,511.0], src:'Étalonnage (β⁺)'},
+    {n:'F-18', cat:'art', hl:'110 min', rad:['β⁺'], g:[511.0], src:'Médical (TEP)'},
+    {n:'Sr-90', cat:'art', hl:'28,8 a', rad:['β'], g:[], src:'Fission · β pur → Y-90'},
+    {n:'Y-90', cat:'art', hl:'64 h', rad:['β'], g:[], src:'β pur (descendant Sr-90)'},
+    {n:'H-3', cat:'art', hl:'12,3 a', rad:['β'], g:[], src:'Tritium · β pur'},
+    {n:'C-14', cat:'art', hl:'5730 a', rad:['β'], g:[], src:'Datation · β pur'},
+    {n:'Eu-152', cat:'art', hl:'13,5 a', rad:['β','γ'], g:[121.8,344.3,1408.0,964.1], src:'Source d\'étalonnage'},
+    {n:'Ba-133', cat:'art', hl:'10,5 a', rad:['γ'], g:[356.0,81.0,302.9,383.9], src:'Source d\'étalonnage'},
+    {n:'Ir-192', cat:'art', hl:'73,8 j', rad:['β','γ'], g:[316.5,468.1,308.5], src:'Radiographie industrielle'},
+    {n:'Pu-239', cat:'art', hl:'24,1 ka', rad:['α'], g:[], src:'Fissile · faibles γ'}
+  ];
+  const RBCLASS={'α':'rb-a','β':'rb-b','β⁺':'rb-bp','γ':'rb-g'};
+  let isoFilter='all';
+  function renderIsotopes(){
+    const q=($('isoSearch').value||'').trim().toLowerCase();
+    const list=$('isoList'); list.innerHTML='';
+    const rows=ISOTOPES.filter(it=>{
+      if(isoFilter==='nat'&&it.cat!=='nat') return false;
+      if(isoFilter==='art'&&it.cat!=='art') return false;
+      if(isoFilter==='gamma'&&it.g.length===0) return false;
+      if(q&&!(it.n.toLowerCase().includes(q)||(it.src||'').toLowerCase().includes(q))) return false;
+      return true;
+    });
+    if(!rows.length){ list.innerHTML='<p style="color:var(--ink-faint);font-size:13px;padding:4px">'+T('iso_empty')+'</p>'; return; }
+    rows.forEach(it=>{
+      const badges=it.rad.map(r=>'<i class="rb '+(RBCLASS[r]||'rb-g')+'">'+r+'</i>').join('');
+      const gline = it.g.length ? T('iso_glabel')+' <b>'+it.g.map(e=>Math.round(e)).join(' · ')+'</b> keV' : '<span class="none">'+T('iso_nogamma')+'</span>';
+      const row=document.createElement('div'); row.className='iso-row';
+      row.innerHTML='<div><div class="iso-name">'+it.n+'</div><div class="iso-hl">'+it.hl+'</div></div>'+
+        '<span class="iso-cat '+it.cat+'">'+T(it.cat==='nat'?'iso_nat':'iso_art')+'</span>'+
+        '<div class="iso-rads">'+badges+'</div>'+
+        '<div class="iso-g">'+gline+'</div>'+
+        (it.src?'<div class="iso-src">'+it.src+'</div>':'');
+      list.appendChild(row);
+    });
+  }
+
   /* ---- liaisons ---- */
+  $('isoSearch').addEventListener('input',renderIsotopes);
+  document.querySelectorAll('#isoFilters .iso-fchip').forEach(c=>c.addEventListener('click',()=>{ document.querySelectorAll('#isoFilters .iso-fchip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); isoFilter=c.dataset.f; renderIsotopes(); }));
   ['d1','d1u','r1','r1u','r2','r2u','geom','expT','expTu'].forEach(i=>$(i).addEventListener('input',calcSource));
   ['rate','rateu','budget','budgetu'].forEach(i=>$(i).addEventListener('input',()=>{clearPresetActive(); checkPreset(); calc2();}));
   ['srate','srateu','iso','mat','thick','thicku'].forEach(i=>$(i).addEventListener('input',calc4));
@@ -644,7 +775,7 @@
   $('overlay').addEventListener('click',e=>{ if(e.target===$('overlay')) $('overlay').classList.remove('show'); });
   $('cardDl').addEventListener('click',()=>{ if(!lastCardURL) return; const a=document.createElement('a'); a.href=lastCardURL; a.download='frenchcurie-radioprotection.png'; document.body.appendChild(a); a.click(); a.remove(); });
 
-  fillConvUnits(); applyLang(); checkPreset(); route();
+  fillConvUnits(); applyLang(); checkPreset(); renderIsotopes(); route();
 })();
 </script>
 <script>

@@ -158,7 +158,7 @@
       v_single:"Chaîne",v_mixte:"Signatures mixtes",v_none:"Indéterminée",
       fam_u238:"chaîne U-238 (uranium / radium)",fam_th232:"chaîne Th-232 (thorium)",fam_prim:"K-40 (potassium)",fam_art:"isotope artificiel",fam_x:"annihilation β⁺",
       verdict_u:"Minéral uranifère — chaîne U-238 en équilibre",
-      disc:"<b>Identification assistée.</b> Le RC-110 a une faible résolution (peu de canaux, pics larges) : les candidats sont <b>indicatifs</b>, fondés sur la cohérence de chaîne, et non quantitatifs (pas d'activité). Les énergies peuvent être légèrement décalées selon la calibration de ton détecteur. Vérifie toujours avec ton app Radiacode et ton expérience. Outil FrenchCurie de vulgarisation."
+      disc:"<b>Identification assistée.</b> Le RC-110 a une faible résolution (peu de canaux, pics larges) : les candidats sont <b>indicatifs</b>, fondés sur la cohérence de chaîne, et non quantitatifs (pas d'activité). Les énergies affichées sont les <b>raies théoriques</b> de l'isotope identifié (indépendantes de la calibration de ton détecteur) ; le pic mesuré peut être légèrement décalé. Vérifie toujours avec ton app Radiacode et ton expérience. Outil FrenchCurie de vulgarisation."
     },
     en:{h1:"FRENCH<span>CURIE</span>",sub:"γ Spectrometry",back:"← Home",
       drop_t:"Load a Radiacode spectrum",drop_d:"Drop an <b>.xml</b> file exported from the Radiacode app, or <span class=\"browse\">browse</span>.",
@@ -169,7 +169,7 @@
       v_single:"Chain",v_mixte:"Mixed signatures",v_none:"Undetermined",
       fam_u238:"U-238 chain (uranium / radium)",fam_th232:"Th-232 chain (thorium)",fam_prim:"K-40 (potassium)",fam_art:"artificial isotope",fam_x:"β⁺ annihilation",
       verdict_u:"Uranium-bearing mineral — U-238 chain in equilibrium",
-      disc:"<b>Assisted identification.</b> The RC-110 has low resolution (few channels, broad peaks): candidates are <b>indicative</b>, based on chain coherence, and not quantitative (no activity). Energies may be slightly shifted depending on your detector calibration. Always cross-check with your Radiacode app and experience. FrenchCurie educational tool."
+      disc:"<b>Assisted identification.</b> The RC-110 has low resolution (few channels, broad peaks): candidates are <b>indicative</b>, based on chain coherence, and not quantitative (no activity). Displayed energies are the <b>theoretical lines</b> of the identified isotope (independent of your detector calibration); the measured peak may be slightly shifted. Always cross-check with your Radiacode app and experience. FrenchCurie educational tool."
     }
   };
   let lang='fr';
@@ -292,9 +292,10 @@
       const row=document.createElement('div');row.className='peak';
       let alt='';
       const others=cands.filter(c=>c.iso!==(best&&best.iso)).slice(0,1);
-      if(others.length)alt='<div class="alt">'+T('alt')+' : '+others[0].iso+' ('+Math.round(others[0].e)+')</div>';
-      row.innerHTML='<div class="pe">'+Math.round(Ep)+' keV</div>'+
-        '<div class="pi"><b>'+(best?best.iso+' · '+Math.round(best.e)+' keV':T('none'))+'</b>'+alt+'</div>'+
+      if(others.length)alt='<div class="alt">'+T('alt')+' : '+others[0].iso+' ('+Math.round(others[0].e)+' keV)</div>';
+      const eShown = best ? Math.round(best.e)+' keV' : '~'+Math.round(Ep)+' keV';
+      row.innerHTML='<div class="pe">'+eShown+'</div>'+
+        '<div class="pi"><b>'+(best?best.iso:T('none'))+'</b>'+alt+'</div>'+
         (best?'<span class="fam '+FAMCLASS[best.fam]+'">'+best.fam.toUpperCase().replace('PRIM','K-40').replace('ART','ARTIF.')+'</span>':'');
       ph.appendChild(row);
     });
@@ -333,7 +334,7 @@
       ctx.fillStyle=opts.lbl||'#e8ecdf';ctx.font='bold 11px "IBM Plex Mono", monospace';
       ctx.fillText(best?best.iso:'?',px,Y+10);
       ctx.fillStyle=opts.tick||'#94a3a0';ctx.font='10px "IBM Plex Mono", monospace';
-      ctx.fillText(Math.round(d.E[idx]),px,py-6);
+      ctx.fillText(best?Math.round(best.e):Math.round(d.E[idx]),px,py-6);
     });
   }
   function drawChart(){
@@ -370,7 +371,7 @@
     let y=1010;const seen=new Set();
     DATA.peaks.forEach(i=>{const b=labelFor(DATA.E[i]);if(!b||seen.has(b.iso))return;seen.add(b.iso);if(y>1230)return;
       ctx.fillStyle='#2dd4a7';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(b.iso,100,y);
-      ctx.fillStyle='#586066';ctx.fillText(Math.round(DATA.E[i])+' keV',300,y);y+=40;});
+      ctx.fillStyle='#586066';ctx.fillText(Math.round(b.e)+' keV',300,y);y+=40;});
     // footer
     ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.textAlign='center';ctx.fillText('@frenchcurie · RC-110',W/2,H-70);
     lastURL=c.toDataURL('image/png');$('cardImg').src=lastURL;$('overlay').classList.add('show');
