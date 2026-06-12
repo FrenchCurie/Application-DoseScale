@@ -50,6 +50,10 @@
   h1 span{color:var(--amber)}
   .sub{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
   .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .head-top{display:flex;align-items:center;gap:9px}
+  .ig-link{display:grid;place-items:center;width:32px;height:30px;flex:none;border:1px solid var(--panel-edge);border-radius:7px;color:var(--ink-dim);text-decoration:none;transition:.15s}
+  .ig-link:hover{border-color:var(--amber);color:var(--amber);background:rgba(255,182,39,.07)}
+  .ig-link svg{width:17px;height:17px;display:block}
   .lang{display:flex;border:1px solid var(--panel-edge);border-radius:7px;overflow:hidden}
   .lang button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:0;color:var(--ink-dim);padding:6px 12px;cursor:pointer;transition:.15s}
   .lang button:hover{color:var(--ink)}
@@ -190,7 +194,10 @@
       </div>
     </div>
     <div class="head-right">
-      <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+      <div class="head-top">
+        <a href="https://instagram.com/frenchcurie" target="_blank" rel="noopener" class="ig-link" aria-label="Instagram @frenchcurie" title="@frenchcurie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div>
+      </div>
       <div class="tag" data-i18n-html="tag">rayonnement <b>γ</b></div>
     </div>
   </header>
