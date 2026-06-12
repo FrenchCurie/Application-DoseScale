@@ -225,7 +225,9 @@
   <!-- ===================== DISTANCE ===================== -->
   <section id="view-distance" class="hidden">
     <div class="card">
-      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/></svg></span><h2 data-i18n="m1_title">Débit de dose selon la distance</h2><span class="hint">D₂ = D₁·(d₁/d₂)²</span></div>
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="5" cy="19" r="1.4" fill="#ffb627" stroke="none"/><path d="M9 19a4 4 0 0 0-4-4"/><path d="M13 19a8 8 0 0 0-8-8"/></svg></span><h2 data-i18n="m1_title">Débit de dose selon la distance</h2><span class="hint" id="m1hint">D₂ = D₁·(d₁/d₂)²</span></div>
+      <div class="row"><div><label data-i18n="m1_geom">Géométrie de la source</label><select class="full" id="geom"><option value="2" selected data-i18n="geom_point">Ponctuelle (1/d²)</option><option value="1" data-i18n="geom_line">Linéaire (1/d)</option><option value="0" data-i18n="geom_plane">Surfacique (≈ const.)</option></select></div></div>
+      <p class="note" id="geomNote">Petite source ou mesure lointaine : le débit décroît en 1/distance².</p>
       <div class="row r2">
         <div><label data-i18n="m1_d1">Débit de dose connu (D₁)</label><div class="ig"><input type="number" id="d1" value="100" min="0" step="any" inputmode="decimal"><select id="d1u"><option value="0.001">nSv/h</option><option value="1">µSv/h</option><option value="1000">mSv/h</option><option value="1000000">Sv/h</option></select></div></div>
         <div><label data-i18n="m1_ref">À la distance de référence (d₁)</label><div class="ig"><input type="number" id="r1" value="50" min="0" step="any" inputmode="decimal"><select id="r1u"><option value="0.01" selected>cm</option><option value="1">m</option></select></div></div>
@@ -388,6 +390,8 @@
       tile_blindage:"Blindage", tile_blindage_d:"Atténuation par un écran",
       m1_title:"Débit de dose selon la distance", m1_d1:"Débit de dose connu (D₁)", m1_ref:"À la distance de référence (d₁)", m1_tgt:"Distance cible (d₂)", m1_out:"Débit de dose estimé à d₂",
       g_bg:"fond ~0.1", m1_factor:"Facteur d'atténuation", m1_safe:"Distance pour 0,5 µSv/h",
+      m1_geom:"Géométrie de la source", geom_point:"Ponctuelle (1/d²)", geom_line:"Linéaire (1/d)", geom_plane:"Surfacique (≈ const.)",
+      geom_note_point:"Petite source ou mesure lointaine : le débit décroît en 1/distance².", geom_note_line:"Source allongée (tuyau, fil, ligne) : le débit décroît en 1/distance.", geom_note_plane:"Grande surface (sol, mur, gros échantillon plat) : le débit varie peu avec la distance.",
       m1_mindist:"Conseil : mesure ta référence à ≥ 50 cm (ou ≥ 3–5× la taille de la source). Plus près, le rayonnement β et la géométrie faussent la loi en 1/d².",
       m1_warn:"Distance < 50 cm : en champ proche, le β et la géométrie étendue rendent l'estimation peu fiable. Éloigne-toi pour une mesure γ propre.",
       m2_title:"Temps de séjour autorisé", m2_hint:"t = budget / débit", m2_rate:"Débit de dose au poste", m2_pull:"↑ Reprendre le débit Distance", m2_budget:"Budget de dose à ne pas dépasser",
@@ -429,6 +433,8 @@
       tile_blindage:"Shielding", tile_blindage_d:"Attenuation through a shield",
       m1_title:"Dose rate by distance", m1_d1:"Known dose rate (D₁)", m1_ref:"At reference distance (d₁)", m1_tgt:"Target distance (d₂)", m1_out:"Estimated dose rate at d₂",
       g_bg:"bg ~0.1", m1_factor:"Attenuation factor", m1_safe:"Distance for 0.5 µSv/h",
+      m1_geom:"Source geometry", geom_point:"Point (1/d²)", geom_line:"Line (1/d)", geom_plane:"Surface (≈ const.)",
+      geom_note_point:"Small source or distant measurement: dose rate falls as 1/distance².", geom_note_line:"Elongated source (pipe, wire, line): dose rate falls as 1/distance.", geom_note_plane:"Large surface (ground, wall, large flat specimen): dose rate barely changes with distance.",
       m1_mindist:"Tip: take your reference at ≥ 50 cm (or ≥ 3–5× the source size). Closer, beta radiation and geometry distort the 1/d² law.",
       m1_warn:"Distance < 50 cm: in the near field, beta and extended geometry make the estimate unreliable. Move back for a clean γ measurement.",
       m2_title:"Allowed stay time", m2_hint:"t = budget / rate", m2_rate:"Dose rate at your position", m2_pull:"↑ Use Distance rate", m2_budget:"Dose budget not to exceed",
@@ -473,11 +479,14 @@
 
   function calc1(){
     const D1=num('d1')*parseFloat($('d1u').value), ref=num('r1')*parseFloat($('r1u').value), tgt=num('r2')*parseFloat($('r2u').value);
+    const n=parseFloat($('geom').value);
+    $('m1hint').textContent = (n===2?'D₂ = D₁·(d₁/d₂)²':(n===1?'D₂ = D₁·(d₁/d₂)':'D₂ ≈ D₁'));
+    $('geomNote').textContent = T(n===2?'geom_note_point':(n===1?'geom_note_line':'geom_note_plane'));
     if(!isFinite(D1)||!isFinite(ref)||!isFinite(tgt)||ref<=0||tgt<=0){ $('out1').innerHTML='—'; resetPaint($('out1')); $('factor').textContent='—'; $('safedist').textContent='—'; $('distWarn').classList.remove('show'); setGauge(NaN); return; }
-    const D2=D1*Math.pow(ref/tgt,2), r=fmtDose(D2); $('out1').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>'; paint($('out1'), bandOf(RATE_BANDS,D2));
+    const D2=(n===0)?D1:D1*Math.pow(ref/tgt,n), r=fmtDose(D2); $('out1').innerHTML=r[0]+'<span class="u">'+r[1]+'</span>'; paint($('out1'), bandOf(RATE_BANDS,D2));
     $('distWarn').classList.toggle('show', (ref>0&&ref<0.5)||(tgt>0&&tgt<0.5));
-    const f=Math.pow(ref/tgt,2); $('factor').textContent=f>=1?'×'+sig(f):'÷'+sig(1/f);
-    const dS=ref*Math.sqrt(D1/0.5); $('safedist').textContent=dS>=1?sig(dS)+' m':sig(dS*100)+' cm';
+    const f=(n===0)?1:Math.pow(ref/tgt,n); $('factor').textContent=(n===0)?'×1':(f>=1?'×'+sig(f):'÷'+sig(1/f));
+    if(n===0){ $('safedist').textContent='—'; } else { const dS=ref*Math.pow(D1/0.5,1/n); $('safedist').textContent=dS>=1?sig(dS)+' m':sig(dS*100)+' cm'; }
     setGauge(D2); return D2;
   }
   function setGauge(D2){
@@ -597,7 +606,7 @@
   function generateCard(){ const ready=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve(); ready.then(()=>{ try{ const url=renderCard(); lastCardURL=url; $('cardImg').src=url; $('overlay').classList.add('show'); }catch(e){} }); }
 
   /* ---- liaisons ---- */
-  ['d1','d1u','r1','r1u','r2','r2u'].forEach(i=>$(i).addEventListener('input',calc1));
+  ['d1','d1u','r1','r1u','r2','r2u','geom'].forEach(i=>$(i).addEventListener('input',calc1));
   ['rate','rateu','budget','budgetu'].forEach(i=>$(i).addEventListener('input',()=>{clearPresetActive(); checkPreset(); calc2();}));
   ['drate','drateu','dur','duru'].forEach(i=>$(i).addEventListener('input',calc3));
   ['srate','srateu','iso','mat','thick','thicku'].forEach(i=>$(i).addEventListener('input',calc4));
