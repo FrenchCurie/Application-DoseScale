@@ -220,6 +220,15 @@
         <span class="tile-ar">›</span>
       </a>
     </div>
+
+    <div class="cat-h" data-i18n="cat_spectro" style="margin-top:28px">Spectrométrie</div>
+    <div class="tiles">
+      <a href="spectro.html" class="tile">
+        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M4 15l4-5 4 3 4-7 4 5"/></svg></div>
+        <div class="tile-tx"><h3 data-i18n="tile_spectro">Analyse de spectre</h3><p data-i18n="tile_spectro_d">Fichiers Radiacode · identification d'isotopes</p></div>
+        <span class="tile-ar">›</span>
+      </a>
+    </div>
   </section>
 
   <!-- ===================== DISTANCE ===================== -->
@@ -415,6 +424,7 @@
       ef_ref_t:"Repères de dose aiguë (corps entier)", ef_note:"Les effets déterministes supposent une dose aiguë unique. Le risque stochastique suit le modèle LNT, débattu aux faibles doses. Repères éducatifs — pas un avis médical.",
       efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
       tile_apropos:"Méthodologie", tile_apropos_d:"Modèles, sources & bonne pratique", install_btn:"📲 Installer l'app",
+      cat_spectro:"Spectrométrie", tile_spectro:"Analyse de spectre", tile_spectro_d:"Fichiers Radiacode · identification d'isotopes",
       ap_h_about:"À propos", ap_about:"FrenchCurie est une boîte à outils de <b>vulgarisation</b> de la radioprotection. Les calculs sont des <b>estimations</b> à but pédagogique : ils ne remplacent ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR (personne compétente en radioprotection).",
       ap_h_iss:"Loi de l'inverse du carré & mesure", ap_iss:"L'outil Distance modélise une <b>source ponctuelle de rayonnement γ</b> : le débit décroît en 1/distance². Ce modèle n'est valable qu'en <b>champ lointain</b> et pour le γ. En pratique :<ul><li>une source se comporte comme ponctuelle à partir d'environ <b>3 à 5× sa plus grande dimension</b> ;</li><li>au contact, le rayonnement <b>β</b> et les photons de basse énergie (absorbés en quelques dizaines de cm d'air) gonflent la lecture ;</li><li>mesure ta référence à <b>≥ 50 cm</b>, cristal orienté vers la source, et soustrais ton fond ;</li><li>pour isoler le β, refais la mesure derrière <b>quelques mm d'aluminium</b> (la chute = part β).</li></ul>",
       ap_h_shield:"Blindage", ap_shield:"L'atténuation suit I = I₀ · ½^(x/CDA), avec des couches de demi-atténuation <b>indicatives</b> (faisceau étroit). En géométrie réelle, le rayonnement diffusé (facteur de build-up) réduit l'efficacité du blindage. Pour l'uranium naturel et le radium, le γ pénétrant provient des <b>descendants de la chaîne</b> (Bi-214…) ; une énergie effective est utilisée.",
@@ -458,6 +468,7 @@
       ef_ref_t:"Acute whole-body dose landmarks", ef_note:"Deterministic effects assume a single acute dose. Stochastic risk follows the LNT model, debated at low doses. Educational landmarks — not medical advice.",
       efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
       tile_apropos:"Methodology", tile_apropos_d:"Models, sources & good practice", install_btn:"📲 Install the app",
+      cat_spectro:"Spectrometry", tile_spectro:"Spectrum analysis", tile_spectro_d:"Radiacode files · isotope identification",
       ap_h_about:"About", ap_about:"FrenchCurie is an <b>educational</b> radiation-protection toolbox. The calculations are <b>estimates</b> for learning: they replace neither a real measurement, a dosimeter, nor the advice of a radiation protection officer.",
       ap_h_iss:"Inverse-square law & measurement", ap_iss:"The Distance tool models a <b>point γ source</b>: dose rate falls as 1/distance². This model only holds in the <b>far field</b> and for γ. In practice:<ul><li>a source behaves as point-like beyond about <b>3–5× its largest dimension</b>;</li><li>up close, <b>β</b> radiation and low-energy photons (absorbed within tens of cm of air) inflate the reading;</li><li>take your reference at <b>≥ 50 cm</b>, crystal facing the source, and subtract background;</li><li>to isolate β, repeat behind <b>a few mm of aluminium</b> (the drop = β contribution).</li></ul>",
       ap_h_shield:"Shielding", ap_shield:"Attenuation follows I = I₀ · ½^(x/HVL), with <b>indicative</b> half-value layers (narrow beam). In real geometry, scattered radiation (build-up factor) reduces effectiveness. For natural uranium and radium, the penetrating γ comes from <b>decay-chain daughters</b> (Bi-214…); an effective energy is used.",

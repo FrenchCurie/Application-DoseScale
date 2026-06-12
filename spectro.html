@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e14">
+<title>FrenchCurie · Spectrométrie</title>
+<link rel="manifest" href="manifest.json">
+<meta name="description" content="Analyse de spectres gamma Radiacode : détection de pics et identification d'isotopes.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FrenchCurie">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e14; --panel-edge:#1e2730; --ink:#e8ecdf; --ink-dim:#94a3a0; --ink-faint:#586066;
+    --amber:#ffb627; --spec:#2dd4a7; --spec-deep:#1a7a60; --danger:#ff5a4d;
+    --grid:rgba(45,212,167,.05);
+    --mono:'IBM Plex Mono',monospace; --disp:'Chakra Petch',sans-serif; --body:'IBM Plex Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased}
+  body{min-height:100dvh;padding:clamp(14px,4vw,40px) clamp(12px,4vw,40px) 56px;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),radial-gradient(ellipse 120% 80% at 50% -10%, rgba(45,212,167,.06), transparent 60%);
+    background-size:38px 38px,38px 38px,100% 100%;}
+  .wrap{max-width:860px;margin:0 auto}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--panel-edge)}
+  .brand{display:flex;align-items:center;gap:14px}
+  .sym{width:46px;height:46px;flex:none}.sym svg{display:block;width:100%;height:100%}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(19px,5vw,28px);letter-spacing:.04em;line-height:1}
+  h1 span{color:var(--spec)}
+  .sub{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
+  .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .lang{display:flex;border:1px solid var(--panel-edge);border-radius:7px;overflow:hidden}
+  .lang button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:0;color:var(--ink-dim);padding:6px 12px;cursor:pointer;transition:.15s}
+  .lang button.active{background:var(--spec);color:var(--bg);font-weight:600}
+  .back{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--spec);background:none;border:1px solid var(--panel-edge);border-radius:9px;padding:9px 14px;cursor:pointer;margin-bottom:18px;text-decoration:none;transition:.15s}
+  .back:hover{border-color:var(--spec);background:rgba(45,212,167,.07)}
+  .card{border:1px solid var(--panel-edge);border-radius:14px;background:linear-gradient(180deg,#10161f,#0b1017);padding:clamp(16px,3.5vw,24px);margin-bottom:18px;position:relative;overflow:hidden}
+  .card-h{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .card-h h2{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:.02em}
+  .card-h .idx{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:7px;background:#0b1017;border:1px solid var(--panel-edge)}
+  .card-h .idx svg{width:16px;height:16px;stroke:var(--spec);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  /* dropzone */
+  .drop{border:1.5px dashed var(--panel-edge);border-radius:14px;padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;background:#0b1017}
+  .drop:hover,.drop.over{border-color:var(--spec);background:rgba(45,212,167,.05)}
+  .drop svg{width:40px;height:40px;stroke:var(--spec);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:10px}
+  .drop h3{font-family:var(--disp);font-weight:600;font-size:16px;margin-bottom:6px}
+  .drop p{font-size:12.5px;color:var(--ink-dim);line-height:1.5}
+  .drop .browse{color:var(--spec)}
+  /* meta chips */
+  .meta{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--ink-dim);background:#0b1017;border:1px solid var(--panel-edge);border-radius:7px;padding:8px 11px;flex:1;min-width:120px}
+  .chip b{display:block;color:var(--ink);font-size:14px;margin-top:4px;font-weight:600;word-break:break-word}
+  /* chart */
+  .chart-wrap{position:relative;width:100%}
+  canvas.chart{width:100%;height:360px;display:block;border-radius:10px;background:var(--bg);border:1px solid var(--panel-edge)}
+  .chart-tools{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+  .tbtn{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-dim);background:#0b1017;border:1px solid var(--panel-edge);border-radius:7px;padding:7px 11px;cursor:pointer;transition:.15s}
+  .tbtn:hover{border-color:var(--spec);color:var(--spec)}
+  .tbtn.active{background:var(--spec);color:var(--bg);border-color:var(--spec);font-weight:600}
+  /* verdict */
+  .verdict-box{border:1px solid var(--spec-deep);background:rgba(45,212,167,.06);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px}
+  .verdict-box .vt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .verdict-box .vv{font-family:var(--disp);font-weight:600;font-size:18px;color:var(--spec);margin-top:4px;line-height:1.25}
+  .verdict-box .vi{font-size:34px;flex:none}
+  /* peak list */
+  .peak{display:flex;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--panel-edge)}
+  .peak:last-child{border-bottom:0}
+  .peak .pe{font-family:var(--mono);font-weight:600;font-size:16px;color:var(--spec);flex:none;width:86px}
+  .peak .pi{flex:1;min-width:0}
+  .peak .pi b{font-size:14px;color:var(--ink)}
+  .peak .pi .alt{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px}
+  .fam{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:5px;border:1px solid var(--panel-edge);color:var(--ink-dim);flex:none}
+  .fam.u238{color:#7dd957;border-color:#3a5a2a}.fam.th232{color:#ffb627;border-color:#5a4a1a}
+  .fam.art{color:#ff8a6b;border-color:#5a2f24}.fam.prim{color:#6bb6ff;border-color:#24405a}
+  .cta{display:block;width:100%;max-width:340px;margin:4px auto 0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--spec);background:none;border:1px solid var(--panel-edge);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
+  .cta:hover{border-color:var(--spec);background:rgba(45,212,167,.07)}
+  .disc{font-size:11.5px;line-height:1.6;color:var(--ink-faint);border:1px solid var(--panel-edge);border-radius:12px;padding:16px 18px;background:#0b1017;margin-top:6px}
+  .disc b{color:var(--ink-dim)}
+  footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:.1em;margin-top:18px}
+  footer span{color:var(--spec)}
+  .hidden{display:none!important}
+  .overlay{position:fixed;inset:0;background:rgba(4,7,11,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:20px;z-index:50}
+  .overlay.show{display:flex}
+  .overlay img{max-width:min(92vw,360px);max-height:66vh;border-radius:14px;border:1px solid var(--panel-edge)}
+  .overlay .hintline{font-family:var(--mono);font-size:11px;color:var(--ink-faint);text-align:center;max-width:340px}
+  .oa{display:flex;gap:10px}
+  .ob{font-family:var(--mono);font-size:13px;border-radius:9px;padding:12px 20px;cursor:pointer;border:1px solid var(--panel-edge);background:#0b1017;color:var(--ink)}
+  .ob.primary{background:var(--spec);color:var(--bg);border-color:var(--spec);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="sym"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="172" fill="none" stroke="#1e2730" stroke-width="5"/><g fill="#2dd4a7"><path d="M 181.00 126.10 A 150.0 150.0 0 0 1 331.00 126.10 L 278.50 217.03 A 45.0 45.0 0 0 0 233.50 217.03 Z"/><path d="M 406.00 256.00 A 150.0 150.0 0 0 1 331.00 385.90 L 278.50 294.97 A 45.0 45.0 0 0 0 301.00 256.00 Z"/><path d="M 181.00 385.90 A 150.0 150.0 0 0 1 106.00 256.00 L 211.00 256.00 A 45.0 45.0 0 0 0 233.50 294.97 Z"/></g><circle cx="256" cy="256" r="30" fill="#2dd4a7"/></svg></div>
+      <div><h1 data-i18n-html="h1">FRENCH<span>CURIE</span></h1><div class="sub" data-i18n="sub">Spectrométrie γ</div></div>
+    </div>
+    <div class="head-right"><div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div></div>
+  </header>
+
+  <a href="index.html#accueil" class="back" data-i18n="back">← Accueil</a>
+
+  <!-- DROPZONE -->
+  <div class="drop" id="drop">
+    <svg viewBox="0 0 24 24"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+    <h3 data-i18n="drop_t">Charger un spectre Radiacode</h3>
+    <p data-i18n="drop_d">Glisse un fichier <b>.xml</b> exporté depuis l'app Radiacode, ou <span class="browse">parcours</span>.</p>
+    <input type="file" id="file" accept=".xml,text/xml,application/xml" class="hidden">
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="hidden">
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M4 15l4-5 4 3 4-7 4 5"/></svg></span><h2 data-i18n="r_spec">Spectre</h2></div>
+      <div class="meta" id="meta" style="margin-bottom:16px"></div>
+      <div class="chart-wrap"><canvas class="chart" id="chart"></canvas></div>
+      <div class="chart-tools">
+        <button class="tbtn active" id="scLin" data-i18n="sc_lin">Linéaire</button>
+        <button class="tbtn" id="scLog" data-i18n="sc_log">Log</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><h2 data-i18n="r_id">Identification</h2></div>
+      <div class="verdict-box" style="margin-bottom:16px"><span class="vi">☢️</span><div><div class="vt" data-i18n="r_verdict">Signature</div><div class="vv" id="verdict">—</div></div></div>
+      <div id="peaks"></div>
+    </div>
+
+    <button class="cta" id="exportBtn" data-i18n="export_btn">📷 Exporter l'image (Instagram)</button>
+  </div>
+
+  <div class="disc" data-i18n-html="disc"></div>
+  <footer>FRENCH<span>CURIE</span> · 🇫🇷</footer>
+
+  <div class="overlay" id="overlay">
+    <img id="cardImg" alt="">
+    <div class="hintline" data-i18n="card_hint">Appui long sur l'image pour l'enregistrer, ou Télécharger.</div>
+    <div class="oa"><button class="ob primary" id="cardDl" data-i18n="card_dl">Télécharger</button><button class="ob" id="cardClose" data-i18n="card_close">Fermer</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const I18N={
+    fr:{h1:"FRENCH<span>CURIE</span>",sub:"Spectrométrie γ",back:"← Accueil",
+      drop_t:"Charger un spectre Radiacode",drop_d:"Glisse un fichier <b>.xml</b> exporté depuis l'app Radiacode, ou <span class=\"browse\">parcours</span>.",
+      r_spec:"Spectre",r_id:"Identification",r_verdict:"Signature",sc_lin:"Linéaire",sc_log:"Log",
+      m_name:"Échantillon",m_dur:"Durée",m_counts:"Coups",m_cps:"CPS moyen",m_range:"Gamme",m_serial:"Détecteur",
+      export_btn:"📷 Exporter l'image (Instagram)",card_dl:"Télécharger",card_close:"Fermer",card_hint:"Appui long sur l'image pour l'enregistrer, ou Télécharger.",
+      np:"Aucun pic net détecté.",alt:"aussi compatible",none:"non identifié",
+      v_single:"Chaîne",v_mixte:"Signatures mixtes",v_none:"Indéterminée",
+      fam_u238:"chaîne U-238 (uranium / radium)",fam_th232:"chaîne Th-232 (thorium)",fam_prim:"K-40 (potassium)",fam_art:"isotope artificiel",fam_x:"annihilation β⁺",
+      verdict_u:"Minéral uranifère — chaîne U-238 en équilibre",
+      disc:"<b>Identification assistée.</b> Le RC-110 a une faible résolution (peu de canaux, pics larges) : les candidats sont <b>indicatifs</b>, fondés sur la cohérence de chaîne, et non quantitatifs (pas d'activité). Les énergies peuvent être légèrement décalées selon la calibration de ton détecteur. Vérifie toujours avec ton app Radiacode et ton expérience. Outil FrenchCurie de vulgarisation."
+    },
+    en:{h1:"FRENCH<span>CURIE</span>",sub:"γ Spectrometry",back:"← Home",
+      drop_t:"Load a Radiacode spectrum",drop_d:"Drop an <b>.xml</b> file exported from the Radiacode app, or <span class=\"browse\">browse</span>.",
+      r_spec:"Spectrum",r_id:"Identification",r_verdict:"Signature",sc_lin:"Linear",sc_log:"Log",
+      m_name:"Sample",m_dur:"Duration",m_counts:"Counts",m_cps:"Mean CPS",m_range:"Range",m_serial:"Detector",
+      export_btn:"📷 Export image (Instagram)",card_dl:"Download",card_close:"Close",card_hint:"Long-press the image to save it, or Download.",
+      np:"No clear peak detected.",alt:"also compatible",none:"unidentified",
+      v_single:"Chain",v_mixte:"Mixed signatures",v_none:"Undetermined",
+      fam_u238:"U-238 chain (uranium / radium)",fam_th232:"Th-232 chain (thorium)",fam_prim:"K-40 (potassium)",fam_art:"artificial isotope",fam_x:"β⁺ annihilation",
+      verdict_u:"Uranium-bearing mineral — U-238 chain in equilibrium",
+      disc:"<b>Assisted identification.</b> The RC-110 has low resolution (few channels, broad peaks): candidates are <b>indicative</b>, based on chain coherence, and not quantitative (no activity). Energies may be slightly shifted depending on your detector calibration. Always cross-check with your Radiacode app and experience. FrenchCurie educational tool."
+    }
+  };
+  let lang='fr';
+  try{const s=localStorage.getItem('dosecalc_lang');if(s==='fr'||s==='en')lang=s;else if((navigator.language||'').toLowerCase().startsWith('en'))lang='en';}catch(e){}
+  const T=k=>(I18N[lang][k]!==undefined?I18N[lang][k]:k);
+  function applyLang(){
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(I18N[lang][k]!==undefined)el.textContent=I18N[lang][k];});
+    document.querySelectorAll('[data-i18n-html]').forEach(el=>{const k=el.getAttribute('data-i18n-html');if(I18N[lang][k]!==undefined)el.innerHTML=I18N[lang][k];});
+    document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    if(DATA) render();
+  }
+  document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.lang;try{localStorage.setItem('dosecalc_lang',lang);}catch(e){}applyLang();}));
+
+  /* ---- bibliothèque de raies (keV, isotope, famille, intensité %) ---- */
+  const LIB=[
+    {e:63.3,iso:'Th-234',fam:'u238',I:3.7},{e:92.6,iso:'Th-234',fam:'u238',I:5.6},{e:186.2,iso:'Ra-226/U-235',fam:'u238',I:3.6},
+    {e:242.0,iso:'Pb-214',fam:'u238',I:7.3},{e:295.2,iso:'Pb-214',fam:'u238',I:18.4},{e:351.9,iso:'Pb-214',fam:'u238',I:35.6},
+    {e:609.3,iso:'Bi-214',fam:'u238',I:45.5},{e:768.4,iso:'Bi-214',fam:'u238',I:4.9},{e:1120.3,iso:'Bi-214',fam:'u238',I:14.9},
+    {e:1238.1,iso:'Bi-214',fam:'u238',I:5.8},{e:1377.7,iso:'Bi-214',fam:'u238',I:4.0},{e:1764.5,iso:'Bi-214',fam:'u238',I:15.3},{e:1001.0,iso:'Pa-234m',fam:'u238',I:0.8},
+    {e:238.6,iso:'Pb-212',fam:'th232',I:43.6},{e:338.3,iso:'Ac-228',fam:'th232',I:11.3},{e:583.2,iso:'Tl-208',fam:'th232',I:30.6},
+    {e:727.3,iso:'Bi-212',fam:'th232',I:6.7},{e:911.2,iso:'Ac-228',fam:'th232',I:25.8},{e:969.0,iso:'Ac-228',fam:'th232',I:15.8},{e:2614.5,iso:'Tl-208',fam:'th232',I:35.9},
+    {e:1460.8,iso:'K-40',fam:'prim',I:10.7},
+    {e:661.7,iso:'Cs-137',fam:'art',I:85},{e:59.5,iso:'Am-241',fam:'art',I:35.9},{e:1173.2,iso:'Co-60',fam:'art',I:99.9},{e:1332.5,iso:'Co-60',fam:'art',I:99.9},
+    {e:511.0,iso:'e⁺e⁻',fam:'x',I:50}
+  ];
+  const FAMCLASS={u238:'u238',th232:'th232',prim:'prim',art:'art',x:''};
+
+  let DATA=null, scale='lin';
+
+  /* ---- parsing ---- */
+  function parseXML(text){
+    const xml=new DOMParser().parseFromString(text,'application/xml');
+    const es=xml.querySelector('EnergySpectrum');
+    if(!es) throw new Error('no EnergySpectrum');
+    const coef=[...es.querySelectorAll('EnergyCalibration Coefficients Coefficient')].map(c=>parseFloat(c.textContent));
+    const counts=Float64Array.from(es.querySelectorAll('Spectrum DataPoint'),d=>parseFloat(d.textContent));
+    const mt=parseFloat((es.querySelector('MeasurementTime')||{}).textContent||'0');
+    const name=((xml.querySelector('SampleInfo Name')||es.querySelector('SpectrumName')||{}).textContent||'').trim();
+    const serial=((es.querySelector('SerialNumber')||{}).textContent||'').trim();
+    const start=((xml.querySelector('StartTime')||{}).textContent||'').trim();
+    const E=new Float64Array(counts.length);
+    for(let i=0;i<counts.length;i++){let e=0;for(let k=0;k<coef.length;k++)e+=coef[k]*Math.pow(i,k);E[i]=e;}
+    return {counts,E,mt,name,serial,start,coef};
+  }
+
+  /* ---- traitement signal ---- */
+  function smooth(a,w){const h=w>>1,n=a.length,o=new Float64Array(n);for(let i=0;i<n;i++){let s=0,c=0;for(let j=Math.max(0,i-h);j<=Math.min(n-1,i+h);j++){s+=a[j];c++;}o[i]=s/c;}return o;}
+  function minFilter(a,w){const h=w>>1,n=a.length,o=new Float64Array(n);for(let i=0;i<n;i++){let m=Infinity;for(let j=Math.max(0,i-h);j<=Math.min(n-1,i+h);j++)if(a[j]<m)m=a[j];o[i]=m;}return o;}
+  function detectPeaks(counts,E){
+    const sm=smooth(counts,11), base=smooth(minFilter(sm,61),41);
+    const resid=new Float64Array(counts.length);
+    let maxr=0;
+    for(let i=0;i<counts.length;i++){resid[i]=sm[i]-base[i];if(E[i]>45&&resid[i]>maxr)maxr=resid[i];}
+    const thr=maxr*0.04;
+    let cand=[];
+    for(let i=2;i<counts.length-2;i++){
+      if(E[i]<=45)continue;
+      if(resid[i]>=thr&&resid[i]>=resid[i-1]&&resid[i]>=resid[i+1]&&resid[i]>=resid[i-2]&&resid[i]>=resid[i+2])cand.push(i);
+    }
+    cand.sort((a,b)=>resid[b]-resid[a]);
+    let peaks=[];
+    for(const i of cand){if(peaks.every(j=>Math.abs(j-i)>=8))peaks.push(i);}
+    peaks.sort((a,b)=>a-b);
+    return peaks;
+  }
+  function matchPeak(Ep){
+    const tol=Math.max(20,0.04*Ep), sig=tol*0.6;
+    return LIB.filter(L=>Math.abs(L.e-Ep)<=tol)
+      .map(L=>Object.assign({},L,{d:Math.abs(L.e-Ep),score:L.I*Math.exp(-Math.pow((L.e-Ep)/sig,2))}))
+      .sort((a,b)=>b.score-a.score);
+  }
+  function analyse(){
+    const {counts,E}=DATA;
+    const peaks=DATA.peaks=detectPeaks(counts,E);
+    const fam={};
+    peaks.forEach(i=>{const Ep=E[i];const seen={};matchPeak(Ep).forEach(c=>{if(!seen[c.fam]){fam[c.fam]=(fam[c.fam]||0)+c.I;seen[c.fam]=1;}});});
+    DATA.fam=fam;
+    const ranked=Object.keys(fam).filter(f=>f!=='x').sort((a,b)=>fam[b]-fam[a]);
+    DATA.domFam=ranked[0]||null;
+    DATA.ranked=ranked;
+  }
+
+  /* ---- rendu ---- */
+  function famLabel(f){return T('fam_'+f);}
+  function labelFor(Ep){
+    const cands=matchPeak(Ep);if(!cands.length)return null;
+    const inDom=cands.filter(c=>c.fam===DATA.domFam);
+    return (inDom[0]||cands[0]);
+  }
+  function fmtInt(v){return Math.round(v).toLocaleString(lang==='fr'?'fr-FR':'en-US');}
+
+  function render(){
+    if(!DATA)return;
+    $('drop').classList.add('hidden');$('results').classList.remove('hidden');
+    // meta
+    const d=DATA, mins=Math.floor(d.mt/60), secs=Math.round(d.mt%60);
+    const total=d.counts.reduce((a,b)=>a+b,0);
+    $('meta').innerHTML=
+      chip('m_name',d.name||'—')+chip('m_serial',d.serial||'—')+
+      chip('m_dur',mins+' min '+secs+' s')+chip('m_counts',fmtInt(total))+
+      chip('m_cps',fmtInt(total/(d.mt||1)))+chip('m_range','0–'+Math.round(d.E[d.E.length-1])+' keV');
+    drawChart();
+    // verdict
+    let vtxt;
+    if(!d.domFam){vtxt=T('v_none');}
+    else{
+      const second=d.ranked[1];
+      const mixed=second&&d.fam[second]/d.fam[d.domFam]>0.6;
+      if(d.domFam==='u238'&&!mixed){vtxt=T('verdict_u');}
+      else if(mixed){vtxt=T('v_mixte')+' : '+famLabel(d.domFam)+' + '+famLabel(second);}
+      else{vtxt=famLabel(d.domFam).charAt(0).toUpperCase()+famLabel(d.domFam).slice(1);}
+    }
+    $('verdict').textContent=vtxt;
+    // peaks list
+    const ph=$('peaks');ph.innerHTML='';
+    if(!d.peaks.length){ph.innerHTML='<p style="color:var(--ink-faint);font-size:13px">'+T('np')+'</p>';}
+    d.peaks.forEach(i=>{
+      const Ep=d.E[i], best=labelFor(Ep), cands=matchPeak(Ep);
+      const row=document.createElement('div');row.className='peak';
+      let alt='';
+      const others=cands.filter(c=>c.iso!==(best&&best.iso)).slice(0,1);
+      if(others.length)alt='<div class="alt">'+T('alt')+' : '+others[0].iso+' ('+Math.round(others[0].e)+')</div>';
+      row.innerHTML='<div class="pe">'+Math.round(Ep)+' keV</div>'+
+        '<div class="pi"><b>'+(best?best.iso+' · '+Math.round(best.e)+' keV':T('none'))+'</b>'+alt+'</div>'+
+        (best?'<span class="fam '+FAMCLASS[best.fam]+'">'+best.fam.toUpperCase().replace('PRIM','K-40').replace('ART','ARTIF.')+'</span>':'');
+      ph.appendChild(row);
+    });
+  }
+  function chip(k,v){return '<div class="chip">'+T(k)+'<b>'+v+'</b></div>';}
+
+  /* ---- graphe canvas ---- */
+  function drawInto(ctx,X,Y,W,H,opts){
+    const d=DATA, n=d.counts.length;
+    const Emax=opts.emax||1800;
+    let imax=n-1;for(let i=0;i<n;i++){if(d.E[i]>Emax){imax=i;break;}}
+    let vmax=0;for(let i=3;i<=imax;i++)if(d.counts[i]>vmax)vmax=d.counts[i];
+    const log=opts.log;
+    const yv=v=>{ if(log){const lv=Math.log10(Math.max(v,1)),lm=Math.log10(Math.max(vmax,10));return Y+H-(lv/lm)*H;} return Y+H-(v/vmax)*H; };
+    const xe=e=>X+(e/Emax)*W;
+    // axes
+    ctx.strokeStyle=opts.axis||'#1e2730';ctx.lineWidth=1;
+    ctx.strokeRect(X,Y,W,H);
+    ctx.fillStyle=opts.tick||'#586066';ctx.font='11px "IBM Plex Mono", monospace';ctx.textAlign='center';
+    for(let e=0;e<=Emax;e+=Emax<=1000?200:300){const px=xe(e);ctx.beginPath();ctx.moveTo(px,Y+H);ctx.lineTo(px,Y+H+4);ctx.stroke();ctx.fillText(e,px,Y+H+17);}
+    // curve
+    ctx.beginPath();
+    for(let i=3;i<=imax;i++){const px=xe(d.E[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.lineTo(xe(d.E[imax]),Y+H);ctx.lineTo(xe(d.E[3]),Y+H);ctx.closePath();
+    ctx.fillStyle=opts.fill||'rgba(45,212,167,.12)';ctx.fill();
+    ctx.beginPath();
+    for(let i=3;i<=imax;i++){const px=xe(d.E[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.strokeStyle=opts.line||'#2dd4a7';ctx.lineWidth=opts.lw||1.6;ctx.lineJoin='round';ctx.stroke();
+    // peaks
+    ctx.textAlign='center';
+    d.peaks.forEach(idx=>{
+      if(d.E[idx]>Emax)return;
+      const best=labelFor(d.E[idx]);const px=xe(d.E[idx]),py=yv(d.counts[idx]);
+      ctx.strokeStyle='rgba(255,206,94,.45)';ctx.lineWidth=0.8;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,Y+12);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle=opts.lbl||'#e8ecdf';ctx.font='bold 11px "IBM Plex Mono", monospace';
+      ctx.fillText(best?best.iso:'?',px,Y+10);
+      ctx.fillStyle=opts.tick||'#94a3a0';ctx.font='10px "IBM Plex Mono", monospace';
+      ctx.fillText(Math.round(d.E[idx]),px,py-6);
+    });
+  }
+  function drawChart(){
+    const c=$('chart'),dpr=window.devicePixelRatio||1;
+    const w=c.clientWidth,h=360;c.width=w*dpr;c.height=h*dpr;
+    const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    drawInto(ctx,46,16,w-58,h-44,{log:scale==='log',emax:1800});
+    ctx.fillStyle='#586066';ctx.font='10px "IBM Plex Mono", monospace';ctx.save();ctx.translate(13,h/2);ctx.rotate(-Math.PI/2);ctx.textAlign='center';ctx.fillText(lang==='fr'?'Coups':'Counts',0,0);ctx.restore();
+    ctx.textAlign='center';ctx.fillText(lang==='fr'?'Énergie (keV)':'Energy (keV)',w/2,h-3);
+  }
+
+  /* ---- export image portrait ---- */
+  let lastURL=null;
+  function drawTrefoil(ctx,cx,cy,ro,color){const u=ro/5,ri=1.5*u;ctx.fillStyle=color;[-90,30,150].forEach(cd=>{const a0=(cd-30)*Math.PI/180,a1=(cd+30)*Math.PI/180;ctx.beginPath();ctx.arc(cx,cy,ro,a0,a1,false);ctx.arc(cx,cy,ri,a1,a0,true);ctx.closePath();ctx.fill();});ctx.beginPath();ctx.arc(cx,cy,u,0,2*Math.PI);ctx.fill();}
+  function exportCard(){
+    const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
+    ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#1e2730';ctx.lineWidth=2;ctx.strokeRect(30,30,W-60,H-60);
+    drawTrefoil(ctx,90,96,34,'#2dd4a7');
+    ctx.textAlign='left';ctx.fillStyle='#e8ecdf';ctx.font='700 46px "Chakra Petch", sans-serif';ctx.fillText('FRENCHCURIE',146,108);
+    ctx.fillStyle='#586066';ctx.font='500 22px "IBM Plex Mono", monospace';ctx.fillText((lang==='fr'?'SPECTROMÉTRIE γ':'γ SPECTROMETRY'),148,140);
+    // title
+    ctx.fillStyle='#e8ecdf';ctx.font='600 38px "Chakra Petch", sans-serif';
+    const nm=(DATA.name||'Spectre').slice(0,34);ctx.fillText(nm,70,225);
+    // chart
+    drawInto(ctx,90,280,W-180,470,{log:false,emax:1800,line:'#2dd4a7',fill:'rgba(45,212,167,.14)',lw:3,axis:'#1e2730',tick:'#94a3a0',lbl:'#e8ecdf'});
+    // verdict
+    ctx.textAlign='left';
+    ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.fillText((lang==='fr'?'SIGNATURE':'SIGNATURE'),70,860);
+    ctx.fillStyle='#2dd4a7';ctx.font='700 40px "Chakra Petch", sans-serif';
+    wrap(ctx,$('verdict').textContent,70,905,W-140,46);
+    // peaks summary
+    ctx.fillStyle='#94a3a0';ctx.font='500 26px "IBM Plex Mono", monospace';
+    let y=1010;const seen=new Set();
+    DATA.peaks.forEach(i=>{const b=labelFor(DATA.E[i]);if(!b||seen.has(b.iso))return;seen.add(b.iso);if(y>1230)return;
+      ctx.fillStyle='#2dd4a7';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(b.iso,100,y);
+      ctx.fillStyle='#586066';ctx.fillText(Math.round(DATA.E[i])+' keV',300,y);y+=40;});
+    // footer
+    ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.textAlign='center';ctx.fillText('@frenchcurie · RC-110',W/2,H-70);
+    lastURL=c.toDataURL('image/png');$('cardImg').src=lastURL;$('overlay').classList.add('show');
+  }
+  function wrap(ctx,text,x,y,maxw,lh){const words=text.split(' ');let line='',yy=y;for(const w of words){const t=line+w+' ';if(ctx.measureText(t).width>maxw&&line){ctx.fillText(line.trim(),x,yy);line=w+' ';yy+=lh;}else line=t;}ctx.fillText(line.trim(),x,yy);}
+
+  /* ---- chargement fichier ---- */
+  function load(file){
+    const r=new FileReader();
+    r.onload=()=>{try{DATA=parseXML(r.result);analyse();render();}catch(e){alert(lang==='fr'?"Fichier non reconnu. Exporte bien un spectre .xml depuis l'app Radiacode.":"Unrecognised file. Export a .xml spectrum from the Radiacode app.");}};
+    r.readAsText(file);
+  }
+  $('drop').addEventListener('click',()=>$('file').click());
+  $('file').addEventListener('change',e=>{if(e.target.files[0])load(e.target.files[0]);});
+  ['dragover','dragenter'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.remove('over');}));
+  $('drop').addEventListener('drop',e=>{if(e.dataTransfer.files[0])load(e.dataTransfer.files[0]);});
+  $('scLin').addEventListener('click',()=>{scale='lin';$('scLin').classList.add('active');$('scLog').classList.remove('active');drawChart();});
+  $('scLog').addEventListener('click',()=>{scale='log';$('scLog').classList.add('active');$('scLin').classList.remove('active');drawChart();});
+  $('exportBtn').addEventListener('click',()=>{const rdy=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();rdy.then(()=>{try{exportCard();}catch(e){}});});
+  $('cardClose').addEventListener('click',()=>$('overlay').classList.remove('show'));
+  $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))$('overlay').classList.remove('show');});
+  $('cardDl').addEventListener('click',()=>{if(!lastURL)return;const a=document.createElement('a');a.href=lastURL;a.download='frenchcurie-spectre.png';document.body.appendChild(a);a.click();a.remove();});
+  window.addEventListener('resize',()=>{if(DATA)drawChart();});
+
+  applyLang();
+})();
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('service-worker.js').catch(()=>{});});}</script>
+</body>
+</html>
