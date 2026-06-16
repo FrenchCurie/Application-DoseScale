@@ -1,5 +1,5 @@
 /* Service worker — Dose · Distance · Temps */
-const CACHE = 'dosecalc-v19';
+const CACHE = 'dosecalc-v20';
 
 /* Fichiers de l'application à mettre en cache à l'installation */
 const SHELL = [
@@ -9,7 +9,9 @@ const SHELL = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './icon-180.png'
+  './icon-180.png',
+  './mark.png',
+  './logo.png'
 ];
 
 /* Installation : on précharge la coque de l'app */

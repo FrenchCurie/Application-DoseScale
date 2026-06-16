@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0c08">
+<meta name="theme-color" content="#07080c">
 <title>FrenchCurie · Spectrométrie</title>
 <link rel="manifest" href="manifest.json">
 <meta name="description" content="Analyse de spectres gamma Radiacode : détection de pics et identification d'isotopes.">
@@ -17,9 +17,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0c08; --panel-edge:#2c2e1d; --ink:#ece7d3; --ink-dim:#9c9577; --ink-faint:#605b42;
-    --amber:#ffb627; --spec:#7dd957; --spec-deep:#3a8a2a; --danger:#ff5a4d;
-    --grid:rgba(125,217,87,.055);
+    --bg:#07080c; --panel-edge:#222617; --ink:#ece7d3; --ink-dim:#9c9577; --ink-faint:#605b42;
+    --amber:#ffb627; --spec:#8fe04a; --spec-deep:#46991f; --danger:#ff5a4d;
+    --grid:rgba(143,224,74,.055);
     --mono:'IBM Plex Mono',monospace; --disp:'Chakra Petch',sans-serif; --body:'IBM Plex Sans',sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -31,16 +31,16 @@
   .wrap{max-width:860px;margin:0 auto;position:relative;z-index:1}
   header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--panel-edge)}
   .brand{display:flex;align-items:center;gap:14px}
-  .sym{width:46px;height:46px;flex:none}.sym svg{display:block;width:100%;height:100%}
-  h1{font-family:var(--disp);font-weight:700;font-size:clamp(19px,5vw,28px);letter-spacing:.04em;line-height:1}
-  h1 span{color:var(--spec)}
+  .sym{width:46px;height:46px;flex:none;border-radius:9px;overflow:hidden}.sym svg{display:block;width:100%;height:100%}.sym img{display:block;width:100%;height:100%;object-fit:cover;filter:drop-shadow(0 0 6px rgba(143,224,74,.35))}
+  h1{font-family:var(--disp);font-weight:400;font-size:clamp(19px,5vw,28px);letter-spacing:.14em;line-height:1;color:var(--ink-dim)}
+  h1 span{color:#fff;font-weight:700}
   .sub{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-top:6px}
   .head-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
   .lang{display:flex;border:1px solid var(--panel-edge);border-radius:7px;overflow:hidden}
   .lang button{font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:0;color:var(--ink-dim);padding:6px 12px;cursor:pointer;transition:.15s}
   .lang button.active{background:var(--spec);color:var(--bg);font-weight:600}
   .back{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--spec);background:none;border:1px solid var(--panel-edge);border-radius:9px;padding:9px 14px;cursor:pointer;margin-bottom:18px;text-decoration:none;transition:.15s}
-  .back:hover{border-color:var(--spec);background:rgba(125,217,87,.07)}
+  .back:hover{border-color:var(--spec);background:rgba(143,224,74,.07)}
   .card{border:1px solid var(--panel-edge);border-radius:14px;background:linear-gradient(180deg,#10161f,#0f1009);padding:clamp(16px,3.5vw,24px);margin-bottom:18px;position:relative;overflow:hidden}
   .card-h{display:flex;align-items:center;gap:10px;margin-bottom:16px}
   .card-h h2{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:.02em}
@@ -48,7 +48,7 @@
   .card-h .idx svg{width:16px;height:16px;stroke:var(--spec);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   /* dropzone */
   .drop{border:1.5px dashed var(--panel-edge);border-radius:14px;padding:34px 20px;text-align:center;cursor:pointer;transition:.15s;background:#0f1009}
-  .drop:hover,.drop.over{border-color:var(--spec);background:rgba(125,217,87,.05)}
+  .drop:hover,.drop.over{border-color:var(--spec);background:rgba(143,224,74,.05)}
   .drop svg{width:40px;height:40px;stroke:var(--spec);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:10px}
   .drop h3{font-family:var(--disp);font-weight:600;font-size:16px;margin-bottom:6px}
   .drop p{font-size:12.5px;color:var(--ink-dim);line-height:1.5}
@@ -65,7 +65,7 @@
   .tbtn:hover{border-color:var(--spec);color:var(--spec)}
   .tbtn.active{background:var(--spec);color:var(--bg);border-color:var(--spec);font-weight:600}
   /* verdict */
-  .verdict-box{border:1px solid var(--spec-deep);background:rgba(125,217,87,.06);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px}
+  .verdict-box{border:1px solid var(--spec-deep);background:rgba(143,224,74,.06);border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px}
   .verdict-box .vt{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
   .verdict-box .vv{font-family:var(--disp);font-weight:600;font-size:18px;color:var(--spec);margin-top:4px;line-height:1.25}
   .verdict-box .vi{font-size:34px;flex:none}
@@ -77,14 +77,14 @@
   .peak .pi b{font-size:14px;color:var(--ink)}
   .peak .pi .alt{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px}
   .fam{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:5px;border:1px solid var(--panel-edge);color:var(--ink-dim);flex:none}
-  .fam.u238{color:#7dd957;border-color:#3a5a2a}.fam.th232{color:#ffb627;border-color:#5a4a1a}
+  .fam.u238{color:#8fe04a;border-color:#3a5a2a}.fam.th232{color:#ffb627;border-color:#5a4a1a}
   .conf{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;padding:2px 6px;border-radius:4px;border:1px solid var(--panel-edge);margin-left:2px}
-  .conf.sur{color:#7dd957;border-color:#3a5a2a}.conf.prob{color:#ffce5e;border-color:#5a4a1a}.conf.poss{color:#94a3a0;border-color:#3a4550}
-  .recal-note{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--ink-dim);background:rgba(125,217,87,.05);border:1px solid var(--spec-deep);border-radius:9px;padding:11px 13px;margin-bottom:14px}
+  .conf.sur{color:#8fe04a;border-color:#3a5a2a}.conf.prob{color:#ffce5e;border-color:#5a4a1a}.conf.poss{color:#94a3a0;border-color:#3a4550}
+  .recal-note{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--ink-dim);background:rgba(143,224,74,.05);border:1px solid var(--spec-deep);border-radius:9px;padding:11px 13px;margin-bottom:14px}
   .recal-note b{color:var(--spec)}.recal-note code{color:var(--ink);font-size:11px;word-break:break-all}
   .fam.art{color:#ff8a6b;border-color:#5a2f24}.fam.prim{color:#6bb6ff;border-color:#24405a}
   .cta{display:block;width:100%;max-width:340px;margin:4px auto 0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--spec);background:none;border:1px solid var(--panel-edge);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
-  .cta:hover{border-color:var(--spec);background:rgba(125,217,87,.07)}
+  .cta:hover{border-color:var(--spec);background:rgba(143,224,74,.07)}
   .disc{font-size:11.5px;line-height:1.6;color:var(--ink-faint);border:1px solid var(--panel-edge);border-radius:12px;padding:16px 18px;background:#0f1009;margin-top:6px}
   .disc b{color:var(--ink-dim)}
   footer{text-align:center;font-family:var(--mono);font-size:10px;color:var(--ink-faint);letter-spacing:.1em;margin-top:18px}
@@ -103,7 +103,7 @@
 <div class="wrap">
   <header>
     <div class="brand">
-      <div class="sym"><svg viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="172" fill="none" stroke="#2c2e1d" stroke-width="5"/><g fill="#7dd957"><path d="M 181.00 126.10 A 150.0 150.0 0 0 1 331.00 126.10 L 278.50 217.03 A 45.0 45.0 0 0 0 233.50 217.03 Z"/><path d="M 406.00 256.00 A 150.0 150.0 0 0 1 331.00 385.90 L 278.50 294.97 A 45.0 45.0 0 0 0 301.00 256.00 Z"/><path d="M 181.00 385.90 A 150.0 150.0 0 0 1 106.00 256.00 L 211.00 256.00 A 45.0 45.0 0 0 0 233.50 294.97 Z"/></g><circle cx="256" cy="256" r="30" fill="#7dd957"/></svg></div>
+      <div class="sym"><img src="mark.png" alt="FrenchCurie" width="46" height="46"></div>
       <div><h1 data-i18n-html="h1">FRENCH<span>CURIE</span></h1><div class="sub" data-i18n="sub">Spectrométrie γ</div></div>
     </div>
     <div class="head-right"><div class="lang"><button data-lang="fr">FR</button><button data-lang="en">EN</button></div></div>
@@ -370,17 +370,17 @@
     const log=opts.log;
     const yv=v=>{ if(log){const lv=Math.log10(Math.max(v,1)),lm=Math.log10(Math.max(vmax,10));return Y+H-(lv/lm)*H;} return Y+H-(v/vmax)*H; };
     const xe=e=>X+(e/Emax)*W;
-    ctx.strokeStyle=opts.axis||'#2c2e1d';ctx.lineWidth=1;
+    ctx.strokeStyle=opts.axis||'#222617';ctx.lineWidth=1;
     ctx.strokeRect(X,Y,W,H);
     ctx.fillStyle=opts.tick||'#586066';ctx.font='11px "IBM Plex Mono", monospace';ctx.textAlign='center';
     for(let e=0;e<=Emax;e+=Emax<=1000?200:300){const px=xe(e);ctx.beginPath();ctx.moveTo(px,Y+H);ctx.lineTo(px,Y+H+4);ctx.stroke();ctx.fillText(e,px,Y+H+17);}
     ctx.beginPath();
     for(let i=3;i<=imax;i++){const px=xe(Eax[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
     ctx.lineTo(xe(Eax[imax]),Y+H);ctx.lineTo(xe(Eax[3]),Y+H);ctx.closePath();
-    ctx.fillStyle=opts.fill||'rgba(125,217,87,.12)';ctx.fill();
+    ctx.fillStyle=opts.fill||'rgba(143,224,74,.12)';ctx.fill();
     ctx.beginPath();
     for(let i=3;i<=imax;i++){const px=xe(Eax[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
-    ctx.strokeStyle=opts.line||'#7dd957';ctx.lineWidth=opts.lw||1.6;ctx.lineJoin='round';ctx.stroke();
+    ctx.strokeStyle=opts.line||'#8fe04a';ctx.lineWidth=opts.lw||1.6;ctx.lineJoin='round';ctx.stroke();
     ctx.textAlign='center';
     d.peaks.forEach(idx=>{
       if(Eax[idx]>Emax)return;
@@ -408,26 +408,26 @@
   function drawTrefoil(ctx,cx,cy,ro,color){const u=ro/5,ri=1.5*u;ctx.fillStyle=color;[-90,30,150].forEach(cd=>{const a0=(cd-30)*Math.PI/180,a1=(cd+30)*Math.PI/180;ctx.beginPath();ctx.arc(cx,cy,ro,a0,a1,false);ctx.arc(cx,cy,ri,a1,a0,true);ctx.closePath();ctx.fill();});ctx.beginPath();ctx.arc(cx,cy,u,0,2*Math.PI);ctx.fill();}
   function exportCard(){
     const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');
-    ctx.fillStyle='#0b0c08';ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle='#2c2e1d';ctx.lineWidth=2;ctx.strokeRect(30,30,W-60,H-60);
-    drawTrefoil(ctx,90,96,34,'#7dd957');
+    ctx.fillStyle='#07080c';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#222617';ctx.lineWidth=2;ctx.strokeRect(30,30,W-60,H-60);
+    drawTrefoil(ctx,90,96,34,'#8fe04a');
     ctx.textAlign='left';ctx.fillStyle='#e8ecdf';ctx.font='700 46px "Chakra Petch", sans-serif';ctx.fillText('FRENCHCURIE',146,108);
     ctx.fillStyle='#586066';ctx.font='500 22px "IBM Plex Mono", monospace';ctx.fillText((lang==='fr'?'SPECTROMÉTRIE γ':'γ SPECTROMETRY'),148,140);
     // title
     ctx.fillStyle='#e8ecdf';ctx.font='600 38px "Chakra Petch", sans-serif';
     const nm=(DATA.name||'Spectre').slice(0,34);ctx.fillText(nm,70,225);
     // chart
-    drawInto(ctx,90,280,W-180,470,{log:false,emax:1800,line:'#7dd957',fill:'rgba(125,217,87,.14)',lw:3,axis:'#2c2e1d',tick:'#94a3a0',lbl:'#e8ecdf'});
+    drawInto(ctx,90,280,W-180,470,{log:false,emax:1800,line:'#8fe04a',fill:'rgba(143,224,74,.14)',lw:3,axis:'#222617',tick:'#94a3a0',lbl:'#e8ecdf'});
     // verdict
     ctx.textAlign='left';
     ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.fillText((lang==='fr'?'SIGNATURE':'SIGNATURE'),70,860);
-    ctx.fillStyle='#7dd957';ctx.font='700 40px "Chakra Petch", sans-serif';
+    ctx.fillStyle='#8fe04a';ctx.font='700 40px "Chakra Petch", sans-serif';
     wrap(ctx,$('verdict').textContent,70,905,W-140,46);
     // peaks summary
     ctx.fillStyle='#94a3a0';ctx.font='500 26px "IBM Plex Mono", monospace';
     let y=1010;const seen=new Set();
     (DATA.assign||[]).forEach(a=>{if(a.none||seen.has(a.iso))return;seen.add(a.iso);if(y>1230)return;
-      ctx.fillStyle='#7dd957';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(a.iso,100,y);
+      ctx.fillStyle='#8fe04a';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(a.iso,100,y);
       ctx.fillStyle='#586066';ctx.fillText(Math.round(a.e)+' keV',340,y);y+=40;});
     // footer
     ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.textAlign='center';ctx.fillText('@frenchcurie · RC-110',W/2,H-70);
