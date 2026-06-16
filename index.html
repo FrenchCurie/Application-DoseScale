@@ -145,6 +145,8 @@
   .iso-rads{display:flex;gap:5px;flex:none}
   .iso-g{flex:1;min-width:140px;font-family:var(--mono);font-size:12px;color:var(--ink-dim);text-align:right}
   .iso-g b{color:#2dd4a7;font-weight:600}
+  .iso-g .gi{color:var(--ink-faint);font-weight:400;font-size:11px}
+  .iso-g b.gmatch{color:#ffce5e}
   .iso-g .none{color:var(--ink-faint)}
   .iso-src{width:100%;font-size:11px;color:var(--ink-faint);margin-top:2px}
   .iso-cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:2px 6px;border-radius:4px;border:1px solid var(--panel-edge);color:var(--ink-faint);flex:none}
@@ -376,7 +378,7 @@
     <div class="card">
       <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="9" ry="4" fill="none"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)" fill="none"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(120 12 12)" fill="none"/></svg></span><h2 data-i18n="iso_title">Bibliothèque d'isotopes</h2></div>
       <p class="note" data-i18n="iso_intro">Type de rayonnement et principales raies gamma (théoriques, en keV) des isotopes courants.</p>
-      <div class="row"><div><input type="text" id="isoSearch" class="full" placeholder="Rechercher (Cs-137, radium…)"></div></div>
+      <div class="row"><div><input type="text" id="isoSearch" class="full" placeholder="Rechercher : Cs-137, radium, ou une énergie (662)…"></div></div>
       <div class="iso-filters" id="isoFilters">
         <span class="iso-fchip active" data-f="all" data-i18n="iso_all">Tous</span>
         <span class="iso-fchip" data-f="nat" data-i18n="iso_nat">Naturels</span>
@@ -691,62 +693,124 @@
 
   /* ---- bibliothèque d'isotopes ---- */
   const ISOTOPES=[
-    // --- naturels (chaîne U-238) ---
-    {n:'U-238', cat:'nat', hl:'4,47 Md a', rad:['α'], g:[], src:'Tête de chaîne U-238'},
-    {n:'Th-234', cat:'nat', hl:'24,1 j', rad:['β','γ'], g:[63.3,92.6], src:'Chaîne U-238'},
-    {n:'Pa-234m', cat:'nat', hl:'1,17 min', rad:['β','γ'], g:[1001.0], src:'Chaîne U-238'},
+    // ===== NATURELS — chaîne U-238 =====
+    {n:'U-238', cat:'nat', hl:'4,47 Md a', rad:['α'], g:[], src:'Tête de chaîne U-238 · α 4,2 MeV'},
+    {n:'Th-234', cat:'nat', hl:'24,1 j', rad:['β','γ'], g:[[63.3,3.7],[92.6,5.6]], src:'Chaîne U-238'},
+    {n:'Pa-234m', cat:'nat', hl:'1,17 min', rad:['β','γ'], g:[[1001.0,0.84],[766.4,0.29]], src:'Chaîne U-238'},
     {n:'U-234', cat:'nat', hl:'245 ka', rad:['α'], g:[], src:'Chaîne U-238'},
-    {n:'Ra-226', cat:'nat', hl:'1600 a', rad:['α','γ'], g:[186.2], src:'Chaîne U-238 (radium)'},
-    {n:'Rn-222', cat:'nat', hl:'3,82 j', rad:['α'], g:[], src:'Radon (gaz)'},
-    {n:'Pb-214', cat:'nat', hl:'26,8 min', rad:['β','γ'], g:[351.9,295.2,242.0], src:'Chaîne U-238'},
-    {n:'Bi-214', cat:'nat', hl:'19,9 min', rad:['β','γ'], g:[609.3,1764.5,1120.3,1238.1,768.4], src:'Chaîne U-238'},
-    {n:'Pb-210', cat:'nat', hl:'22,2 a', rad:['β','γ'], g:[46.5], src:'Chaîne U-238'},
-    {n:'Po-210', cat:'nat', hl:'138 j', rad:['α'], g:[], src:'Chaîne U-238'},
-    // --- naturels (chaîne Th-232) ---
-    {n:'Th-232', cat:'nat', hl:'14 Md a', rad:['α'], g:[], src:'Tête de chaîne Th-232'},
-    {n:'Ac-228', cat:'nat', hl:'6,15 h', rad:['β','γ'], g:[911.2,969.0,338.3], src:'Chaîne Th-232'},
-    {n:'Pb-212', cat:'nat', hl:'10,6 h', rad:['β','γ'], g:[238.6], src:'Chaîne Th-232'},
-    {n:'Bi-212', cat:'nat', hl:'60,5 min', rad:['α','β','γ'], g:[727.3], src:'Chaîne Th-232'},
-    {n:'Tl-208', cat:'nat', hl:'3,05 min', rad:['β','γ'], g:[2614.5,583.2,510.8], src:'Chaîne Th-232'},
-    // --- naturels (U-235 & primordial) ---
-    {n:'U-235', cat:'nat', hl:'704 Ma', rad:['α','γ'], g:[185.7,143.8,163.3,205.3], src:'Chaîne U-235'},
-    {n:'K-40', cat:'nat', hl:'1,25 Md a', rad:['β','γ'], g:[1460.8], src:'Primordial (potassium)'},
-    // --- artificiels ---
-    {n:'Cs-137', cat:'art', hl:'30,1 a', rad:['β','γ'], g:[661.7], src:'Fission · contamination'},
-    {n:'Cs-134', cat:'art', hl:'2,06 a', rad:['β','γ'], g:[604.7,795.9], src:'Fission'},
-    {n:'Co-60', cat:'art', hl:'5,27 a', rad:['β','γ'], g:[1173.2,1332.5], src:'Activation · industriel'},
-    {n:'Co-57', cat:'art', hl:'272 j', rad:['γ'], g:[122.1,136.5], src:'Médical · étalonnage'},
-    {n:'Am-241', cat:'art', hl:'432 a', rad:['α','γ'], g:[59.5], src:'Détecteurs de fumée'},
-    {n:'I-131', cat:'art', hl:'8,02 j', rad:['β','γ'], g:[364.5,637.0,284.3], src:'Médical (thyroïde)'},
-    {n:'I-125', cat:'art', hl:'59,4 j', rad:['γ'], g:[35.5,27.5], src:'Médical (curiethérapie)'},
-    {n:'Tc-99m', cat:'art', hl:'6,01 h', rad:['γ'], g:[140.5], src:'Médical (imagerie)'},
-    {n:'Na-22', cat:'art', hl:'2,60 a', rad:['β⁺','γ'], g:[1274.5,511.0], src:'Étalonnage (β⁺)'},
-    {n:'F-18', cat:'art', hl:'110 min', rad:['β⁺'], g:[511.0], src:'Médical (TEP)'},
+    {n:'Th-230', cat:'nat', hl:'75,4 ka', rad:['α','γ'], g:[[67.7,0.38]], src:'Chaîne U-238'},
+    {n:'Ra-226', cat:'nat', hl:'1600 a', rad:['α','γ'], g:[[186.2,3.6]], src:'Chaîne U-238 (radium)'},
+    {n:'Rn-222', cat:'nat', hl:'3,82 j', rad:['α'], g:[], src:'Radon (gaz) · chaîne U-238'},
+    {n:'Po-218', cat:'nat', hl:'3,1 min', rad:['α'], g:[], src:'Descendant du radon'},
+    {n:'Pb-214', cat:'nat', hl:'26,8 min', rad:['β','γ'], g:[[351.9,35.6],[295.2,18.4],[242.0,7.3]], src:'Chaîne U-238'},
+    {n:'Bi-214', cat:'nat', hl:'19,9 min', rad:['β','γ'], g:[[609.3,45.5],[1764.5,15.3],[1120.3,14.9],[1238.1,5.8],[2204.2,4.9],[768.4,4.9]], src:'Chaîne U-238 · raies repères'},
+    {n:'Po-214', cat:'nat', hl:'164 µs', rad:['α'], g:[], src:'Chaîne U-238 · α 7,7 MeV'},
+    {n:'Pb-210', cat:'nat', hl:'22,2 a', rad:['β','γ'], g:[[46.5,4.25]], src:'Chaîne U-238 · raie basse 46 keV'},
+    {n:'Bi-210', cat:'nat', hl:'5,01 j', rad:['β'], g:[], src:'Chaîne U-238 · β pur'},
+    {n:'Po-210', cat:'nat', hl:'138 j', rad:['α'], g:[], src:'Chaîne U-238 · α quasi sans γ'},
+    // ===== NATURELS — chaîne Th-232 =====
+    {n:'Th-232', cat:'nat', hl:'14,0 Md a', rad:['α'], g:[], src:'Tête de chaîne Th-232'},
+    {n:'Ra-228', cat:'nat', hl:'5,75 a', rad:['β'], g:[], src:'Chaîne Th-232 · β pur'},
+    {n:'Ac-228', cat:'nat', hl:'6,15 h', rad:['β','γ'], g:[[911.2,25.8],[969.0,15.8],[338.3,11.4],[463.0,4.4],[794.9,4.3]], src:'Chaîne Th-232 · marqueur thorium'},
+    {n:'Th-228', cat:'nat', hl:'1,91 a', rad:['α','γ'], g:[[84.4,1.2]], src:'Chaîne Th-232'},
+    {n:'Ra-224', cat:'nat', hl:'3,63 j', rad:['α','γ'], g:[[241.0,4.1]], src:'Chaîne Th-232'},
+    {n:'Rn-220', cat:'nat', hl:'55,6 s', rad:['α'], g:[], src:'Thoron (gaz) · chaîne Th-232'},
+    {n:'Pb-212', cat:'nat', hl:'10,6 h', rad:['β','γ'], g:[[238.6,43.6],[300.1,3.3]], src:'Chaîne Th-232 · raie 239 keV'},
+    {n:'Bi-212', cat:'nat', hl:'60,5 min', rad:['α','β','γ'], g:[[727.3,6.7],[1620.5,1.5]], src:'Chaîne Th-232 · α+β'},
+    {n:'Tl-208', cat:'nat', hl:'3,05 min', rad:['β','γ'], g:[[2614.5,35.9],[583.2,30.6],[510.8,8.1],[860.6,4.5]], src:'Chaîne Th-232 · 2615 keV très haut'},
+    // ===== NATURELS — chaîne U-235 =====
+    {n:'U-235', cat:'nat', hl:'704 Ma', rad:['α','γ'], g:[[185.7,57.2],[143.8,10.96],[163.3,5.08],[205.3,5.01]], src:'Chaîne U-235 · 0,72 % de l\'U naturel'},
+    {n:'Th-231', cat:'nat', hl:'25,5 h', rad:['β','γ'], g:[[84.2,6.6],[25.6,14.5]], src:'Chaîne U-235'},
+    {n:'Pa-231', cat:'nat', hl:'32,8 ka', rad:['α','γ'], g:[[283.7,1.6],[300.1,2.4]], src:'Chaîne U-235'},
+    {n:'Th-227', cat:'nat', hl:'18,7 j', rad:['α','γ'], g:[[235.9,12.9],[256.2,7.0]], src:'Chaîne U-235'},
+    {n:'Ra-223', cat:'nat', hl:'11,4 j', rad:['α','γ'], g:[[269.5,13.7],[154.2,5.6],[323.9,3.9]], src:'Chaîne U-235 · aussi médical (Xofigo)'},
+    {n:'Rn-219', cat:'nat', hl:'3,96 s', rad:['α','γ'], g:[[271.2,10.8],[401.8,6.4]], src:'Action (gaz) · chaîne U-235'},
+    // ===== NATURELS — primordiaux & cosmogéniques =====
+    {n:'K-40', cat:'nat', hl:'1,25 Md a', rad:['β','γ'], g:[[1460.8,10.66]], src:'Primordial · partout (sol, corps, banane)'},
+    {n:'Be-7', cat:'nat', hl:'53,2 j', rad:['γ'], g:[[477.6,10.4]], src:'Cosmogénique (haute atmosphère)'},
+    {n:'C-14', cat:'nat', hl:'5730 a', rad:['β'], g:[], src:'Cosmogénique · datation · β pur 156 keV'},
+    // ===== ARTIFICIELS — produits de fission =====
+    {n:'Cs-137', cat:'art', hl:'30,1 a', rad:['β','γ'], g:[[661.7,85.1]], src:'Fission · marqueur de contamination'},
+    {n:'Cs-134', cat:'art', hl:'2,06 a', rad:['β','γ'], g:[[604.7,97.6],[795.9,85.5],[569.3,15.4],[801.9,8.7]], src:'Fission · double raie 605/796'},
+    {n:'I-131', cat:'art', hl:'8,02 j', rad:['β','γ'], g:[[364.5,81.5],[637.0,7.2],[284.3,6.1]], src:'Fission · médical (thyroïde)'},
+    {n:'I-133', cat:'art', hl:'20,8 h', rad:['β','γ'], g:[[529.9,87.0]], src:'Fission · vie courte'},
     {n:'Sr-90', cat:'art', hl:'28,8 a', rad:['β'], g:[], src:'Fission · β pur → Y-90'},
-    {n:'Y-90', cat:'art', hl:'64 h', rad:['β'], g:[], src:'β pur (descendant Sr-90)'},
-    {n:'H-3', cat:'art', hl:'12,3 a', rad:['β'], g:[], src:'Tritium · β pur'},
-    {n:'C-14', cat:'art', hl:'5730 a', rad:['β'], g:[], src:'Datation · β pur'},
-    {n:'Eu-152', cat:'art', hl:'13,5 a', rad:['β','γ'], g:[121.8,344.3,1408.0,964.1], src:'Source d\'étalonnage'},
-    {n:'Ba-133', cat:'art', hl:'10,5 a', rad:['γ'], g:[356.0,81.0,302.9,383.9], src:'Source d\'étalonnage'},
-    {n:'Ir-192', cat:'art', hl:'73,8 j', rad:['β','γ'], g:[316.5,468.1,308.5], src:'Radiographie industrielle'},
-    {n:'Pu-239', cat:'art', hl:'24,1 ka', rad:['α'], g:[], src:'Fissile · faibles γ'}
+    {n:'Y-90', cat:'art', hl:'64,0 h', rad:['β'], g:[], src:'β pur 2,28 MeV (descendant Sr-90)'},
+    {n:'Ru-106', cat:'art', hl:'371,8 j', rad:['β','γ'], g:[[511.9,20.4],[621.9,9.9]], src:'Fission · via Rh-106'},
+    {n:'Ce-144', cat:'art', hl:'284,9 j', rad:['β','γ'], g:[[133.5,11.1],[80.1,1.4]], src:'Fission'},
+    {n:'Zr-95', cat:'art', hl:'64,0 j', rad:['β','γ'], g:[[756.7,54.4],[724.2,44.2]], src:'Fission'},
+    {n:'Nb-95', cat:'art', hl:'34,99 j', rad:['β','γ'], g:[[765.8,99.8]], src:'Fission (descendant Zr-95)'},
+    {n:'Ba-140', cat:'art', hl:'12,75 j', rad:['β','γ'], g:[[537.3,24.4]], src:'Fission → La-140'},
+    {n:'La-140', cat:'art', hl:'1,68 j', rad:['β','γ'], g:[[1596.2,95.4],[487.0,45.5]], src:'Fission (descendant Ba-140)'},
+    {n:'Te-132', cat:'art', hl:'3,2 j', rad:['β','γ'], g:[[228.2,88.0]], src:'Fission → I-132'},
+    {n:'Xe-133', cat:'art', hl:'5,24 j', rad:['β','γ'], g:[[81.0,38.0]], src:'Fission · gaz rare'},
+    {n:'Kr-85', cat:'art', hl:'10,76 a', rad:['β','γ'], g:[[514.0,0.43]], src:'Fission · gaz rare'},
+    // ===== ARTIFICIELS — activation, étalonnage, industrie =====
+    {n:'Co-60', cat:'art', hl:'5,27 a', rad:['β','γ'], g:[[1332.5,99.98],[1173.2,99.85]], src:'Activation · stérilisation · étalonnage'},
+    {n:'Co-57', cat:'art', hl:'271,7 j', rad:['γ'], g:[[122.1,85.6],[136.5,10.7]], src:'Étalonnage basse énergie · médical'},
+    {n:'Mn-54', cat:'art', hl:'312,2 j', rad:['γ'], g:[[834.8,99.98]], src:'Activation · étalonnage'},
+    {n:'Na-22', cat:'art', hl:'2,60 a', rad:['β⁺','γ'], g:[[1274.5,99.94],[511.0,180.0]], src:'Étalonnage β⁺ · double 511'},
+    {n:'Na-24', cat:'art', hl:'14,96 h', rad:['β','γ'], g:[[1368.6,100.0],[2754.0,99.9]], src:'Activation neutronique'},
+    {n:'Zn-65', cat:'art', hl:'243,9 j', rad:['β⁺','γ'], g:[[1115.5,50.0]], src:'Activation'},
+    {n:'Cd-109', cat:'art', hl:'461,9 j', rad:['γ'], g:[[88.0,3.6]], src:'Étalonnage basse énergie'},
+    {n:'Bi-207', cat:'art', hl:'31,6 a', rad:['γ'], g:[[569.7,97.8],[1063.7,74.5],[1770.2,6.9]], src:'Étalonnage multi-raies'},
+    {n:'Am-241', cat:'art', hl:'432,2 a', rad:['α','γ'], g:[[59.5,35.9]], src:'Détecteurs de fumée · étalonnage 60 keV'},
+    {n:'Eu-152', cat:'art', hl:'13,5 a', rad:['β','γ'], g:[[121.8,28.6],[344.3,26.5],[1408.0,21.0],[964.1,14.6],[1112.1,13.6]], src:'Source d\'étalonnage multi-raies'},
+    {n:'Eu-154', cat:'art', hl:'8,6 a', rad:['β','γ'], g:[[123.1,40.4],[1274.4,35.5],[723.3,20.0]], src:'Source d\'étalonnage'},
+    {n:'Ba-133', cat:'art', hl:'10,5 a', rad:['γ'], g:[[356.0,62.1],[81.0,34.1],[302.9,18.3],[383.8,8.9]], src:'Source d\'étalonnage'},
+    {n:'Ir-192', cat:'art', hl:'73,8 j', rad:['β','γ'], g:[[316.5,82.8],[468.1,47.8],[308.5,29.7],[296.0,28.7]], src:'Gammagraphie industrielle'},
+    // ===== ARTIFICIELS — médical =====
+    {n:'Tc-99m', cat:'art', hl:'6,01 h', rad:['γ'], g:[[140.5,89.0]], src:'Imagerie médicale (le + utilisé)'},
+    {n:'Mo-99', cat:'art', hl:'65,9 h', rad:['β','γ'], g:[[739.5,12.1],[181.1,6.0]], src:'Générateur de Tc-99m'},
+    {n:'I-123', cat:'art', hl:'13,2 h', rad:['γ'], g:[[159.0,83.3]], src:'Imagerie thyroïde'},
+    {n:'I-125', cat:'art', hl:'59,4 j', rad:['γ'], g:[[35.5,6.7],[27.2,39.0]], src:'Curiethérapie · X de Te 27 keV'},
+    {n:'F-18', cat:'art', hl:'109,8 min', rad:['β⁺'], g:[[511.0,193.0]], src:'TEP (PET-scan) · β⁺'},
+    {n:'Ga-67', cat:'art', hl:'78,3 h', rad:['γ'], g:[[93.3,38.8],[184.6,21.4],[300.2,16.6]], src:'Imagerie (scintigraphie)'},
+    {n:'In-111', cat:'art', hl:'67,3 h', rad:['γ'], g:[[171.3,90.6],[245.4,94.1]], src:'Imagerie (marquage cellulaire)'},
+    {n:'Tl-201', cat:'art', hl:'73,0 h', rad:['γ'], g:[[167.4,10.0],[135.3,2.6]], src:'Imagerie cardiaque · X de Hg 70-80'},
+    {n:'Lu-177', cat:'art', hl:'6,65 j', rad:['β','γ'], g:[[208.4,10.4],[112.9,6.2]], src:'Radiothérapie ciblée'},
+    // ===== ARTIFICIELS — fissiles =====
+    {n:'Pu-239', cat:'art', hl:'24,1 ka', rad:['α'], g:[[413.7,0.0015]], src:'Fissile · α, γ quasi nuls'},
+    {n:'Pu-238', cat:'art', hl:'87,7 a', rad:['α'], g:[], src:'Source thermique (RTG) · α'},
+    {n:'H-3', cat:'art', hl:'12,3 a', rad:['β'], g:[], src:'Tritium · β pur très mou (18 keV)'}
   ];
   const RBCLASS={'α':'rb-a','β':'rb-b','β⁺':'rb-bp','γ':'rb-g'};
   let isoFilter='all';
   function renderIsotopes(){
-    const q=($('isoSearch').value||'').trim().toLowerCase();
+    const qraw=($('isoSearch').value||'').trim();
+    const q=qraw.toLowerCase();
+    const qnum=parseFloat(qraw.replace(',','.'));
+    const byEnergy=qraw!==''&&isFinite(qnum)&&/^[\d.,\s]+$/.test(qraw);
     const list=$('isoList'); list.innerHTML='';
     const rows=ISOTOPES.filter(it=>{
+      if(it.hl==='—') return false;
       if(isoFilter==='nat'&&it.cat!=='nat') return false;
       if(isoFilter==='art'&&it.cat!=='art') return false;
-      if(isoFilter==='gamma'&&it.g.length===0) return false;
+      if(isoFilter==='gamma'&&(!it.g||it.g.length===0)) return false;
+      if(byEnergy){ return (it.g||[]).some(L=>Math.abs(L[0]-qnum)<=3); }
       if(q&&!(it.n.toLowerCase().includes(q)||(it.src||'').toLowerCase().includes(q))) return false;
       return true;
+    });
+    if(byEnergy) rows.sort((a,b)=>{
+      const da=Math.min(...a.g.map(L=>Math.abs(L[0]-qnum))), db=Math.min(...b.g.map(L=>Math.abs(L[0]-qnum)));
+      return da-db;
     });
     if(!rows.length){ list.innerHTML='<p style="color:var(--ink-faint);font-size:13px;padding:4px">'+T('iso_empty')+'</p>'; return; }
     rows.forEach(it=>{
       const badges=it.rad.map(r=>'<i class="rb '+(RBCLASS[r]||'rb-g')+'">'+r+'</i>').join('');
-      const gline = it.g.length ? T('iso_glabel')+' <b>'+it.g.map(e=>Math.round(e)).join(' · ')+'</b> keV' : '<span class="none">'+T('iso_nogamma')+'</span>';
+      let gline;
+      if(it.g&&it.g.length){
+        const sorted=[...it.g].sort((a,b)=>b[1]-a[1]).slice(0,4);
+        const parts=sorted.map((L,k)=>{
+          const e=Math.round(L[0]), pct=L[1]>=1?Math.round(L[1]):L[1].toPrecision(1);
+          const hi=byEnergy&&Math.abs(L[0]-qnum)<=3;
+          const txt=e+' <span class="gi">('+pct+'%)</span>';
+          return k===0||hi ? '<b'+(hi?' class="gmatch"':'')+'>'+txt+'</b>' : txt;
+        });
+        gline=T('iso_glabel')+' '+parts.join(' · ')+' keV';
+      } else {
+        gline='<span class="none">'+T('iso_nogamma')+'</span>';
+      }
       const row=document.createElement('div'); row.className='iso-row';
       row.innerHTML='<div><div class="iso-name">'+it.n+'</div><div class="iso-hl">'+it.hl+'</div></div>'+
         '<span class="iso-cat '+it.cat+'">'+T(it.cat==='nat'?'iso_nat':'iso_art')+'</span>'+

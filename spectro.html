@@ -77,6 +77,10 @@
   .peak .pi .alt{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:3px}
   .fam{font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:3px 7px;border-radius:5px;border:1px solid var(--panel-edge);color:var(--ink-dim);flex:none}
   .fam.u238{color:#7dd957;border-color:#3a5a2a}.fam.th232{color:#ffb627;border-color:#5a4a1a}
+  .conf{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;padding:2px 6px;border-radius:4px;border:1px solid var(--panel-edge);margin-left:2px}
+  .conf.sur{color:#2dd4a7;border-color:#1a5a48}.conf.prob{color:#ffce5e;border-color:#5a4a1a}.conf.poss{color:#94a3a0;border-color:#3a4550}
+  .recal-note{font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--ink-dim);background:rgba(45,212,167,.05);border:1px solid var(--spec-deep);border-radius:9px;padding:11px 13px;margin-bottom:14px}
+  .recal-note b{color:var(--spec)}.recal-note code{color:var(--ink);font-size:11px;word-break:break-all}
   .fam.art{color:#ff8a6b;border-color:#5a2f24}.fam.prim{color:#6bb6ff;border-color:#24405a}
   .cta{display:block;width:100%;max-width:340px;margin:4px auto 0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--spec);background:none;border:1px solid var(--panel-edge);border-radius:10px;padding:13px 16px;cursor:pointer;transition:.15s}
   .cta:hover{border-color:var(--spec);background:rgba(45,212,167,.07)}
@@ -129,6 +133,7 @@
     <div class="card">
       <div class="card-h"><span class="idx"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span><h2 data-i18n="r_id">Identification</h2></div>
       <div class="verdict-box" style="margin-bottom:16px"><span class="vi">☢️</span><div><div class="vt" data-i18n="r_verdict">Signature</div><div class="vv" id="verdict">—</div></div></div>
+      <div id="recalNote" class="recal-note" style="display:none"></div>
       <div id="peaks"></div>
     </div>
 
@@ -156,7 +161,9 @@
       export_btn:"📷 Exporter l'image (Instagram)",card_dl:"Télécharger",card_close:"Fermer",card_hint:"Appui long sur l'image pour l'enregistrer, ou Télécharger.",
       np:"Aucun pic net détecté.",alt:"aussi compatible",none:"non identifié",
       v_single:"Chaîne",v_mixte:"Signatures mixtes",v_none:"Indéterminée",
-      fam_u238:"chaîne U-238 (uranium / radium)",fam_th232:"chaîne Th-232 (thorium)",fam_prim:"K-40 (potassium)",fam_art:"isotope artificiel",fam_x:"annihilation β⁺",
+      fam_u238:"chaîne U-238 (uranium / radium)",fam_th232:"chaîne Th-232 (thorium)",fam_u235:"chaîne U-235",fam_prim:"K-40 (potassium)",fam_art:"isotope artificiel",fam_x:"annihilation β⁺",
+      cf_sur:"sûr",cf_prob:"probable",cf_poss:"possible",
+      rc_title:"Recalé en énergie",rc_coef:"coeffs Radiacode affinés :",
       verdict_u:"Minéral uranifère — chaîne U-238 en équilibre",
       disc:"<b>Identification assistée.</b> Le RC-110 a une faible résolution (peu de canaux, pics larges) : les candidats sont <b>indicatifs</b>, fondés sur la cohérence de chaîne, et non quantitatifs (pas d'activité). Les énergies affichées sont les <b>raies théoriques</b> de l'isotope identifié (indépendantes de la calibration de ton détecteur) ; le pic mesuré peut être légèrement décalé. Vérifie toujours avec ton app Radiacode et ton expérience. Outil FrenchCurie de vulgarisation."
     },
@@ -167,7 +174,9 @@
       export_btn:"📷 Export image (Instagram)",card_dl:"Download",card_close:"Close",card_hint:"Long-press the image to save it, or Download.",
       np:"No clear peak detected.",alt:"also compatible",none:"unidentified",
       v_single:"Chain",v_mixte:"Mixed signatures",v_none:"Undetermined",
-      fam_u238:"U-238 chain (uranium / radium)",fam_th232:"Th-232 chain (thorium)",fam_prim:"K-40 (potassium)",fam_art:"artificial isotope",fam_x:"β⁺ annihilation",
+      fam_u238:"U-238 chain (uranium / radium)",fam_th232:"Th-232 chain (thorium)",fam_u235:"U-235 chain",fam_prim:"K-40 (potassium)",fam_art:"artificial isotope",fam_x:"β⁺ annihilation",
+      cf_sur:"sure",cf_prob:"likely",cf_poss:"possible",
+      rc_title:"Energy recalibrated",rc_coef:"refined Radiacode coeffs:",
       verdict_u:"Uranium-bearing mineral — U-238 chain in equilibrium",
       disc:"<b>Assisted identification.</b> The RC-110 has low resolution (few channels, broad peaks): candidates are <b>indicative</b>, based on chain coherence, and not quantitative (no activity). Displayed energies are the <b>theoretical lines</b> of the identified isotope (independent of your detector calibration); the measured peak may be slightly shifted. Always cross-check with your Radiacode app and experience. FrenchCurie educational tool."
     }
@@ -186,17 +195,29 @@
 
   /* ---- bibliothèque de raies (keV, isotope, famille, intensité %) ---- */
   const LIB=[
-    {e:63.3,iso:'Th-234',fam:'u238',I:3.7},{e:92.6,iso:'Th-234',fam:'u238',I:5.6},{e:186.2,iso:'Ra-226/U-235',fam:'u238',I:3.6},
-    {e:242.0,iso:'Pb-214',fam:'u238',I:7.3},{e:295.2,iso:'Pb-214',fam:'u238',I:18.4},{e:351.9,iso:'Pb-214',fam:'u238',I:35.6},
-    {e:609.3,iso:'Bi-214',fam:'u238',I:45.5},{e:768.4,iso:'Bi-214',fam:'u238',I:4.9},{e:1120.3,iso:'Bi-214',fam:'u238',I:14.9},
-    {e:1238.1,iso:'Bi-214',fam:'u238',I:5.8},{e:1377.7,iso:'Bi-214',fam:'u238',I:4.0},{e:1764.5,iso:'Bi-214',fam:'u238',I:15.3},{e:1001.0,iso:'Pa-234m',fam:'u238',I:0.8},
-    {e:238.6,iso:'Pb-212',fam:'th232',I:43.6},{e:338.3,iso:'Ac-228',fam:'th232',I:11.3},{e:583.2,iso:'Tl-208',fam:'th232',I:30.6},
-    {e:727.3,iso:'Bi-212',fam:'th232',I:6.7},{e:911.2,iso:'Ac-228',fam:'th232',I:25.8},{e:969.0,iso:'Ac-228',fam:'th232',I:15.8},{e:2614.5,iso:'Tl-208',fam:'th232',I:35.9},
+    // chaîne U-238
+    {e:46.5,iso:'Pb-210',fam:'u238',I:4.25},{e:63.3,iso:'Th-234',fam:'u238',I:3.7},{e:92.6,iso:'Th-234',fam:'u238',I:5.6},
+    {e:186.2,iso:'Ra-226/U-235',fam:'u238',I:7.0},{e:242.0,iso:'Pb-214',fam:'u238',I:7.3},{e:295.2,iso:'Pb-214',fam:'u238',I:18.4},
+    {e:351.9,iso:'Pb-214',fam:'u238',I:35.6},{e:609.3,iso:'Bi-214',fam:'u238',I:45.5},{e:768.4,iso:'Bi-214',fam:'u238',I:4.9},
+    {e:934.1,iso:'Bi-214',fam:'u238',I:3.1},{e:1120.3,iso:'Bi-214',fam:'u238',I:14.9},{e:1238.1,iso:'Bi-214',fam:'u238',I:5.8},
+    {e:1377.7,iso:'Bi-214',fam:'u238',I:4.0},{e:1764.5,iso:'Bi-214',fam:'u238',I:15.3},{e:2204.2,iso:'Bi-214',fam:'u238',I:4.9},{e:1001.0,iso:'Pa-234m',fam:'u238',I:0.84},
+    // chaîne Th-232
+    {e:238.6,iso:'Pb-212',fam:'th232',I:43.6},{e:338.3,iso:'Ac-228',fam:'th232',I:11.4},{e:583.2,iso:'Tl-208',fam:'th232',I:30.6},
+    {e:727.3,iso:'Bi-212',fam:'th232',I:6.7},{e:794.9,iso:'Ac-228',fam:'th232',I:4.3},{e:860.6,iso:'Tl-208',fam:'th232',I:4.5},
+    {e:911.2,iso:'Ac-228',fam:'th232',I:25.8},{e:969.0,iso:'Ac-228',fam:'th232',I:15.8},{e:1588.2,iso:'Ac-228',fam:'th232',I:3.2},{e:2614.5,iso:'Tl-208',fam:'th232',I:35.9},
+    // chaîne U-235
+    {e:143.8,iso:'U-235',fam:'u235',I:10.96},{e:163.4,iso:'U-235',fam:'u235',I:5.08},{e:205.3,iso:'U-235',fam:'u235',I:5.01},
+    // primordial
     {e:1460.8,iso:'K-40',fam:'prim',I:10.7},
-    {e:661.7,iso:'Cs-137',fam:'art',I:85},{e:59.5,iso:'Am-241',fam:'art',I:35.9},{e:1173.2,iso:'Co-60',fam:'art',I:99.9},{e:1332.5,iso:'Co-60',fam:'art',I:99.9},
-    {e:511.0,iso:'e⁺e⁻',fam:'x',I:50}
+    // artificiels
+    {e:59.5,iso:'Am-241',fam:'art',I:35.9},{e:122.1,iso:'Co-57',fam:'art',I:85.6},{e:140.5,iso:'Tc-99m',fam:'art',I:89},
+    {e:364.5,iso:'I-131',fam:'art',I:81.5},{e:604.7,iso:'Cs-134',fam:'art',I:97.6},{e:661.7,iso:'Cs-137',fam:'art',I:85.1},
+    {e:795.9,iso:'Cs-134',fam:'art',I:85.5},{e:1173.2,iso:'Co-60',fam:'art',I:99.9},{e:1274.5,iso:'Na-22',fam:'art',I:99.9},{e:1332.5,iso:'Co-60',fam:'art',I:100}
   ];
-  const FAMCLASS={u238:'u238',th232:'th232',prim:'prim',art:'art',x:''};
+  const PHYS=[{e:511.0,iso:'Annihilation e⁺'},{e:75.0,iso:'X plomb'},{e:84.9,iso:'X plomb'}];
+  const FAMS=['u238','th232','u235','prim','art'];
+  const STRONG={u238:[351.9,609.3,295.2],th232:[238.6,2614.5,911.2,583.2],u235:[143.8,163.4]};
+  const FAMCLASS={u238:'u238',th232:'th232',u235:'u238',prim:'prim',art:'art'};
 
   let DATA=null, scale='lin';
 
@@ -224,7 +245,7 @@
     const resid=new Float64Array(counts.length);
     let maxr=0;
     for(let i=0;i<counts.length;i++){resid[i]=sm[i]-base[i];if(E[i]>45&&resid[i]>maxr)maxr=resid[i];}
-    const thr=maxr*0.04;
+    const thr=maxr*0.035;
     let cand=[];
     for(let i=2;i<counts.length-2;i++){
       if(E[i]<=45)continue;
@@ -234,32 +255,64 @@
     let peaks=[];
     for(const i of cand){if(peaks.every(j=>Math.abs(j-i)>=8))peaks.push(i);}
     peaks.sort((a,b)=>a-b);
-    return peaks;
+    return {idx:peaks, prom:peaks.map(i=>resid[i])};
   }
-  function matchPeak(Ep){
-    const tol=Math.max(20,0.04*Ep), sig=tol*0.6;
-    return LIB.filter(L=>Math.abs(L.e-Ep)<=tol)
-      .map(L=>Object.assign({},L,{d:Math.abs(L.e-Ep),score:L.I*Math.exp(-Math.pow((L.e-Ep)/sig,2))}))
-      .sort((a,b)=>b.score-a.score);
+  function bestInFam(Eval,fam,tolfrac){
+    const tol=Math.max(16,tolfrac*Eval), sig=tol*0.7; let best=null;
+    for(const L of LIB){ if(L.fam!==fam)continue; const d=Math.abs(L.e-Eval);
+      if(d<=tol){ const q=Math.exp(-Math.pow((L.e-Eval)/sig,2)); if(!best||q>best.q)best={q,d,e:L.e,iso:L.iso,I:L.I}; } }
+    return best;
+  }
+  function assignLine(Ec,dom,active){
+    const tol=Math.max(12,0.02*Ec), sig=tol*0.7, CH=['u238','th232','u235']; let cands=[];
+    for(const L of LIB){ if(CH.indexOf(L.fam)>=0 && active && !active.has(L.fam)) continue; // chaîne concurrente absente : ignorée
+      const d=Math.abs(L.e-Ec);
+      if(d<=tol){ const sc=L.I*Math.exp(-Math.pow((L.e-Ec)/sig,2))*(L.fam===dom?2.0:1.0); cands.push({d,e:L.e,iso:L.iso,fam:L.fam,score:sc}); } }
+    cands.sort((a,b)=>b.score-a.score);
+    if(!cands.length){ for(const P of PHYS){ if(Math.abs(P.e-Ec)<=8) return [{d:Math.abs(P.e-Ec),e:P.e,iso:P.iso,fam:'phys',score:0}]; } }
+    return cands;
   }
   function analyse(){
     const {counts,E}=DATA;
-    const peaks=DATA.peaks=detectPeaks(counts,E);
-    const fam={};
-    peaks.forEach(i=>{const Ep=E[i];const seen={};matchPeak(Ep).forEach(c=>{if(!seen[c.fam]){fam[c.fam]=(fam[c.fam]||0)+c.I;seen[c.fam]=1;}});});
-    DATA.fam=fam;
-    const ranked=Object.keys(fam).filter(f=>f!=='x').sort((a,b)=>fam[b]-fam[a]);
-    DATA.domFam=ranked[0]||null;
-    DATA.ranked=ranked;
+    const pk=detectPeaks(counts,E); DATA.peaks=pk.idx; DATA.prom=pk.prom;
+    const pmax=Math.max(1,...pk.prom);
+    // couverture des pics par famille (cohérence, tolérance large : offset non corrigé)
+    const cov={}; FAMS.forEach(f=>cov[f]=0);
+    pk.idx.forEach((i,j)=>{ const w=pk.prom[j]/pmax; FAMS.forEach(f=>{ const b=bestInFam(E[i],f,0.035); if(b)cov[f]+=w*b.q; }); });
+    const ranked=FAMS.filter(f=>cov[f]>0.04).sort((a,b)=>cov[b]-cov[a]);
+    const dom=ranked[0]||null; DATA.domFam=dom; DATA.cov=cov; DATA.ranked=ranked;
+    // chaînes "actives" : la dominante + toute chaîne concurrente réellement présente
+    const CH=['u238','th232','u235']; const active=new Set(dom?[dom]:[]);
+    if(dom) CH.forEach(f=>{ if(f!==dom && cov[f]>=0.4*cov[dom]) active.add(f); });
+    DATA.active=active;
+    // recalage en énergie (fit linéaire sur raies sûres de la famille dominante)
+    let pairs=[];
+    pk.idx.forEach(i=>{ if(E[i]<120)return; const b=bestInFam(E[i],dom,0.035); if(b&&b.I>=5&&b.d<Math.max(20,0.04*E[i]))pairs.push([E[i],b.e]); });
+    DATA.recal=null; DATA.Ecorr=E;
+    if(dom&&pairs.length>=2){
+      let sx=0,sy=0,sxx=0,sxy=0,n=pairs.length;
+      pairs.forEach(([x,y])=>{sx+=x;sy+=y;sxx+=x*x;sxy+=x*y;});
+      const a=(n*sxy-sx*sy)/(n*sxx-sx*sx), b=(sy-a*sx)/n;
+      if(isFinite(a)&&isFinite(b)&&a>0.9&&a<1.1){
+        const Ec=new Float64Array(E.length); for(let i=0;i<E.length;i++)Ec[i]=a*E[i]+b;
+        DATA.Ecorr=Ec; const c=DATA.coef;
+        DATA.recal={a,b,n:pairs.length,gain:(a-1)*100,coef:[a*(c[0]||0)+b, a*(c[1]||0), a*(c[2]||0)]};
+      }
+    }
+    // assignation finale (E corrigée, tolérance resserrée, bonus famille dominante)
+    DATA.assign=pk.idx.map(i=>{
+      const Em=E[i], Ec=DATA.Ecorr[i], cands=assignLine(Ec,dom,DATA.active);
+      if(!cands.length)return {i,Em,Ec,none:true};
+      const top=cands[0], d=top.d;
+      const conf = d<5?'sur':(d<9?'prob':'poss');
+      const alt = cands.find(c=>c.iso!==top.iso);
+      return {i,Em,Ec,iso:top.iso,e:top.e,fam:top.fam,d,conf,alt:alt?{iso:alt.iso,e:alt.e}:null};
+    });
   }
 
   /* ---- rendu ---- */
   function famLabel(f){return T('fam_'+f);}
-  function labelFor(Ep){
-    const cands=matchPeak(Ep);if(!cands.length)return null;
-    const inDom=cands.filter(c=>c.fam===DATA.domFam);
-    return (inDom[0]||cands[0]);
-  }
+  function asgFor(i){return (DATA.assign||[]).find(a=>a.i===i);}
   function fmtInt(v){return Math.round(v).toLocaleString(lang==='fr'?'fr-FR':'en-US');}
 
   function render(){
@@ -273,68 +326,71 @@
       chip('m_dur',mins+' min '+secs+' s')+chip('m_counts',fmtInt(total))+
       chip('m_cps',fmtInt(total/(d.mt||1)))+chip('m_range','0–'+Math.round(d.E[d.E.length-1])+' keV');
     drawChart();
+    // recalage
+    const rn=$('recalNote');
+    if(d.recal){ rn.style.display='block';
+      rn.innerHTML='<b>'+T('rc_title')+' '+(d.recal.gain>=0?'+':'')+d.recal.gain.toFixed(1)+'%</b> — '+T('rc_coef')+' <code>['+d.recal.coef[0].toFixed(4)+', '+d.recal.coef[1].toFixed(5)+', '+d.recal.coef[2].toExponential(3)+']</code>';
+    } else { rn.style.display='none'; }
     // verdict
     let vtxt;
     if(!d.domFam){vtxt=T('v_none');}
     else{
       const second=d.ranked[1];
-      const mixed=second&&d.fam[second]/d.fam[d.domFam]>0.6;
+      const mixed=second&&d.cov[second]/d.cov[d.domFam]>0.6;
       if(d.domFam==='u238'&&!mixed){vtxt=T('verdict_u');}
-      else if(mixed){vtxt=T('v_mixte')+' : '+famLabel(d.domFam)+' + '+famLabel(second);}
-      else{vtxt=famLabel(d.domFam).charAt(0).toUpperCase()+famLabel(d.domFam).slice(1);}
+      else if(mixed){vtxt=cap(famLabel(d.domFam))+' + '+famLabel(second);}
+      else{vtxt=cap(famLabel(d.domFam));}
     }
     $('verdict').textContent=vtxt;
     // peaks list
     const ph=$('peaks');ph.innerHTML='';
     if(!d.peaks.length){ph.innerHTML='<p style="color:var(--ink-faint);font-size:13px">'+T('np')+'</p>';}
-    d.peaks.forEach(i=>{
-      const Ep=d.E[i], best=labelFor(Ep), cands=matchPeak(Ep);
+    (d.assign||[]).forEach(a=>{
       const row=document.createElement('div');row.className='peak';
-      let alt='';
-      const others=cands.filter(c=>c.iso!==(best&&best.iso)).slice(0,1);
-      if(others.length)alt='<div class="alt">'+T('alt')+' : '+others[0].iso+' ('+Math.round(others[0].e)+' keV)</div>';
-      const eShown = best ? Math.round(best.e)+' keV' : '~'+Math.round(Ep)+' keV';
-      row.innerHTML='<div class="pe">'+eShown+'</div>'+
-        '<div class="pi"><b>'+(best?best.iso:T('none'))+'</b>'+alt+'</div>'+
-        (best?'<span class="fam '+FAMCLASS[best.fam]+'">'+best.fam.toUpperCase().replace('PRIM','K-40').replace('ART','ARTIF.')+'</span>':'');
+      if(a.none){ row.innerHTML='<div class="pe">~'+Math.round(a.Em)+' keV</div><div class="pi"><b>'+T('none')+'</b></div>'; ph.appendChild(row); return; }
+      const alt=a.alt?'<div class="alt">'+T('alt')+' : '+a.alt.iso+' ('+Math.round(a.alt.e)+' keV)</div>':'';
+      const cf='<span class="conf '+a.conf+'">'+T('cf_'+a.conf)+'</span>';
+      const famb = a.fam!=='phys' ? '<span class="fam '+FAMCLASS[a.fam]+'">'+famTag(a.fam)+'</span>' : '';
+      row.innerHTML='<div class="pe">'+Math.round(a.e)+' keV</div>'+
+        '<div class="pi"><b>'+a.iso+'</b> '+cf+alt+'</div>'+famb;
       ph.appendChild(row);
     });
   }
+  function cap(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+  function famTag(f){return {u238:'U-238',th232:'Th-232',u235:'U-235',prim:'K-40',art:'ARTIF.'}[f]||(f||'').toUpperCase();}
   function chip(k,v){return '<div class="chip">'+T(k)+'<b>'+v+'</b></div>';}
 
   /* ---- graphe canvas ---- */
   function drawInto(ctx,X,Y,W,H,opts){
-    const d=DATA, n=d.counts.length;
+    const d=DATA, n=d.counts.length, Eax=d.Ecorr||d.E;
     const Emax=opts.emax||1800;
-    let imax=n-1;for(let i=0;i<n;i++){if(d.E[i]>Emax){imax=i;break;}}
+    let imax=n-1;for(let i=0;i<n;i++){if(Eax[i]>Emax){imax=i;break;}}
     let vmax=0;for(let i=3;i<=imax;i++)if(d.counts[i]>vmax)vmax=d.counts[i];
     const log=opts.log;
     const yv=v=>{ if(log){const lv=Math.log10(Math.max(v,1)),lm=Math.log10(Math.max(vmax,10));return Y+H-(lv/lm)*H;} return Y+H-(v/vmax)*H; };
     const xe=e=>X+(e/Emax)*W;
-    // axes
     ctx.strokeStyle=opts.axis||'#1e2730';ctx.lineWidth=1;
     ctx.strokeRect(X,Y,W,H);
     ctx.fillStyle=opts.tick||'#586066';ctx.font='11px "IBM Plex Mono", monospace';ctx.textAlign='center';
     for(let e=0;e<=Emax;e+=Emax<=1000?200:300){const px=xe(e);ctx.beginPath();ctx.moveTo(px,Y+H);ctx.lineTo(px,Y+H+4);ctx.stroke();ctx.fillText(e,px,Y+H+17);}
-    // curve
     ctx.beginPath();
-    for(let i=3;i<=imax;i++){const px=xe(d.E[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
-    ctx.lineTo(xe(d.E[imax]),Y+H);ctx.lineTo(xe(d.E[3]),Y+H);ctx.closePath();
+    for(let i=3;i<=imax;i++){const px=xe(Eax[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.lineTo(xe(Eax[imax]),Y+H);ctx.lineTo(xe(Eax[3]),Y+H);ctx.closePath();
     ctx.fillStyle=opts.fill||'rgba(45,212,167,.12)';ctx.fill();
     ctx.beginPath();
-    for(let i=3;i<=imax;i++){const px=xe(d.E[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    for(let i=3;i<=imax;i++){const px=xe(Eax[i]),py=yv(d.counts[i]);if(i===3)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
     ctx.strokeStyle=opts.line||'#2dd4a7';ctx.lineWidth=opts.lw||1.6;ctx.lineJoin='round';ctx.stroke();
-    // peaks
     ctx.textAlign='center';
     d.peaks.forEach(idx=>{
-      if(d.E[idx]>Emax)return;
-      const best=labelFor(d.E[idx]);const px=xe(d.E[idx]),py=yv(d.counts[idx]);
+      if(Eax[idx]>Emax)return;
+      const a=asgFor(idx); const lblE=(a&&!a.none)?a.e:Eax[idx];
+      const px=xe(lblE),py=yv(d.counts[idx]);
       ctx.strokeStyle='rgba(255,206,94,.45)';ctx.lineWidth=0.8;ctx.setLineDash([4,3]);
       ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,Y+12);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle=opts.lbl||'#e8ecdf';ctx.font='bold 11px "IBM Plex Mono", monospace';
-      ctx.fillText(best?best.iso:'?',px,Y+10);
+      ctx.fillText((a&&!a.none)?a.iso:'?',px,Y+10);
       ctx.fillStyle=opts.tick||'#94a3a0';ctx.font='10px "IBM Plex Mono", monospace';
-      ctx.fillText(best?Math.round(best.e):Math.round(d.E[idx]),px,py-6);
+      ctx.fillText(Math.round(lblE),px,py-6);
     });
   }
   function drawChart(){
@@ -369,9 +425,9 @@
     // peaks summary
     ctx.fillStyle='#94a3a0';ctx.font='500 26px "IBM Plex Mono", monospace';
     let y=1010;const seen=new Set();
-    DATA.peaks.forEach(i=>{const b=labelFor(DATA.E[i]);if(!b||seen.has(b.iso))return;seen.add(b.iso);if(y>1230)return;
-      ctx.fillStyle='#2dd4a7';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(b.iso,100,y);
-      ctx.fillStyle='#586066';ctx.fillText(Math.round(b.e)+' keV',300,y);y+=40;});
+    (DATA.assign||[]).forEach(a=>{if(a.none||seen.has(a.iso))return;seen.add(a.iso);if(y>1230)return;
+      ctx.fillStyle='#2dd4a7';ctx.fillText('● ',70,y);ctx.fillStyle='#e8ecdf';ctx.fillText(a.iso,100,y);
+      ctx.fillStyle='#586066';ctx.fillText(Math.round(a.e)+' keV',340,y);y+=40;});
     // footer
     ctx.fillStyle='#586066';ctx.font='500 24px "IBM Plex Mono", monospace';ctx.textAlign='center';ctx.fillText('@frenchcurie · RC-110',W/2,H-70);
     lastURL=c.toDataURL('image/png');$('cardImg').src=lastURL;$('overlay').classList.add('show');
