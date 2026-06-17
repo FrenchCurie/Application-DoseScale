@@ -1,5 +1,5 @@
 /* Service worker — Dose · Distance · Temps */
-const CACHE = 'dosecalc-v20';
+const CACHE = 'dosecalc-v21';
 
 /* Fichiers de l'application à mettre en cache à l'installation */
 const SHELL = [
