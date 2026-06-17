@@ -209,6 +209,19 @@
   .gm-big .u{font-size:.32em;color:var(--phos-deep);margin-left:8px;letter-spacing:.06em;font-weight:500}
   .gm-cpm{font-family:var(--mono);font-size:13px;color:var(--uv-bright);margin-top:11px;letter-spacing:.05em}
   .gm-cpm b{color:#fff;font-weight:600}.gm-cpm .gm-sub{color:var(--ink-faint)}
+  .gm-time{font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);margin-top:9px;letter-spacing:.03em}
+  .gm-time b{color:var(--uv-bright);font-weight:600}
+  .gm-recent{width:100%;max-width:280px;margin:13px auto 0;display:flex;flex-direction:column;gap:1px;border-top:1px solid var(--panel-edge);padding-top:10px}
+  .gm-recent:empty{display:none}
+  .gm-rr{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-family:var(--mono);font-size:11.5px;padding:3px 2px;color:var(--ink-faint)}
+  .gm-rr .t{color:var(--ink-dim)}
+  .gm-rr .v{color:var(--phos-deep);font-weight:600}
+  .gm-rr .c{color:var(--ink-faint);font-size:10.5px}
+  .gm-refresh{margin:15px auto 0;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--uv);background:rgba(143,224,74,.06);border:1px solid var(--panel-edge);border-radius:9px;padding:8px 16px;cursor:pointer;transition:border-color .15s,background .15s}
+  .gm-refresh:hover{border-color:var(--uv);background:rgba(143,224,74,.12)}
+  .gm-refresh:active{transform:translateY(1px)}
+  .gm-refresh svg{transition:transform .5s}
+  .gm-refresh.spin svg{transform:rotate(360deg)}
   @keyframes gm-blink{0%,68%{opacity:1}69%,100%{opacity:.22}}
   @media(max-width:520px){.gx-counter{flex-direction:column;align-items:stretch;text-align:center}.gm-dial{max-width:260px;margin:0 auto}}
   @media(prefers-reduced-motion:reduce){.gm-needle{transition:none}.gm-led{animation:none}}
@@ -256,6 +269,12 @@
         <div class="gm-read">
           <div class="gm-big" id="gmBig">0,1<span class="u">µSv/h</span></div>
           <div class="gm-cpm" id="gmCpm">~13 cpm · <span class="gm-sub" data-i18n="gm_illu">illustration</span></div>
+          <div class="gm-time" id="gmTime"></div>
+          <div class="gm-recent" id="gmRecent"></div>
+          <button class="gm-refresh" id="gmRefresh" type="button" aria-label="Actualiser">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+            <span data-i18n="gm_refresh">Actualiser</span>
+          </button>
         </div>
       </div>
     </div>
@@ -489,7 +508,7 @@
     fr: {
       title:"FrenchCurie · Radioprotection", h1:"FRENCH<span>CURIE</span>", sub:"Boîte à outils · Radioprotection", tag:"rayonnement <b>γ</b>",
       home_intro:"Une suite d'outils de radioprotection à glisser dans ta poche. Choisis un calcul.", cat_radio:"Radioprotection", nav_back:"← Accueil",
-      gm_ref:"fond naturel", gm_illu:"illustration", gm_live:"en direct", gm_off:"hors-ligne",
+      gm_ref:"fond naturel", gm_illu:"illustration", gm_live:"en direct", gm_off:"hors-ligne", gm_refresh:"Actualiser",
       tile_distance:"Distance", tile_distance_d:"Débit de dose selon la distance",
       tile_temps:"Temps de séjour", tile_temps_d:"Durée selon un budget de dose",
       tile_dose:"Dose reçue", tile_dose_d:"Dose cumulée selon le temps",
@@ -545,7 +564,7 @@
     en: {
       title:"FrenchCurie · Radiation protection", h1:"FRENCH<span>CURIE</span>", sub:"Toolbox · Radiation protection", tag:"<b>γ</b> radiation",
       home_intro:"A pocket suite of radiation-protection tools. Pick a calculation.", cat_radio:"Radiation protection", nav_back:"← Home",
-      gm_ref:"background", gm_illu:"illustration", gm_live:"live", gm_off:"offline",
+      gm_ref:"background", gm_illu:"illustration", gm_live:"live", gm_off:"offline", gm_refresh:"Refresh",
       tile_distance:"Distance", tile_distance_d:"Dose rate by distance",
       tile_temps:"Stay time", tile_temps_d:"Duration for a dose budget",
       tile_dose:"Received dose", tile_dose_d:"Cumulative dose over time",
@@ -907,56 +926,100 @@ if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator
 <script>
 /* ===== Compteur en direct : GMC-500+ → relais → site ===== */
 (function(){
-  /* ▼ Colle ici l'URL JSON de ton relais. Laisse "" pour le mode illustration. ▼ */
+  /* ▼ URL JSON du relais. Laisse "" pour le mode illustration. ▼ */
   const LIVE_URL = "https://frenchcurie-gmc.hdmsjbrtc5.workers.dev/latest";
-  /* ex : "https://frenchcurie-gmc.TONCOMPTE.workers.dev/latest" */
   const POLL_MS = 60000;
 
   const needle=document.getElementById('gmNeedle'),
         big=document.getElementById('gmBig'),
         cpm=document.getElementById('gmCpm'),
+        timeEl=document.getElementById('gmTime'),
+        recentEl=document.getElementById('gmRecent'),
+        btn=document.getElementById('gmRefresh'),
         stat=document.getElementById('gmStat'),
         statT=document.getElementById('gmStatT');
   if(!needle||!big) return;
 
+  function lang(){ let l='fr'; try{ l=localStorage.getItem('dosecalc_lang')||(navigator.language||'fr').slice(0,2); }catch(e){} return l==='en'?'en':'fr'; }
   function tr(k){
-    const fr={gm_ref:'fond naturel',gm_live:'en direct',gm_off:'hors-ligne',gm_illu:'illustration'};
-    const en={gm_ref:'background',gm_live:'live',gm_off:'offline',gm_illu:'illustration'};
-    let l='fr'; try{ l=localStorage.getItem('dosecalc_lang')||(navigator.language||'fr').slice(0,2); }catch(e){}
-    return (l==='en'?en:fr)[k]||k;
+    const fr={gm_ref:'fond naturel',gm_live:'en direct',gm_off:'hors-ligne',gm_illu:'illustration',gm_at:'mesure de'};
+    const en={gm_ref:'background',gm_live:'live',gm_off:'offline',gm_illu:'illustration',gm_at:'measured at'};
+    return (lang()==='en'?en:fr)[k]||k;
   }
   function usvToF(u){ const a=Math.log10(0.03),b=Math.log10(30); return Math.max(0,Math.min(1,(Math.log10(Math.max(u,0.001))-a)/(b-a))); }
   function setNeedle(f){ needle.style.transform='rotate('+((f-0.12)*180).toFixed(1)+'deg)'; }
   function fmtUsv(u){ return (u<0.1?u.toFixed(3):u.toFixed(2)).replace('.',','); }
-  function ago(ts){
-    if(ts==null||ts==='') return '';
-    const s=''+ts; let t;
-    if(/^\d{13}$/.test(s)) t=+s; else if(/^\d{10}$/.test(s)) t=+s*1000; else t=Date.parse(s);
-    if(isNaN(t)) return '';
-    const d=Math.max(0,(Date.now()-t)/1000);
-    if(d<90) return 'il y a '+Math.round(d)+' s';
-    if(d<5400) return 'il y a '+Math.round(d/60)+' min';
-    return 'il y a '+Math.round(d/3600)+' h';
+  function parseTs(ts){
+    if(ts==null||ts==='') return NaN;
+    if(typeof ts==='number') return ts>1e12?ts:(ts>1e9?ts*1000:ts);
+    const s=''+ts;
+    if(/^\d{13}$/.test(s)) return +s;
+    if(/^\d{10}$/.test(s)) return +s*1000;
+    return Date.parse(s);
   }
+  function fmtClock(ts){
+    const t=parseTs(ts); if(isNaN(t)) return '';
+    try{ return new Date(t).toLocaleTimeString(lang()==='en'?'en-GB':'fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+    catch(e){ return ''; }
+  }
+
   function illustration(){ stat.className='gx-stat ref'; statT.textContent=tr('gm_ref'); setNeedle(0.12);
-    big.innerHTML='0,1<span class="u">µSv/h</span>'; cpm.innerHTML='~13 cpm · <span class="gm-sub">'+tr('gm_illu')+'</span>'; }
-  function live(usv,c,ts){ stat.className='gx-stat live'; statT.textContent=tr('gm_live'); setNeedle(usvToF(usv));
-    big.innerHTML=fmtUsv(usv)+'<span class="u">µSv/h</span>';
-    const a=ago(ts); cpm.innerHTML=(isFinite(c)?'<b>'+c+'</b> cpm':'')+(a?' · <span class="gm-sub">'+a+'</span>':''); }
+    big.innerHTML='0,1<span class="u">µSv/h</span>';
+    cpm.innerHTML='~13 cpm · <span class="gm-sub">'+tr('gm_illu')+'</span>';
+    timeEl.textContent=''; recentEl.innerHTML=''; }
   function offline(){ stat.className='gx-stat off'; statT.textContent=tr('gm_off'); }
 
+  function render(d){
+    let recent = Array.isArray(d.recent)&&d.recent.length ? d.recent
+      : [{usv:d.usv,cpm:d.cpm,ts:(d.ts??d.time??d.date??d.t)}];
+    recent = recent.map(x=>({
+      usv: parseFloat(x.usv ?? x.uSv ?? x.uSV),
+      cpm: Math.round(parseFloat(x.cpm ?? x.CPM)),
+      ts:  (x.ts ?? x.time ?? x.date ?? x.t)
+    })).filter(x=>isFinite(x.usv));
+    if(!recent.length){ offline(); return; }
+
+    const cur=recent[0];
+    stat.className='gx-stat live'; statT.textContent=tr('gm_live');
+    setNeedle(usvToF(cur.usv));
+    big.innerHTML=fmtUsv(cur.usv)+'<span class="u">µSv/h</span>';
+    cpm.innerHTML=isFinite(cur.cpm)?'<b>'+cur.cpm+'</b> cpm':'';
+
+    const hh=fmtClock(cur.ts);
+    timeEl.innerHTML = hh ? (tr('gm_at')+' <b>'+hh+'</b>') : '';
+
+    // les 3 mesures précédentes
+    const prev=recent.slice(1,4);
+    recentEl.innerHTML = prev.map(x=>{
+      const t=fmtClock(x.ts)||'—';
+      const c=isFinite(x.cpm)?x.cpm+' cpm':'';
+      return '<div class="gm-rr"><span class="t">'+t+'</span><span class="v">'+fmtUsv(x.usv)+' µSv/h</span><span class="c">'+c+'</span></div>';
+    }).join('');
+  }
+
+  let busy=false;
   async function poll(){
     if(!LIVE_URL){ illustration(); return; }
+    if(busy) return; busy=true;
     try{
-      const r=await fetch(LIVE_URL,{cache:'no-store'}); if(!r.ok) throw 0;
-      const d=await r.json();
-      const usv=parseFloat(d.usv ?? d.uSv ?? d.uSV ?? d.usvh);
-      const c=Math.round(parseFloat(d.cpm ?? d.CPM));
-      const ts=d.ts ?? d.time ?? d.date ?? d.t;
-      if(isFinite(usv)) live(usv,c,ts); else offline();
+      const r=await fetch(LIVE_URL+'?t='+Date.now(),{cache:'no-store'}); if(!r.ok) throw 0;
+      render(await r.json());
     }catch(e){ offline(); }
+    finally{ busy=false; }
   }
-  setTimeout(()=>{ if(!LIVE_URL) illustration(); poll(); }, 250);
+
+  function refresh(){
+    if(btn){ btn.classList.remove('spin'); void btn.offsetWidth; btn.classList.add('spin'); }
+    poll();
+  }
+  if(btn) btn.addEventListener('click', refresh);
+
+  // Ré-actualisation quand l'appli revient au premier plan (signet écran d'accueil)
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') poll(); });
+  window.addEventListener('pageshow', ()=> poll());
+  window.addEventListener('focus', ()=> poll());
+
+  setTimeout(()=>{ if(!LIVE_URL) illustration(); else poll(); }, 250);
   if(LIVE_URL) setInterval(poll, POLL_MS);
 })();
 </script>

@@ -1,5 +1,5 @@
 /* Service worker — Dose · Distance · Temps */
-const CACHE = 'dosecalc-v23';
+const CACHE = 'dosecalc-v24';
 
 /* Fichiers de l'application à mettre en cache à l'installation */
 const SHELL = [
@@ -31,10 +31,26 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-/* Requêtes : cache d'abord, réseau ensuite (et on met en cache au passage,
-   y compris les polices Google pour un vrai hors-ligne). */
+/* Requêtes :
+   - Données live du compteur (relais Cloudflare /latest) → RÉSEAU d'abord,
+     repli sur le cache uniquement si hors-ligne (sinon la valeur reste figée).
+   - Reste (coque, polices) → cache d'abord, réseau ensuite. */
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  const isLive = url.hostname.endsWith('workers.dev') || url.pathname.endsWith('/latest');
+
+  if (isLive) {
+    event.respondWith(
+      fetch(event.request).then(resp => {
+        const copy = resp.clone();
+        caches.open(CACHE).then(cache => { try { cache.put(event.request, copy); } catch (e) {} });
+        return resp;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
