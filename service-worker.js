@@ -1,11 +1,10 @@
 /* Service worker — Dose · Distance · Temps */
-const CACHE = 'dosecalc-v21';
+const CACHE = 'dosecalc-v23';
 
 /* Fichiers de l'application à mettre en cache à l'installation */
 const SHELL = [
   './',
   './index.html',
-  './spectro.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

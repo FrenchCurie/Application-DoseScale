@@ -150,7 +150,9 @@
   .rb-b{color:#6bb6ff;background:rgba(107,182,255,.12);border:1px solid #24405a}
   .rb-bp{color:#c08bff;background:rgba(192,139,255,.12);border:1px solid #3f2a5a}
   .rb-g{color:#8fe04a;background:rgba(143,224,74,.12);border:1px solid #3a5a2a}
-  .iso-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--panel-edge);border-radius:11px;background:linear-gradient(180deg,#10161f,#0b1017);padding:13px 15px;margin-bottom:8px}
+  .iso-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--panel-edge);border-radius:11px;background:linear-gradient(180deg,#14160e,#0c0d07);padding:13px 15px;margin-bottom:8px}
+  .iso-id{width:100%;font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-top:4px;padding-top:7px;border-top:1px dashed var(--panel-edge)}
+  .iso-id .gi{color:var(--ink-faint)}
   .iso-name{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink);min-width:78px}
   .iso-hl{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:2px}
   .iso-rads{display:flex;gap:5px;flex:none}
@@ -161,8 +163,8 @@
   .iso-g .none{color:var(--ink-faint)}
   .iso-src{width:100%;font-size:11px;color:var(--ink-faint);margin-top:2px}
   .iso-cat{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:2px 6px;border-radius:4px;border:1px solid var(--panel-edge);color:var(--ink-faint);flex:none}
-  .iso-cat.nat{color:#7dd957;border-color:#3a5a2a}.iso-cat.art{color:#ff8a6b;border-color:#5a2f24}
-  .card-cta:hover{border-color:var(--uv);background:rgba(255,182,39,.07)}
+  .iso-cat.nat{color:#8fe04a;border-color:#3a5a2a}.iso-cat.art{color:#ff8a6b;border-color:#5a2f24}
+  .card-cta:hover{border-color:var(--uv);background:rgba(143,224,74,.07)}
   .abt{font-size:13px;line-height:1.7;color:var(--ink-dim)}
   .abt b{color:var(--ink);font-weight:600}
   .abt ul{margin:8px 0 0;padding-left:18px}
@@ -296,13 +298,8 @@
       </a>
     </div>
 
-    <div class="cat-h" data-i18n="cat_spectro" style="margin-top:28px">Spectrométrie</div>
+    <div class="cat-h" data-i18n="cat_spectro" style="margin-top:28px">Référence</div>
     <div class="tiles">
-      <a href="spectro.html" class="tile">
-        <div class="tile-ic"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M4 15l4-5 4 3 4-7 4 5"/></svg></div>
-        <div class="tile-tx"><h3 data-i18n="tile_spectro">Analyse de spectre</h3><p data-i18n="tile_spectro_d">Fichiers Radiacode · identification d'isotopes</p></div>
-        <span class="tile-ar">›</span>
-      </a>
       <a href="#isotopes" class="tile">
         <div class="tile-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.5"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(120 12 12)"/></svg></div>
         <div class="tile-tx"><h3 data-i18n="tile_isotopes">Bibliothèque d'isotopes</h3><p data-i18n="tile_isotopes_d">α/β/γ · raies gamma théoriques</p></div>
@@ -529,12 +526,12 @@
       ef_ref_t:"Repères de dose aiguë (corps entier)", ef_note:"Les effets déterministes supposent une dose aiguë unique. Le risque stochastique suit le modèle LNT, débattu aux faibles doses. Repères éducatifs — pas un avis médical.",
       efs_negl:"Risque négligeable", efs_low:"Risque faible (statistique)", efs_notable:"Risque accru mesurable", efs_high:"Risque élevé",
       tile_apropos:"Méthodologie", tile_apropos_d:"Modèles, sources & bonne pratique", install_btn:"📲 Installer l'app",
-      cat_spectro:"Spectrométrie", tile_spectro:"Analyse de spectre", tile_spectro_d:"Fichiers Radiacode · identification d'isotopes",
+      cat_spectro:"Référence", tile_spectro:"Analyse de spectre", tile_spectro_d:"Fichiers Radiacode · identification d'isotopes",
       tile_isotopes:"Bibliothèque d'isotopes", tile_isotopes_d:"α/β/γ · raies gamma théoriques",
       iso_title:"Bibliothèque d'isotopes", iso_intro:"Type de rayonnement et principales raies gamma (théoriques, en keV) des isotopes courants.",
       iso_all:"Tous", iso_nat:"Naturel", iso_art:"Artificiel", iso_gammaonly:"Émetteurs γ",
       iso_alpha:"alpha", iso_beta:"bêta", iso_betap:"bêta+", iso_gamma:"gamma",
-      iso_glabel:"γ :", iso_nogamma:"pas de raie γ exploitable", iso_empty:"Aucun isotope ne correspond.",
+      iso_glabel:"γ :", iso_via:"↳ via descendants :", iso_nogamma:"pas de raie γ propre", iso_empty:"Aucun isotope ne correspond.",
       iso_note:"Demi-vies et raies indicatives (valeurs de référence usuelles). Les émetteurs β purs (Sr-90, H-3, C-14…) n'ont pas de raie γ exploitable.",
       ap_h_about:"À propos", ap_about:"FrenchCurie est une boîte à outils de <b>vulgarisation</b> de la radioprotection. Les calculs sont des <b>estimations</b> à but pédagogique : ils ne remplacent ni une mesure réelle, ni un dosimètre, ni l'avis d'une PCR (personne compétente en radioprotection).",
       ap_h_iss:"Loi de l'inverse du carré & mesure", ap_iss:"L'outil Distance modélise une <b>source ponctuelle de rayonnement γ</b> : le débit décroît en 1/distance². Ce modèle n'est valable qu'en <b>champ lointain</b> et pour le γ. En pratique :<ul><li>une source se comporte comme ponctuelle à partir d'environ <b>3 à 5× sa plus grande dimension</b> ;</li><li>au contact, le rayonnement <b>β</b> et les photons de basse énergie (absorbés en quelques dizaines de cm d'air) gonflent la lecture ;</li><li>mesure ta référence à <b>≥ 50 cm</b>, cristal orienté vers la source, et soustrais ton fond ;</li><li>pour isoler le β, refais la mesure derrière <b>quelques mm d'aluminium</b> (la chute = part β).</li></ul>",
@@ -585,12 +582,12 @@
       ef_ref_t:"Acute whole-body dose landmarks", ef_note:"Deterministic effects assume a single acute dose. Stochastic risk follows the LNT model, debated at low doses. Educational landmarks — not medical advice.",
       efs_negl:"Negligible risk", efs_low:"Low risk (statistical)", efs_notable:"Measurable increased risk", efs_high:"High risk",
       tile_apropos:"Methodology", tile_apropos_d:"Models, sources & good practice", install_btn:"📲 Install the app",
-      cat_spectro:"Spectrometry", tile_spectro:"Spectrum analysis", tile_spectro_d:"Radiacode files · isotope identification",
+      cat_spectro:"Reference", tile_spectro:"Spectrum analysis", tile_spectro_d:"Radiacode files · isotope identification",
       tile_isotopes:"Isotope library", tile_isotopes_d:"α/β/γ · theoretical gamma lines",
       iso_title:"Isotope library", iso_intro:"Radiation type and main gamma lines (theoretical, in keV) of common isotopes.",
       iso_all:"All", iso_nat:"Natural", iso_art:"Artificial", iso_gammaonly:"γ emitters",
       iso_alpha:"alpha", iso_beta:"beta", iso_betap:"beta+", iso_gamma:"gamma",
-      iso_glabel:"γ:", iso_nogamma:"no usable γ line", iso_empty:"No matching isotope.",
+      iso_glabel:"γ:", iso_via:"↳ via daughters:", iso_nogamma:"no own γ line", iso_empty:"No matching isotope.",
       iso_note:"Indicative half-lives and lines (usual reference values). Pure β emitters (Sr-90, H-3, C-14…) have no usable γ line.",
       ap_h_about:"About", ap_about:"FrenchCurie is an <b>educational</b> radiation-protection toolbox. The calculations are <b>estimates</b> for learning: they replace neither a real measurement, a dosimeter, nor the advice of a radiation protection officer.",
       ap_h_iss:"Inverse-square law & measurement", ap_iss:"The Distance tool models a <b>point γ source</b>: dose rate falls as 1/distance². This model only holds in the <b>far field</b> and for γ. In practice:<ul><li>a source behaves as point-like beyond about <b>3–5× its largest dimension</b>;</li><li>up close, <b>β</b> radiation and low-energy photons (absorbed within tens of cm of air) inflate the reading;</li><li>take your reference at <b>≥ 50 cm</b>, crystal facing the source, and subtract background;</li><li>to isolate β, repeat behind <b>a few mm of aluminium</b> (the drop = β contribution).</li></ul>",
@@ -745,12 +742,12 @@
   /* ---- bibliothèque d'isotopes ---- */
   const ISOTOPES=[
     // ===== NATURELS — chaîne U-238 =====
-    {n:'U-238', cat:'nat', hl:'4,47 Md a', rad:['α'], g:[], src:'Tête de chaîne U-238 · α 4,2 MeV'},
+    {n:'U-238', cat:'nat', hl:'4,47 Md a', rad:['α'], g:[], idg:[[63.3,'Th-234'],[92.6,'Th-234'],[1001,'Pa-234m'],[295,'Pb-214'],[352,'Pb-214'],[609,'Bi-214'],[1120,'Bi-214'],[1764,'Bi-214']], src:'Tête de chaîne U-238 · α, aucune γ propre → identifié par ses descendants'},
     {n:'Th-234', cat:'nat', hl:'24,1 j', rad:['β','γ'], g:[[63.3,3.7],[92.6,5.6]], src:'Chaîne U-238'},
     {n:'Pa-234m', cat:'nat', hl:'1,17 min', rad:['β','γ'], g:[[1001.0,0.84],[766.4,0.29]], src:'Chaîne U-238'},
     {n:'U-234', cat:'nat', hl:'245 ka', rad:['α'], g:[], src:'Chaîne U-238'},
     {n:'Th-230', cat:'nat', hl:'75,4 ka', rad:['α','γ'], g:[[67.7,0.38]], src:'Chaîne U-238'},
-    {n:'Ra-226', cat:'nat', hl:'1600 a', rad:['α','γ'], g:[[186.2,3.6]], src:'Chaîne U-238 (radium)'},
+    {n:'Ra-226', cat:'nat', hl:'1600 a', rad:['α','γ'], g:[[186.2,3.6]], idg:[[295,'Pb-214'],[352,'Pb-214'],[609,'Bi-214']], src:'Chaîne U-238 · 186 keV chevauche U-235 ; à l\'équilibre, repéré via Pb-214/Bi-214'},
     {n:'Rn-222', cat:'nat', hl:'3,82 j', rad:['α'], g:[], src:'Radon (gaz) · chaîne U-238'},
     {n:'Po-218', cat:'nat', hl:'3,1 min', rad:['α'], g:[], src:'Descendant du radon'},
     {n:'Pb-214', cat:'nat', hl:'26,8 min', rad:['β','γ'], g:[[351.9,35.6],[295.2,18.4],[242.0,7.3]], src:'Chaîne U-238'},
@@ -760,7 +757,7 @@
     {n:'Bi-210', cat:'nat', hl:'5,01 j', rad:['β'], g:[], src:'Chaîne U-238 · β pur'},
     {n:'Po-210', cat:'nat', hl:'138 j', rad:['α'], g:[], src:'Chaîne U-238 · α quasi sans γ'},
     // ===== NATURELS — chaîne Th-232 =====
-    {n:'Th-232', cat:'nat', hl:'14,0 Md a', rad:['α'], g:[], src:'Tête de chaîne Th-232'},
+    {n:'Th-232', cat:'nat', hl:'14,0 Md a', rad:['α'], g:[], idg:[[238.6,'Pb-212'],[338.3,'Ac-228'],[911.2,'Ac-228'],[969,'Ac-228'],[583.2,'Tl-208'],[2614.5,'Tl-208']], src:'Tête de chaîne Th-232 · α, aucune γ propre → identifié par ses descendants'},
     {n:'Ra-228', cat:'nat', hl:'5,75 a', rad:['β'], g:[], src:'Chaîne Th-232 · β pur'},
     {n:'Ac-228', cat:'nat', hl:'6,15 h', rad:['β','γ'], g:[[911.2,25.8],[969.0,15.8],[338.3,11.4],[463.0,4.4],[794.9,4.3]], src:'Chaîne Th-232 · marqueur thorium'},
     {n:'Th-228', cat:'nat', hl:'1,91 a', rad:['α','γ'], g:[[84.4,1.2]], src:'Chaîne Th-232'},
@@ -768,9 +765,9 @@
     {n:'Rn-220', cat:'nat', hl:'55,6 s', rad:['α'], g:[], src:'Thoron (gaz) · chaîne Th-232'},
     {n:'Pb-212', cat:'nat', hl:'10,6 h', rad:['β','γ'], g:[[238.6,43.6],[300.1,3.3]], src:'Chaîne Th-232 · raie 239 keV'},
     {n:'Bi-212', cat:'nat', hl:'60,5 min', rad:['α','β','γ'], g:[[727.3,6.7],[1620.5,1.5]], src:'Chaîne Th-232 · α+β'},
-    {n:'Tl-208', cat:'nat', hl:'3,05 min', rad:['β','γ'], g:[[2614.5,35.9],[583.2,30.6],[510.8,8.1],[860.6,4.5]], src:'Chaîne Th-232 · 2615 keV très haut'},
+    {n:'Tl-208', cat:'nat', hl:'3,05 min', rad:['β','γ'], g:[[2614.5,99.8],[583.2,85.0],[510.8,22.6],[860.6,12.5],[277.4,6.6]], src:'Chaîne Th-232 (branche 36 % de Bi-212) · 2615 keV, raie la plus haute des spectres naturels'},
     // ===== NATURELS — chaîne U-235 =====
-    {n:'U-235', cat:'nat', hl:'704 Ma', rad:['α','γ'], g:[[185.7,57.2],[143.8,10.96],[163.3,5.08],[205.3,5.01]], src:'Chaîne U-235 · 0,72 % de l\'U naturel'},
+    {n:'U-235', cat:'nat', hl:'704 Ma', rad:['α','γ'], g:[[185.7,57.2],[143.8,10.96],[163.3,5.08],[205.3,5.01]], src:'Chaîne U-235 · 0,7 % de l\'U naturel · raie repère 185,7 keV (chevauche Ra-226 186,2)'},
     {n:'Th-231', cat:'nat', hl:'25,5 h', rad:['β','γ'], g:[[84.2,6.6],[25.6,14.5]], src:'Chaîne U-235'},
     {n:'Pa-231', cat:'nat', hl:'32,8 ka', rad:['α','γ'], g:[[283.7,1.6],[300.1,2.4]], src:'Chaîne U-235'},
     {n:'Th-227', cat:'nat', hl:'18,7 j', rad:['α','γ'], g:[[235.9,12.9],[256.2,7.0]], src:'Chaîne U-235'},
@@ -838,14 +835,12 @@
       if(isoFilter==='nat'&&it.cat!=='nat') return false;
       if(isoFilter==='art'&&it.cat!=='art') return false;
       if(isoFilter==='gamma'&&(!it.g||it.g.length===0)) return false;
-      if(byEnergy){ return (it.g||[]).some(L=>Math.abs(L[0]-qnum)<=3); }
+      if(byEnergy){ return [...(it.g||[]),...(it.idg||[])].some(L=>Math.abs(L[0]-qnum)<=3); }
       if(q&&!(it.n.toLowerCase().includes(q)||(it.src||'').toLowerCase().includes(q))) return false;
       return true;
     });
-    if(byEnergy) rows.sort((a,b)=>{
-      const da=Math.min(...a.g.map(L=>Math.abs(L[0]-qnum))), db=Math.min(...b.g.map(L=>Math.abs(L[0]-qnum)));
-      return da-db;
-    });
+    if(byEnergy){ const dmin=it=>Math.min(...[...(it.g||[]),...(it.idg||[])].map(L=>Math.abs(L[0]-qnum)));
+      rows.sort((a,b)=>dmin(a)-dmin(b)); }
     if(!rows.length){ list.innerHTML='<p style="color:var(--ink-faint);font-size:13px;padding:4px">'+T('iso_empty')+'</p>'; return; }
     rows.forEach(it=>{
       const badges=it.rad.map(r=>'<i class="rb '+(RBCLASS[r]||'rb-g')+'">'+r+'</i>').join('');
@@ -862,11 +857,17 @@
       } else {
         gline='<span class="none">'+T('iso_nogamma')+'</span>';
       }
+      let idline='';
+      if(it.idg&&it.idg.length){
+        const ip=it.idg.map(L=>{ const e=Math.round(L[0]); const hi=byEnergy&&Math.abs(L[0]-qnum)<=3; const txt=e+' <span class="gi">('+L[1]+')</span>'; return hi?'<b class="gmatch">'+txt+'</b>':txt; });
+        idline='<div class="iso-id">'+T('iso_via')+' '+ip.join(' · ')+' keV</div>';
+      }
       const row=document.createElement('div'); row.className='iso-row';
       row.innerHTML='<div><div class="iso-name">'+it.n+'</div><div class="iso-hl">'+it.hl+'</div></div>'+
         '<span class="iso-cat '+it.cat+'">'+T(it.cat==='nat'?'iso_nat':'iso_art')+'</span>'+
         '<div class="iso-rads">'+badges+'</div>'+
         '<div class="iso-g">'+gline+'</div>'+
+        idline+
         (it.src?'<div class="iso-src">'+it.src+'</div>':'');
       list.appendChild(row);
     });
